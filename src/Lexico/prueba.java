@@ -13,21 +13,28 @@ public class prueba {
 	        // Cargamos el buffer con el contenido del archivo
 	        
 	        try {
-	        	BufferedReader br = new BufferedReader (new FileReader ("C:\\Users\\rober\\Desktop\\codigo.txt"));
+	        	BufferedReader br = new BufferedReader (new FileReader ("C:\\Users\\uliip\\Desktop\\codigo.txt"));
 	        	
 		        // Leemos la primera linea
-			                      
-		       	String temp="";
-	        	String bfRead;
-	        	while((bfRead = br.readLine())!=null){
-	        	//haz el ciclo, mientras bfRead tiene datos
-	        	temp = temp + bfRead + "\n";
-	        	}
-	        	
-	        	int y = temp.length();
-	        	for (int i=0; i < y; i++) {
-	        		System.out.println("caracter "+i+": "+temp.charAt(i));
-	        	}
+	        	int nrolinea = 1;        
+		       	String texto = br.readLine();
+	        	while(texto != null)
+	            {
+	        		System.out.println("Linea leida: " + nrolinea);        
+	                System.out.println(texto); 	                //Hacer lo que sea con la línea leída
+	                
+	                String token;
+	                int numTokens = 0;
+	                StringTokenizer st = new StringTokenizer (texto);    
+	                while (st.hasMoreTokens()) // bucle por todas las palabras
+	                {
+	                    token = st.nextToken();
+	                    numTokens++;
+	                    System.out.println ("    Palabra " + numTokens + " es: " + token);
+	                }
+	                nrolinea++;
+	                texto = br.readLine(); //leo la siguiente linea
+	            }
 	
 		    } catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
