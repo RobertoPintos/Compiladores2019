@@ -10,37 +10,62 @@ public class Controller {
 
 	//DEFINO OBJETOS DE LA CLASE
 	
+	//ACCIONES SEMANTICAS
+	private AccSemantica as1 = new AS1();
+	private AccSemantica as2 = new AS2();
+	private AccSemantica blanco = new ASBlanco();
+	
 	//MATRIZ DE TRANSICION DE ESTADOS
 	int [][] matEstados = {
-			//      l   L   d    _   .   /   *   +   -    /n    =   >    <    :    (    )    %    e    E     ;    ,   BL,Tab 
+			//      l   L   d    _   .   /   *   +   -    /n    =   >    <    :    (    )    %    e    E     ;    ,  BL,Tab 
 			//      0   1   2    3   4   5   6   7   8    9   10   11   12   13   14   15   16   17   18    19   20   21
-			/*0*/ { 1,  1,  2,  -1,  7,  9,  F,  F,  F,  -1,  16,  14,  15,  17,   F,   F,  18,  -1,  -1,   F,   F,   0}, 
+			/*0*/ { 1,  1,  2,   F,  7,  9,  F,  F,  F,   0,  14,  12,  13,  15,   F,   F,  16,   1,   1,   F,   F,   0}, 
 			/*1*/ { 1,  1,  1,   1,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*2*/ {-1, -1,  2,  -1,  3, -1, -1, -1, -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
+			/*2*/ { F,  F,  2,   F,  3,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   0,   0,   F,   F,   F},
 			/*3*/ { F,  F,  3,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
-			/*4*/ {-1, -1,  5,  -1, -1, -1, -1,  6,  6,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
+			/*4*/ { 0,  0,  5,   0,  0,  0,  0,  6,  6,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
 			/*5*/ { F,  F,  5,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*6*/ { F,  F,  6,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*7*/ {-1, -1,  8,  -1, -1, -1, -1, -1, -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
-			/*8*/ { F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
-			/*9*/ { F,  F,  F,   F,  F,  F,  F, 10,  F,   0,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*10*/{10, 10, 10,  10, 10, 11, 10, 12, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
-			/*11*/{-1, -1, -1,  -1, -1, -1, -1, -1, -1,  10,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
-			/*12*/{10, 10, 10,  10, 10, 13, 10, 12, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
-			/*13*/{ 0,  0,  0,   0,  0,  0,  0,  0,  0,  12,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+			/*7*/ { 0,  0,  8,   0,  0,  0,  0,  0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+			/*8*/ { F,  F,  8,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
+			/*9*/ { F,  F,  F,   F,  F,  F,  F, 10,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+			/*10*/{10, 10, 10,  10, 10, 10, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
+			/*11*/{10, 10, 10,  10, 10,  0, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
+			/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+			/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*15*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*16*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*17*/{-1, -1, -1,  -1, -1, -1, -1, -1, -1,  -1,  -1,  -1,  -1,   F,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
-			/*18*/{18, 18, 18,  18, 18, 19, 18, 18, 18,  18,  18,  18,  18,  18,  18,  18,   F,  18,  18,  18,  18,  18},
-			/*19*/{18, 18, 18,  18, 18, 18, 18, 18, 18,   0,  18,  18,  18,  18,  18,  18,  18,  18,  18,  18,  18,  18}
+			/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},
+	};
+	
+	//MATRIZ DE ACCIONES SEMANTICAS
+	private AccSemantica [][] matAS = {
+				//	    l     L     d    _    .    /    *    +    -     /n      =   >    <    :    (    )    %    e    E     ;    ,    BL,Tab 
+				//      0     1     2    3    4    5    6    7    8     9      10   11   12   13   14   15   16   17   18    19   20     21
+				/*0*/ { as1, as1,  as1, as2, as1, as1, as2, as2, as2, blanco,  as1, as1, as1, as1, as2, as2, as1, as1, as1,  as2, as2, blanco}, 
+				/*1*/ { 1,  1,  1,   1,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*2*/ { F,  F,  2,   F,  3,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   0,   0,   F,   F,   F},
+				/*3*/ { F,  F,  3,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
+				/*4*/ { 0,  0,  5,   0,  0,  0,  0,  6,  6,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+				/*5*/ { F,  F,  5,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*6*/ { F,  F,  6,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*7*/ { 0,  0,  8,   0,  0,  0,  0,  0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+				/*8*/ { F,  F,  8,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
+				/*9*/ { F,  F,  F,   F,  F,  F,  F, 10,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*10*/{10, 10, 10,  10, 10, 10, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
+				/*11*/{10, 10, 10,  10, 10,  0, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
+				/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*15*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+				/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},	
 	};
 	
 	//CONSTANTES IDENTIFICADORAS
 	
 	public static final int ID = 257;
 	public final static short CTE=258;
-	public final static short CTEFLOAT=258;
+	public final static short CTEFLOAT=278;
 	public final static short CADENA=259;
 	public final static short COMENTARIO=260;
 	public final static short ASIGNACION=261;
@@ -75,12 +100,45 @@ public class Controller {
 	String fuente;
 	public static int posFuente;
 	public static int nroLinea;
-		
+	public String buffer = new String();	
 	public static Token token;
-	private String buffer = new String();
+	private int estado;
 
 	public static HashMap<String,Atributo> tablaDeSimbolo;
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
+	public static List<Token> listToken = new ArrayList<Token>(); 
+	
+	
+	//CARGO ARREGLO DE PALABRAS RESERVADAS
+	
+	private void cargarPalabrasReservadas() {
+		
+		palabrasReservadas.put("if", 265);
+		palabrasReservadas.put("else", 266);
+		palabrasReservadas.put("end_if", 267);
+		palabrasReservadas.put("int", 268);
+		palabrasReservadas.put("begin", 269);
+		palabrasReservadas.put("end", 270);
+		palabrasReservadas.put("print", 271);
+		palabrasReservadas.put("while", 272);
+		palabrasReservadas.put("do", 273);
+		palabrasReservadas.put("class", 274);
+		palabrasReservadas.put("public", 275);
+		palabrasReservadas.put("private", 276);
+		
+	}
+	
+	//METODO CENTRAL, DEVUELVE DE A UN TOKEN DEL CODIGO FUENTE, EN EL FUTURO ES yylex()
+	
+	public Token getToken() {
+		int estadoInic = 0;
+		String buffer = new String();
+		char charLeido;
+		int columna;
+		int estadoSig;
+	}
+	
+// ---------------------------METODOS ADICIONALES-----------------------------------------
 	
 	public int get(int fila, int columna) {
 		return matEstados[fila][columna];
@@ -92,7 +150,7 @@ public class Controller {
 		if (value >= 97 && value <= 122)  //Detecta Letra minuscula
 			return 0;
 		if (value >= 65 && value <= 90)  //Detecta Letra mayuscula
-				return 1;
+			return 1;
 		if ( (value >= 48 && value <= 57) )//Detecta digito
 			return 2;
 		if (value == 95) //Detecta "_"
@@ -134,5 +192,81 @@ public class Controller {
 		if ((value==9) || (value == 32))// BLANCO Y TAB
 			return 21; 
 		return -1;
-		}
+	}
+	
+	private int getIdentificador(String s) {
+		if (esReservada(s)){
+            switch (s){
+                case "if": return IF;
+                case "else": return ELSE;
+                case "end_if": return END_IF;
+                case "int": return INT;
+                case "do": return DO;
+                case "begin": return BEGIN;
+                case "end": return END;
+                case "while": return WHILE;
+                case "print": return PRINT;
+                case "class": return CLASS;
+                case "public": return PUBLIC;
+                case "private": return PRIVATE;
+                default: return ID;
+            }
+        } else 
+             if(s.length()>1){
+            	if ((s.charAt(0) == "/") && (s.charAt(1) == "+"))
+            		return COMENTARIO;
+            	if (s.charAt(0) == "%")
+            		return CADENA;
+                if (s.contains("."))
+                    return CTEFLOAT;
+                if (s.equals(":="))
+                    return ASIGNACION;
+                if (s.equals("=="))
+                	return C_IGUAL;
+                if(s.equals("!="))
+                    return C_DISTINTO;
+                else
+                if(s.equals(">="))
+                    return C_MAYORIGUAL;
+                else
+                if(s.equals("<="))
+                    return C_MENORIGUAL;
+                 
+            }
+         return (int) s.charAt(0);//CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
+		
+	}
+	
+	public boolean esReservada(String palabra){
+        if (palabrasReservadas.containsKey(palabra))
+            return true;
+        else
+            return false;
+    }
+	
+	public void inicializarBuffer (char c) {
+		buffer = ""+c;
+	}
+	
+	public String getBuffer() {
+		return buffer;
+	}
+	
+	public void addTokenListSimple (char c, int nLinea) {
+		String s = String.valueOf(c);
+		Token t = new Token(getIdentificador(s), s, nLinea));
+		listToken.add(t);
+	}
+	
+	public void setEstadoFinal() {
+		estado = F;
+	}
+	
+	public int getNroLinea() {
+		return nroLinea;
+	}
+	
+	public void setBuffer(String s) {
+		buffer = s;
+	}
 }
