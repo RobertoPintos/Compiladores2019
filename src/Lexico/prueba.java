@@ -1,55 +1,64 @@
 package Lexico;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.StringTokenizer;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import Lexico.Controller;
+import Lexico.Fuente;
+
 
 public class prueba {
 	
-	public static void leerArchivo() {
-		{
-	        // Cargamos el buffer con el contenido del archivo
-	        
-	        try {
-	        	BufferedReader br = new BufferedReader (new FileReader ("C:\\Users\\uliip\\Desktop\\codigo.txt"));
-	        	
-		        // Leemos la primera linea
-	        	int nrolinea = 1;        
-		       	String texto = br.readLine();
-	        	while(texto != null)
-	            {
-	        		System.out.println("Linea leida: " + nrolinea);        
-	                System.out.println(texto); 	                //Hacer lo que sea con la línea leída
-	                
-	                String token;
-	                int numTokens = 0;
-	                StringTokenizer st = new StringTokenizer (texto);    
-	                while (st.hasMoreTokens()) // bucle por todas las palabras
-	                {
-	                    token = st.nextToken();
-	                    numTokens++;
-	                    System.out.println ("    Palabra " + numTokens + " es: " + token);
-	                }
-	                nrolinea++;
-	                texto = br.readLine(); //leo la siguiente linea
-	            }
+	private static BufferedReader codigo;
 	
-		    } catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		    } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	//ESTE METODO GUARDA EL CODIGO EN UN STRINGBUILDER, AGREGANDO SALTOS DE LINEA Y EL SIMBOLO $ AL FINAL
+	private static StringBuilder getCodigo(BufferedReader ubicacion){
+        StringBuilder buffer = new StringBuilder();
+        try{
+            codigo = new BufferedReader(new FileReader(ubicacion.readLine()));
+            String readLine;
+            while ((readLine = codigo.readLine())!= null) {
+                buffer.append(readLine+"\n");
+            }
+            buffer.append("$");
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return buffer;
+    }
+	
+	 public static void mainr () {
+		String direccion = new String("C:\\Users\\uliip\\Desktop\\codigo.txt");
+        InputStream is = new ByteArrayInputStream(direccion.getBytes());
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder codigo = null;
+        codigo = new StringBuilder(getCodigo(br));
+        
+      //--------------------------------------------------------------------------------
+       
+        Fuente archivo = new Fuente(codigo);
+        Controller controlador = new Controller(archivo);
+
+        //AHORA TENDRIA QUE PEDIR LOS TOKENS Y LOS ERRRORES
+
+        controlador.recorrerCodFuente();
+        //controlador.mostrarErrores();
+        }
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		leerArchivo();
+		mainr();
 	}
 
 }

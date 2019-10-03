@@ -11,5 +11,6 @@ public class AS2 extends AccSemantica{
 		ct.addTokenListSimple(c, ct.getNroLinea());
 		ct.setEstadoFinal();
 		return 0;
+	
 	}
 }

@@ -4,6 +4,11 @@ public class Error {
 	String descripcion;
 	int nroLinea;
 	
+	public Error(String d, int n) {
+		this.descripcion = d;
+		this.nroLinea = n;
+	}
+	
 	public String getDescripcion() {
 		return descripcion;
 	}

@@ -13,6 +13,10 @@ public class Controller {
 	//ACCIONES SEMANTICAS
 	private AccSemantica as1 = new AS1();
 	private AccSemantica as2 = new AS2();
+	private AccSemantica as3 = new AS3();
+	private AccSemantica as4 = new AS4();
+	private AccSemantica err1 = new Error1();
+	private AccSemantica err2 = new Error2();
 	private AccSemantica blanco = new ASBlanco();
 	
 	//MATRIZ DE TRANSICION DE ESTADOS
@@ -34,7 +38,7 @@ public class Controller {
 			/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*15*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+			/*15*/{ 0,  0,  0,   0,  0,  0,  0,  0,  0,   0,   F,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
 			/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},
 	};
 	
@@ -57,15 +61,14 @@ public class Controller {
 				/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 				/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 				/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*15*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},	
+				/*15*/{ err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2,   F,  err2,err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2},
+				/*16*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,   err1,  as3, as3, as3, as3, as3,  as3, as4, as3, as3,  as3, as3, as3},	
 	};
 	
 	//CONSTANTES IDENTIFICADORAS
 	
 	public static final int ID = 257;
 	public final static short CTE=258;
-	public final static short CTEFLOAT=278;
 	public final static short CADENA=259;
 	public final static short COMENTARIO=260;
 	public final static short ASIGNACION=261;
@@ -73,7 +76,7 @@ public class Controller {
 	public final static short C_MENORIGUAL=263;
 	public final static short C_DISTINTO=264;
 	public final static short C_IGUAL=277;
-	
+	public final static short CTEFLOAT=278;
 	
 	//PALABRAS RESERVADAS DEL CODIGO
 	public static final int IF = 265;
@@ -84,10 +87,12 @@ public class Controller {
     public static final int END = 270;
     public static final int PRINT = 271;
     public final static short WHILE =272;
-	public final static short DO=273;
-	public final static short CLASS =274;
-	public final static short PUBLIC=275;
-	public final static short PRIVATE=276;
+	public final static short DO = 273;
+	public final static short CLASS = 274;
+	public final static short PUBLIC = 275;
+	public final static short PRIVATE = 276;
+	public final static short FLOAT = 279;
+
 	
 	//SUPUESTO ESTADO FINAL
 	private static int F = 500;
@@ -97,14 +102,13 @@ public class Controller {
 	public static List<Error> warning = new ArrayList<>();
 	
 	// VARIABLES DE CODIGO
-	String fuente;
-	public static int posFuente;
-	public static int nroLinea;
+	private Fuente codigoFuente;
+	private int nroLinea;
 	public String buffer = new String();	
 	public static Token token;
 	private int estado;
 
-	public static HashMap<String,Atributo> tablaDeSimbolo;
+	public static HashMap<String,String> tablaDeSimbolo;
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
 	
@@ -125,14 +129,21 @@ public class Controller {
 		palabrasReservadas.put("class", 274);
 		palabrasReservadas.put("public", 275);
 		palabrasReservadas.put("private", 276);
-		
+		palabrasReservadas.put("float", 279);
+
+	}
+	
+	//CONSTRUCTOR
+	
+	public Controller(Fuente cf) {
+		this.codigoFuente = cf;
+		cargarPalabrasReservadas();
 	}
 	
 	//METODO CENTRAL, DEVUELVE DE A UN TOKEN DEL CODIGO FUENTE, EN EL FUTURO ES yylex()
 	
 	public Token getToken() {
-		int estadoInic = 0;
-		String buffer = new String();
+		estado = 0;
 		char charLeido;
 		int columna;
 		int estadoSig;
@@ -147,23 +158,23 @@ public class Controller {
 	//DEVUELVE LA COLUMNA DE LA MATRIZ CORRESPONDIENTE AL SIMBOLO LEIDO
 	private int getColumna(char c) {
 		int value = (int)c;
-		if (value >= 97 && value <= 122)  //Detecta Letra minuscula
+		if (value >= 97 && value <= 122)  //DETECTA LETRA MINUSCULA
 			return 0;
-		if (value >= 65 && value <= 90)  //Detecta Letra mayuscula
+		if (value >= 65 && value <= 90)  //DETECTA LETRA MAYUSCULA
 			return 1;
-		if ( (value >= 48 && value <= 57) )//Detecta digito
+		if ( (value >= 48 && value <= 57) )//DETECTA UN DIGITO
 			return 2;
-		if (value == 95) //Detecta "_"
+		if (value == 95) //DETECTA "_"
 			return 3;
-		if (value == 46) //Detecta "."
+		if (value == 46) //DETECTA "."
 			return 4;
-		if (value == 47) //Detecta "/"
+		if (value == 47) //DETECTA "/"
 			return 5;
-		if (value == 42) //Detecta "*"
+		if (value == 42) //DETECTA "*"
 			return 6;
-		if (value == 43) //Detecta +
+		if (value == 43) //DETECTA "+"
 			return 7;
-		if (value == 45) //Detecta -
+		if (value == 45) //DETECTA "-"
 			return 8;
 		if (value==10) // /n
 			return 9; 
@@ -194,9 +205,9 @@ public class Controller {
 		return -1;
 	}
 	
-	private int getIdentificador(String s) {
-		if (esReservada(s)){
-            switch (s){
+	private int getIdentificador(String lex) {
+		if (esReservada(lex)){
+            switch (lex){
                 case "if": return IF;
                 case "else": return ELSE;
                 case "end_if": return END_IF;
@@ -209,31 +220,31 @@ public class Controller {
                 case "class": return CLASS;
                 case "public": return PUBLIC;
                 case "private": return PRIVATE;
+                case "float": return FLOAT;
                 default: return ID;
             }
         } else 
-             if(s.length()>1){
-            	if ((s.charAt(0) == "/") && (s.charAt(1) == "+"))
+             if(lex.length()>1){
+            	if ((lex.charAt(0) == "/") && (lex.charAt(1) == "+"))
             		return COMENTARIO;
-            	if (s.charAt(0) == "%")
-            		return CADENA;
-                if (s.contains("."))
-                    return CTEFLOAT;
-                if (s.equals(":="))
-                    return ASIGNACION;
-                if (s.equals("=="))
-                	return C_IGUAL;
-                if(s.equals("!="))
-                    return C_DISTINTO;
-                else
-                if(s.equals(">="))
-                    return C_MAYORIGUAL;
-                else
-                if(s.equals("<="))
-                    return C_MENORIGUAL;
-                 
-            }
-         return (int) s.charAt(0);//CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
+            	else if (lex.charAt(0) == "%")
+            			return CADENA;
+            		else {
+            			if (lex.contains(".")) 
+            				return CTEFLOAT;
+            			// if (lex = cte) FALTA DETERMINAR SI EL LEXEMA ES UNA CTE
+                		if (lex.equals(":="))
+                			return ASIGNACION;
+                		if (lex.equals("=="))
+                			return C_IGUAL;
+                		if (lex.equals("!="))
+                			return C_DISTINTO;
+                		if (lex.equals(">="))
+                			return C_MAYORIGUAL;
+                		if (lex.equals("<="))
+                			return C_MENORIGUAL;
+            		}
+         return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
 		
 	}
 	
@@ -258,6 +269,26 @@ public class Controller {
 		listToken.add(t);
 	}
 	
+	public void addTokenListCompuesto (String lex, int nLinea) {
+		Token t = new Token(getIdentificador(lex), lex, nLinea)
+		listToken.add(t);
+	}
+	
+	public void addTokenTS(String lex, String t) {
+		if (tablaDeSimbolo.containsKey(lex))
+			System.out.println("El lexema " + lex + " ya existe.");
+		else if (lex.charAt(0) == "%") {
+				String nuevo = lex.substring(1);
+				tablaDeSimbolo.put(nuevo, t);
+			} else 
+				tablaDeSimbolo.put(lex, t);
+	}
+	
+	public void addError(String desc, int nLinea) {
+		Error e = new Error(desc, nLinea);
+		errores.add(e);
+	}
+	
 	public void setEstadoFinal() {
 		estado = F;
 	}
@@ -268,5 +299,11 @@ public class Controller {
 	
 	public void setBuffer(String s) {
 		buffer = s;
+	}
+	
+	public void recorrerCodFuente() {
+		while (!Fuente.hasFinished()) {
+			getToken();
+		}
 	}
 }
