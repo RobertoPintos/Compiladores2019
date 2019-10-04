@@ -34,7 +34,7 @@ public class Controller {
 			/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*15*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
+			/*15*/{ 0,  0,  0,   0,  0,  0,  0,  0,  0,   0,   F,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
 			/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},
 	};
 	
@@ -103,7 +103,14 @@ public class Controller {
 	public String buffer = new String();	
 	public static Token token;
 	private int estado;
-
+	
+	//VARIABLES DE CONTROL
+	public static final int maxId = 25;
+	public static final float minF = 0.0; //definir bien los maximos de los float
+	public static final float maxf = 1.0;
+	public static final int minE = -32768;
+	public static final int maxE = 32767;
+	
 	public static HashMap<String,Atributo> tablaDeSimbolo;
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
@@ -194,7 +201,7 @@ public class Controller {
 		return -1;
 	}
 	
-	private int getIdentificador(String s) {
+	public int getIdentificador(String s) {
 		if (esReservada(s)){
             switch (s){
                 case "if": return IF;
