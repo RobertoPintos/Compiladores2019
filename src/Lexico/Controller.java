@@ -107,6 +107,13 @@ public class Controller {
 	public String buffer = new String();	
 	public static Token token;
 	private int estado;
+	
+	//VARIABLES DE CONTROL
+	public static final int maxId = 25;
+	public static final float minF = 0.0; //definir bien los maximos de los float
+	public static final float maxf = 1.0;
+	public static final int minE = -32768;
+	public static final int maxE = 32767;
 
 	public static HashMap<String,String> tablaDeSimbolo;
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
