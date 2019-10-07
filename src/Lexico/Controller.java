@@ -15,8 +15,17 @@ public class Controller {
 	private AccSemantica as2 = new AS2();
 	private AccSemantica as3 = new AS3();
 	private AccSemantica as4 = new AS4();
+	private AccSemantica as5 = new AS5();
+	private AccSemantica as6 = new AS6();
+	private AccSemantica as7 = new AS7();
+	private AccSemantica as8 = new AS8();
+	private AccSemantica as9 = new AS9();
+	private AccSemantica as10 = new AS10();
 	private AccSemantica err1 = new Error1();
 	private AccSemantica err2 = new Error2();
+	private AccSemantica err3 = new Error3();
+	private AccSemantica err4 = new Error4();
+	private AccSemantica err5 = new Error5();
 	private AccSemantica blanco = new ASBlanco();
 	
 	//MATRIZ DE TRANSICION DE ESTADOS
@@ -46,23 +55,23 @@ public class Controller {
 	private AccSemantica [][] matAS = {
 				//	    l     L     d    _    .    /    *    +    -     /n      =   >    <    :    (    )    %    e    E     ;    ,    BL,Tab 
 				//      0     1     2    3    4    5    6    7    8     9      10   11   12   13   14   15   16   17   18    19   20     21
-				/*0*/ { as1, as1,  as1, as2, as1, as1, as2, as2, as2, blanco,  as1, as1, as1, as1, as2, as2, as1, as1, as1,  as2, as2, blanco}, 
-				/*1*/ { 1,  1,  1,   1,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*2*/ { F,  F,  2,   F,  3,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   0,   0,   F,   F,   F},
-				/*3*/ { F,  F,  3,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
-				/*4*/ { 0,  0,  5,   0,  0,  0,  0,  6,  6,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
-				/*5*/ { F,  F,  5,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*6*/ { F,  F,  6,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*7*/ { 0,  0,  8,   0,  0,  0,  0,  0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
-				/*8*/ { F,  F,  8,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
-				/*9*/ { F,  F,  F,   F,  F,  F,  F, 10,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*10*/{10, 10, 10,  10, 10, 10, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
-				/*11*/{10, 10, 10,  10, 10,  0, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
-				/*12*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*13*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-				/*15*/{ err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2,   F,  err2,err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2},
-				/*16*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,   err1,  as3, as3, as3, as3, as3,  as3, as4, as3, as3,  as3, as3, as3},	
+				/*0*/ { as1, as1,  as1, as2, as1, as1, as2, as2, as2, blanco, as1, as1, as1, as1, as2, as2, as1, as1, as1,  as2, as2, blanco}, 
+				/*1*/ { as3, as3,  as3, as3, as6, as6, as6, as6, as6,  as6,   as6, as6, as6, as6, as6, as6, as6, as3, as3,  as6, as6,   as6},
+				/*2*/ { as7, as7,  as3, as7, as3, as7, as7, as7, as7,  as7,   as7, as7, as7, as7, as7, as7, as7, as7, as7,  as7, as7,   as7},
+				/*3*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as3, as3,  as8, as8,   as8},
+				/*4*/ { err3,err3, as3, err3,err3,err3,err3,as3, as3,  err3,  err3,err3,err3,err3,err3,err3,err3,err3,err3, err3,err3,  err3},
+				/*5*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
+				/*6*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
+				/*7*/ { err4,err4, as3, err4,err4,err4,err4,err4,err4, err4,  err4,err4,err4,err4,err4,err4,err4,err4,err4, err4,err4,  err4},
+				/*8*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
+				/*9*/ { err5,err5, err5,err5,err5,err5,err5,as3, err5, err5,  err5,err5,err5,err5,err5,err5,err5,err5,err5, err5,err5,  err5},
+				/*10*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
+				/*11*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
+				/*12*/{ as9, as9,  as9, as9, as9, as9, as9, as9, as9,  as9,   as5, as9, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
+				/*13*/{ as9, as9,  as9, as9, as9, as9, as9, as9, as9,  as9,   as5,as10, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
+				/*14*/{ as9, as9,  as9, as9, as9, as9, as9, as9, as9,  as9,   as5, as9, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
+				/*15*/{ err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2,  as5,err2,err2,err2,err2,err2,err2,err2,err2, err2,err2,  err2},
+				/*16*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  err1,  as3, as3, as3, as3, as3, as3, as4, as3, as3,  as3, as3,   as3},	
 	};
 	
 	//CONSTANTES IDENTIFICADORAS
@@ -110,8 +119,12 @@ public class Controller {
 	
 	//VARIABLES DE CONTROL
 	public static final int maxId = 25;
-	public static final float minF = 0.0; //definir bien los maximos de los float
-	public static final float maxf = 1.0;
+	public static final float minNegF = (float) -(3.40282347e38);
+	public static final float maxNegF = (float) -(1.17549435e-38); 
+	public static final float minPosF = (float) 1.17549435e-38;
+	public static final float maxPosF = (float) 3.40282347e38;
+	public static final float zeroF = (float) 0.0;
+	
 	public static final int minE = -32768;
 	public static final int maxE = 32767;
 
@@ -154,6 +167,8 @@ public class Controller {
 		char charLeido;
 		int columna;
 		int estadoSig;
+		Token t = new Token(0, "asd", 0);
+		return t;
 	}
 	
 // ---------------------------METODOS ADICIONALES-----------------------------------------
@@ -232,9 +247,9 @@ public class Controller {
             }
         } else 
              if(lex.length()>1){
-            	if ((lex.charAt(0) == "/") && (lex.charAt(1) == "+"))
+            	if ((lex.charAt(0) == '/') && (lex.charAt(1) == '+'))
             		return COMENTARIO;
-            	else if (lex.charAt(0) == "%")
+            	else if (lex.charAt(0) == '%')
             			return CADENA;
             		else {
             			if (lex.contains(".")) 
@@ -251,6 +266,7 @@ public class Controller {
                 		if (lex.equals("<="))
                 			return C_MENORIGUAL;
             		}
+             }
          return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
 		
 	}
@@ -272,19 +288,19 @@ public class Controller {
 	
 	public void addTokenListSimple (char c, int nLinea) {
 		String s = String.valueOf(c);
-		Token t = new Token(getIdentificador(s), s, nLinea));
+		Token t = new Token(getIdentificador(s), s, nLinea);
 		listToken.add(t);
 	}
 	
 	public void addTokenListCompuesto (String lex, int nLinea) {
-		Token t = new Token(getIdentificador(lex), lex, nLinea)
+		Token t = new Token(getIdentificador(lex), lex, nLinea);
 		listToken.add(t);
 	}
 	
 	public void addTokenTS(String lex, String t) {
 		if (tablaDeSimbolo.containsKey(lex))
 			System.out.println("El lexema " + lex + " ya existe.");
-		else if (lex.charAt(0) == "%") {
+		else if (lex.charAt(0) == '%') {
 				String nuevo = lex.substring(1);
 				tablaDeSimbolo.put(nuevo, t);
 			} else 
@@ -294,6 +310,11 @@ public class Controller {
 	public void addError(String desc, int nLinea) {
 		Error e = new Error(desc, nLinea);
 		errores.add(e);
+	}
+	
+	public void addWarning(String desc, int nLinea) {
+		Error e = new Error(desc, nLinea);
+		warning.add(e);
 	}
 	
 	public void setEstadoFinal() {

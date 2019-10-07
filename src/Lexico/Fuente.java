@@ -5,7 +5,7 @@ public class Fuente {
     static final char saltoLinea = '\n';  //TENEMOS QUE VER COMO TOMAMOS EL SALTO DE LINEA, SI COMO CARACTER UNICO O COMO /N
     static final char finArch = '$';
     public int linea;
-    private char actual; 
+    private static char actual; 
     private int pos;     //POSICION EN EL ARCHIVO
     private StringBuilder archivo;     //ARCHIVO
 
@@ -20,7 +20,7 @@ public class Fuente {
         return linea;
     }
 
-    public boolean hasFinished() {//TERMINO DE LEER EL CODIGO FUENTE
+    public static boolean hasFinished() {//TERMINO DE LEER EL CODIGO FUENTE
         if( actual == finArch){
             System.out.println("Termino de leer el archivo");
             return true;
