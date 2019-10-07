@@ -50,9 +50,9 @@ public class prueba {
         Controller controlador = new Controller(archivo);
 
         //AHORA TENDRIA QUE PEDIR LOS TOKENS Y LOS ERRRORES
-
+        System.out.println(codigo);
         controlador.recorrerCodFuente();
-        //controlador.mostrarErrores();
+        controlador.mostrarListaTokens();
         }
 	
 	public static void main(String[] args) {
