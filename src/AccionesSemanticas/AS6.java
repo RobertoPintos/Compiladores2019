@@ -22,6 +22,7 @@ public class AS6 extends AccSemantica{
 				ct.addWarning("Warning: ID truncado: "+bf, ct.getNroLinea());
 			}
 		ct.setEstadoFinal();
+		ct.setSimboloAnt();
 		return 0;
 	}
 }

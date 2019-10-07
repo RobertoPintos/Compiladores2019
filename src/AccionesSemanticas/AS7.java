@@ -27,6 +27,7 @@ public class AS7 extends AccSemantica{
 			}
 		}
 		ct.setEstadoFinal();
+		ct.setSimboloAnt();
 		return 0;
 	}
 }

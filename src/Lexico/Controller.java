@@ -63,7 +63,7 @@ public class Controller {
 				/*5*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
 				/*6*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
 				/*7*/ { err4,err4, as3, err4,err4,err4,err4,err4,err4, err4,  err4,err4,err4,err4,err4,err4,err4,err4,err4, err4,err4,  err4},
-				/*8*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
+				/*8*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as3, as3,  as8, as8,   as8},
 				/*9*/ { err5,err5, err5,err5,err5,err5,err5,as3, err5, err5,  err5,err5,err5,err5,err5,err5,err5,err5,err5, err5,err5,  err5},
 				/*10*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
 				/*11*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
@@ -112,10 +112,10 @@ public class Controller {
 	
 	// VARIABLES DE CODIGO
 	private Fuente codigoFuente;
-	private int nroLinea;
 	public String buffer = new String();	
 	public static Token token;
 	private int estado;
+	private char simboloAnt;
 	
 	//VARIABLES DE CONTROL
 	public static final int maxId = 25;
@@ -128,7 +128,7 @@ public class Controller {
 	public static final int minE = -32768;
 	public static final int maxE = 32767;
 
-	public static HashMap<String,String> tablaDeSimbolo;
+	public static HashMap<String,String> tablaDeSimbolo = new HashMap<>();
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
 	
@@ -164,11 +164,23 @@ public class Controller {
 	
 	public Token getToken() {
 		estado = 0;
-		char charLeido;
-		int columna;
-		int estadoSig;
-		Token t = new Token(0, "asd", 0);
-		return t;
+		while (!codigoFuente.hasFinished() && !(estado == 500)) {
+			char leido = codigoFuente.getChar();
+			int col = getColumna(leido);
+			AccSemantica as = matAS[estado][col];
+			as.ejecutar(leido, this);
+			if (estado != 500) {
+				estado = matEstados[estado][col];
+				codigoFuente.siguiente();
+			} else {
+				codigoFuente.siguiente();
+			}
+		}
+		if (!codigoFuente.hasFinished()) {
+			Token t = new Token(getIdentificador(buffer), buffer, getNroLinea());
+			System.out.println("Token leido: '"+t.getLexema()+"' en la linea: "+t.getNroLinea());
+			return t;
+		} else return null;
 	}
 	
 // ---------------------------METODOS ADICIONALES-----------------------------------------
@@ -180,6 +192,10 @@ public class Controller {
 	//DEVUELVE LA COLUMNA DE LA MATRIZ CORRESPONDIENTE AL SIMBOLO LEIDO
 	private int getColumna(char c) {
 		int value = (int)c;
+		if ((value == 101) && (esNum(buffer))) // DETECTA LETRA e EN CASO DE QUE EL BUFFER SEA UNA CTE
+			return 17;
+		if ((value == 69) && (esNum(buffer))) // DETECTA LETRA E EN CASO DE QUE EL BUFFER SEA UNA CTE
+			return 18;
 		if (value >= 97 && value <= 122)  //DETECTA LETRA MINUSCULA
 			return 0;
 		if (value >= 65 && value <= 90)  //DETECTA LETRA MAYUSCULA
@@ -214,10 +230,6 @@ public class Controller {
 			return 15;
 		if (value== 37) // %
 			return 16;
-		if ((value == 101)) // e
-			return 17;
-		if ((value == 69)) // E
-			return 18;
 		if ((value == 59)) // ;
 			return 19;
 		if ((value == 44)) // :
@@ -254,7 +266,8 @@ public class Controller {
             		else {
             			if (lex.contains(".")) 
             				return CTEFLOAT;
-            			// if (lex = cte) FALTA DETERMINAR SI EL LEXEMA ES UNA CTE
+            			if (esNum(lex))
+            				return CTE;
                 		if (lex.equals(":="))
                 			return ASIGNACION;
                 		if (lex.equals("=="))
@@ -265,9 +278,12 @@ public class Controller {
                 			return C_MAYORIGUAL;
                 		if (lex.equals("<="))
                 			return C_MENORIGUAL;
+                		return ID;
             		}
              }
-         return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
+		if (getColumna(lex.charAt(0)) == 0 || getColumna(lex.charAt(0)) == 1)
+			return ID; //CASO DE LOS IDS DE UN SOLO CARACTER
+		else return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
 		
 	}
 	
@@ -322,7 +338,7 @@ public class Controller {
 	}
 	
 	public int getNroLinea() {
-		return nroLinea;
+		return codigoFuente.getLinea();
 	}
 	
 	public void setBuffer(String s) {
@@ -330,8 +346,27 @@ public class Controller {
 	}
 	
 	public void recorrerCodFuente() {
-		while (!Fuente.hasFinished()) {
+		while (!codigoFuente.hasFinished()) {
 			getToken();
 		}
+        System.out.println("Termino de leer el archivo");
+	}
+	
+	private static boolean esNum(String s) { 
+		  try {  
+		    Double.parseDouble(s);  
+		    return true;
+		  } catch(NumberFormatException e){  
+		    return false;  
+		  }  
+		}
+	
+	public void mostrarListaTokens() {
+		for (Token t: listToken)
+			System.out.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea());
+	}
+	
+	public void setSimboloAnt () {
+		codigoFuente.anterior();
 	}
 }

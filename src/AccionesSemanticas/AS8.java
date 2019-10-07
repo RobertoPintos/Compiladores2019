@@ -34,6 +34,7 @@ public class AS8 extends AccSemantica{
 			}
 		}
 		ct.setEstadoFinal();
+		ct.setSimboloAnt();
 		return 0;
 	}
 }

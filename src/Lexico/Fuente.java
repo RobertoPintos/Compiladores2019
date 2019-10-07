@@ -20,9 +20,8 @@ public class Fuente {
         return linea;
     }
 
-    public static boolean hasFinished() {//TERMINO DE LEER EL CODIGO FUENTE
+    public boolean hasFinished() {//TERMINO DE LEER EL CODIGO FUENTE
         if( actual == finArch){
-            System.out.println("Termino de leer el archivo");
             return true;
         }
         else return false;
@@ -39,5 +38,10 @@ public class Fuente {
             pos++;
             actual=archivo.charAt(pos);
         }
+    }
+    
+    public void anterior() {
+    	pos--;
+    	actual=archivo.charAt(pos);
     }
 }

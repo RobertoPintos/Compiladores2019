@@ -11,6 +11,7 @@ public class AS10 extends AccSemantica{
 			ct.setBuffer(ct.getBuffer()+c);
 			String aux = new String(ct.getBuffer());
 			ct.addTokenListCompuesto(aux, ct.getNroLinea());
+			ct.setEstadoFinal();
 		}
 		return 0;
 	}
