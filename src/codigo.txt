@@ -1,0 +1,13 @@
+archivo de prueba para leer tokens
+.2e23
+if ( x == -32768)after(then
+	return_astuviejacomosealomejordalebodalebo true;
+	AB_23:= -32769;
+	ab_23:= 23;
+%cadena de caracteres de prueba%
+
+%cadena con
+error%
+/+ comentario con salto
+de linea incluido+/
+char c = tuvieja;
