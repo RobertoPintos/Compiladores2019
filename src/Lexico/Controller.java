@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import AccionesSemanticas.*;
+import Lexico.Controller;
 
 public class Controller {
 
@@ -101,6 +102,9 @@ public class Controller {
 	public final static short PUBLIC = 275;
 	public final static short PRIVATE = 276;
 	public final static short FLOAT = 279;
+	public final static short VOID = 280;
+	public final static short EXTENDS = 281;
+
 
 	
 	//SUPUESTO ESTADO FINAL
@@ -131,6 +135,8 @@ public class Controller {
 	public static HashMap<String,String> tablaDeSimbolo = new HashMap<>();
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
+    private ArrayList<String> estructuras = new ArrayList<String>();// CARGO LAS ESTRUCTURAS QUE FUNCIONAN BIEN
+
 	
 	
 	//CARGO ARREGLO DE PALABRAS RESERVADAS
@@ -255,6 +261,8 @@ public class Controller {
                 case "public": return PUBLIC;
                 case "private": return PRIVATE;
                 case "float": return FLOAT;
+                case "void": return VOID;
+                case "extends": return EXTENDS;
                 default: return ID;
             }
         } else 
@@ -366,7 +374,47 @@ public class Controller {
 			System.out.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea());
 	}
 	
+	public void mostrarTablaSimbolos() {
+		System.out.println("Contenido de la tabla de simbolos:");
+		for (String s: tablaDeSimbolo.keySet()) {
+			String valor = tablaDeSimbolo.get(s);
+			System.out.println("ID: "+s+", tipo: "+valor+".");
+		}
+	}
+	
+	public void mostrarWarnings() {
+		System.out.println("Warnings:");
+		for (Error e: warning) {
+			System.out.println("-"+e.getDescripcion()+" En la linea: "+e.getNroLinea());
+		}
+	}
+	
+	public void mostrarErrores() {
+		System.out.println("Errores:");
+		for (Error e: errores) {
+			System.out.println("-"+e.getDescripcion()+" en la linea: "+e.getNroLinea());
+		}
+	}
+	
 	public void setSimboloAnt () {
 		codigoFuente.anterior();
 	}
+	
+    public Controller getLexico(){
+        return this;
+    }
+    
+    public void getEstructuras() {
+        System.out.println("SE ENCONTRARON "+getListaEstructuras().size()+" ESTRUCTURAS GRAMATICALES");
+        for (String s:estructuras){
+            System.out.println(s);}
+    }
+
+    public ArrayList<String> getListaEstructuras() {
+        return estructuras;
+    }
+    
+    public void agregarEstructura(String error){
+        estructuras.add(error);
+}
 }
