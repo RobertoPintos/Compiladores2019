@@ -1,13 +1,21 @@
-archivo de prueba para leer tokens
-.2e23
-if ( x == -32768)after(then
-	return_astuviejacomosealomejordalebodalebo true;
-	AB_23:= -32769;
-	ab_23:= 23;
-%cadena de caracteres de prueba%
+float f;
+float ab_23;
+int var3;
 
-%cadena con
-error%
-/+ comentario con salto
-de linea incluido+/
-char c = tuvieja;
+begin
+if ( x == 33)
+	begin
+	var2 := 9283;
+	var3 := -12;
+	end
+end_if
+f := .2e23;
+print(%cadena de caracteres%);
+
+while ( i < 10 ) do
+	begin
+	var2 := 123;
+	print(%chupateeta%);
+	end
+
+end;
