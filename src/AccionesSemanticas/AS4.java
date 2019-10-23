@@ -7,6 +7,7 @@ public class AS4 extends AccSemantica{
 	
 	public int ejecutar (char c, Controller ct) {
 		String seq = ct.getBuffer();
+		ct.setBuffer(ct.getBuffer()+c);
 		ct.addTokenListCompuesto(seq, ct.getNroLinea());
 		ct.addTokenTS(seq, "CHARSEQ");
 		return 0;

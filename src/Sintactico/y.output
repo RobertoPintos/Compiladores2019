@@ -1,0 +1,2212 @@
+   0  $accept : programa $end
+
+   1  programa : conjunto_sentencias
+
+   2  conjunto_sentencias : conj_sentencias_declarativas sentencias_ejecutables
+   3                      | conj_sentencias_declarativas
+   4                      | sentencias_ejecutables
+
+   5  conj_sentencias_declarativas : sentencia_declarativa
+   6                               | sentencia_declarativa conj_sentencias_declarativas
+
+   7  sentencia_declarativa : tipo lista_de_variables ';'
+   8                        | sentencia_de_clase
+
+   9  lista_de_variables : lista_de_variables ',' variable
+  10                     | variable
+
+  11  $$1 :
+
+  12  variable : ID $$1
+
+  13  sentencia_de_clase : CLASS ID BEGIN declaraciones_de_clase END
+  14                     | CLASS ID EXTENDS ID BEGIN declaraciones_de_clase END
+
+  15  declaraciones_de_clase : declaracion_atributos declaracion_metodos
+  16                         | declaracion_atributos
+  17                         | declaracion_metodos
+
+  18  declaracion_atributos : atributos_pub declaracion_atributos
+  19                        | atributos_priv declaracion_atributos
+  20                        | atributos_pub
+  21                        | atributos_priv
+
+  22  atributos_pub : PUBLIC sentencia_declarativa
+
+  23  atributos_priv : PRIVATE conj_sentencias_declarativas
+
+  24  declaracion_metodos : PUBLIC VOID ID '(' ')' bloque_sentencias
+  25                      | PRIVATE VOID ID '(' ')' bloque_sentencias
+
+  26  tipo : FLOAT
+
+  27  $$2 :
+
+  28  tipo : INT $$2
+
+  29  sentencias_ejecutables : BEGIN bloque_sentencias END ';'
+  30                         | error bloque_sentencias END ';'
+  31                         | BEGIN bloque_sentencias error ';'
+  32                         | BEGIN bloque_sentencias END error
+
+  33  bloque_sentencias : bloque_sentencias sentencia
+  34                    | sentencia
+
+  35  sentencia : ejecucion
+
+  36  ejecucion : iteracion
+  37            | seleccion
+  38            | print
+  39            | asig
+  40            | invocacion_metodo_clase
+
+  41  invocacion_metodo_clase : ID '.' ID '(' ')' ';'
+  42                          | error_inv_metodo_clase
+
+  43  error_inv_metodo_clase : error '.' ID '(' ')' ';'
+  44                         | ID '.' error '(' ')' ';'
+  45                         | ID '.' error ')' ';'
+  46                         | ID '.' ID '(' error ';'
+  47                         | ID '.' ID '(' ')' error
+
+  48  print : PRINT '(' CADENA ')' ';'
+  49        | error_print
+
+  50  error_print : PRINT error CADENA ')' ';'
+  51              | PRINT '(' CADENA error ';'
+  52              | PRINT '(' CADENA ')' error
+
+  53  iteracion : WHILE '(' condicion ')' DO bloque_anidado
+  54            | WHILE condicion ')' DO bloque_anidado
+  55            | WHILE '(' condicion DO bloque_anidado
+  56            | WHILE '(' condicion ')' bloque_anidado
+
+  57  condicion : expresion comparador expresion
+  58            | comparador expresion
+  59            | expresion comparador error
+
+  60  comparador : '<'
+  61             | '>'
+  62             | '='
+  63             | C_MAYORIGUAL
+  64             | C_MENORIGUAL
+  65             | C_DISTINTO
+  66             | C_IGUAL
+
+  67  seleccion : if_condicion END_IF
+  68            | if_condicion ELSE bloque_anidado END_IF
+
+  69  if_condicion : IF '(' condicion ')' bloque_anidado
+  70               | IF condicion ')' bloque_anidado
+  71               | IF '(' condicion bloque_anidado
+  72               | IF condicion bloque_anidado
+
+  73  bloque_anidado : sentencia
+  74                 | BEGIN bloque_sentencias END
+  75                 | BEGIN bloque_sentencias error
+  76                 | error bloque_sentencias END
+
+  77  asig : variable ASIGNACION expresion ';'
+  78       | variable expresion ';'
+  79       | error ASIGNACION expresion ';'
+  80       | variable ASIGNACION expresion
+
+  81  expresion : expresion '+' termino
+  82            | expresion '-' termino
+  83            | termino
+
+  84  termino : termino '*' factor
+  85          | termino '/' factor
+  86          | factor
+
+  87  factor : ID
+  88         | ID '.' ID
+  89         | cte
+
+  90  cte : CTE
+  91      | '-' CTE
+  92      | CTEFLOAT
+  93      | '-' CTEFLOAT
+
+state 0
+	$accept : . programa $end  (0)
+
+	error  shift 1
+	INT  shift 2
+	BEGIN  shift 3
+	CLASS  shift 4
+	FLOAT  shift 5
+	.  error
+
+	programa  goto 6
+	conjunto_sentencias  goto 7
+	conj_sentencias_declarativas  goto 8
+	sentencias_ejecutables  goto 9
+	sentencia_declarativa  goto 10
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 1
+	sentencias_ejecutables : error . bloque_sentencias END ';'  (30)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 19
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 2
+	tipo : INT . $$2  (28)
+	$$2 : .  (27)
+
+	.  reduce 27
+
+	$$2  goto 30
+
+
+state 3
+	sentencias_ejecutables : BEGIN . bloque_sentencias END ';'  (29)
+	sentencias_ejecutables : BEGIN . bloque_sentencias error ';'  (31)
+	sentencias_ejecutables : BEGIN . bloque_sentencias END error  (32)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 31
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 4
+	sentencia_de_clase : CLASS . ID BEGIN declaraciones_de_clase END  (13)
+	sentencia_de_clase : CLASS . ID EXTENDS ID BEGIN declaraciones_de_clase END  (14)
+
+	ID  shift 32
+	.  error
+
+
+state 5
+	tipo : FLOAT .  (26)
+
+	.  reduce 26
+
+
+state 6
+	$accept : programa . $end  (0)
+
+	$end  accept
+
+
+state 7
+	programa : conjunto_sentencias .  (1)
+
+	.  reduce 1
+
+
+state 8
+	conjunto_sentencias : conj_sentencias_declarativas . sentencias_ejecutables  (2)
+	conjunto_sentencias : conj_sentencias_declarativas .  (3)
+
+	error  shift 1
+	BEGIN  shift 3
+	$end  reduce 3
+
+	sentencias_ejecutables  goto 33
+
+
+state 9
+	conjunto_sentencias : sentencias_ejecutables .  (4)
+
+	.  reduce 4
+
+
+state 10
+	conj_sentencias_declarativas : sentencia_declarativa .  (5)
+	conj_sentencias_declarativas : sentencia_declarativa . conj_sentencias_declarativas  (6)
+
+	INT  shift 2
+	CLASS  shift 4
+	FLOAT  shift 5
+	$end  reduce 5
+	error  reduce 5
+	BEGIN  reduce 5
+	END  reduce 5
+	PUBLIC  reduce 5
+	PRIVATE  reduce 5
+
+	conj_sentencias_declarativas  goto 34
+	sentencia_declarativa  goto 10
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 11
+	sentencia_declarativa : tipo . lista_de_variables ';'  (7)
+
+	ID  shift 35
+	.  error
+
+	lista_de_variables  goto 36
+	variable  goto 37
+
+
+state 12
+	sentencia_declarativa : sentencia_de_clase .  (8)
+
+	.  reduce 8
+
+
+state 13
+	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
+	asig : error . ASIGNACION expresion ';'  (79)
+
+	ASIGNACION  shift 38
+	'.'  shift 39
+	.  error
+
+
+state 14
+	variable : ID . $$1  (12)
+	invocacion_metodo_clase : ID . '.' ID '(' ')' ';'  (41)
+	error_inv_metodo_clase : ID . '.' error '(' ')' ';'  (44)
+	error_inv_metodo_clase : ID . '.' error ')' ';'  (45)
+	error_inv_metodo_clase : ID . '.' ID '(' error ';'  (46)
+	error_inv_metodo_clase : ID . '.' ID '(' ')' error  (47)
+	$$1 : .  (11)
+
+	'.'  shift 40
+	ID  reduce 11
+	CTE  reduce 11
+	ASIGNACION  reduce 11
+	CTEFLOAT  reduce 11
+	'-'  reduce 11
+
+	$$1  goto 41
+
+
+state 15
+	if_condicion : IF . '(' condicion ')' bloque_anidado  (69)
+	if_condicion : IF . condicion ')' bloque_anidado  (70)
+	if_condicion : IF . '(' condicion bloque_anidado  (71)
+	if_condicion : IF . condicion bloque_anidado  (72)
+
+	ID  shift 42
+	CTE  shift 43
+	C_MAYORIGUAL  shift 44
+	C_MENORIGUAL  shift 45
+	C_DISTINTO  shift 46
+	C_IGUAL  shift 47
+	CTEFLOAT  shift 48
+	'('  shift 49
+	'<'  shift 50
+	'>'  shift 51
+	'='  shift 52
+	'-'  shift 53
+	.  error
+
+	condicion  goto 54
+	expresion  goto 55
+	comparador  goto 56
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 16
+	print : PRINT . '(' CADENA ')' ';'  (48)
+	error_print : PRINT . error CADENA ')' ';'  (50)
+	error_print : PRINT . '(' CADENA error ';'  (51)
+	error_print : PRINT . '(' CADENA ')' error  (52)
+
+	error  shift 60
+	'('  shift 61
+	.  error
+
+
+state 17
+	iteracion : WHILE . '(' condicion ')' DO bloque_anidado  (53)
+	iteracion : WHILE . condicion ')' DO bloque_anidado  (54)
+	iteracion : WHILE . '(' condicion DO bloque_anidado  (55)
+	iteracion : WHILE . '(' condicion ')' bloque_anidado  (56)
+
+	ID  shift 42
+	CTE  shift 43
+	C_MAYORIGUAL  shift 44
+	C_MENORIGUAL  shift 45
+	C_DISTINTO  shift 46
+	C_IGUAL  shift 47
+	CTEFLOAT  shift 48
+	'('  shift 62
+	'<'  shift 50
+	'>'  shift 51
+	'='  shift 52
+	'-'  shift 53
+	.  error
+
+	condicion  goto 63
+	expresion  goto 55
+	comparador  goto 56
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 18
+	asig : variable . ASIGNACION expresion ';'  (77)
+	asig : variable . expresion ';'  (78)
+	asig : variable . ASIGNACION expresion  (80)
+
+	ID  shift 42
+	CTE  shift 43
+	ASIGNACION  shift 64
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	expresion  goto 65
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 19
+	sentencias_ejecutables : error bloque_sentencias . END ';'  (30)
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	END  shift 66
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 20
+	bloque_sentencias : sentencia .  (34)
+
+	.  reduce 34
+
+
+state 21
+	sentencia : ejecucion .  (35)
+
+	.  reduce 35
+
+
+state 22
+	ejecucion : iteracion .  (36)
+
+	.  reduce 36
+
+
+state 23
+	ejecucion : seleccion .  (37)
+
+	.  reduce 37
+
+
+state 24
+	ejecucion : print .  (38)
+
+	.  reduce 38
+
+
+state 25
+	ejecucion : asig .  (39)
+
+	.  reduce 39
+
+
+state 26
+	ejecucion : invocacion_metodo_clase .  (40)
+
+	.  reduce 40
+
+
+state 27
+	invocacion_metodo_clase : error_inv_metodo_clase .  (42)
+
+	.  reduce 42
+
+
+state 28
+	print : error_print .  (49)
+
+	.  reduce 49
+
+
+state 29
+	seleccion : if_condicion . END_IF  (67)
+	seleccion : if_condicion . ELSE bloque_anidado END_IF  (68)
+
+	ELSE  shift 68
+	END_IF  shift 69
+	.  error
+
+
+state 30
+	tipo : INT $$2 .  (28)
+
+	.  reduce 28
+
+
+state 31
+	sentencias_ejecutables : BEGIN bloque_sentencias . END ';'  (29)
+	sentencias_ejecutables : BEGIN bloque_sentencias . error ';'  (31)
+	sentencias_ejecutables : BEGIN bloque_sentencias . END error  (32)
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+
+	error  shift 70
+	ID  shift 14
+	IF  shift 15
+	END  shift 71
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 32
+	sentencia_de_clase : CLASS ID . BEGIN declaraciones_de_clase END  (13)
+	sentencia_de_clase : CLASS ID . EXTENDS ID BEGIN declaraciones_de_clase END  (14)
+
+	BEGIN  shift 72
+	EXTENDS  shift 73
+	.  error
+
+
+state 33
+	conjunto_sentencias : conj_sentencias_declarativas sentencias_ejecutables .  (2)
+
+	.  reduce 2
+
+
+state 34
+	conj_sentencias_declarativas : sentencia_declarativa conj_sentencias_declarativas .  (6)
+
+	.  reduce 6
+
+
+state 35
+	variable : ID . $$1  (12)
+	$$1 : .  (11)
+
+	.  reduce 11
+
+	$$1  goto 41
+
+
+state 36
+	sentencia_declarativa : tipo lista_de_variables . ';'  (7)
+	lista_de_variables : lista_de_variables . ',' variable  (9)
+
+	';'  shift 74
+	','  shift 75
+	.  error
+
+
+state 37
+	lista_de_variables : variable .  (10)
+
+	.  reduce 10
+
+
+state 38
+	asig : error ASIGNACION . expresion ';'  (79)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	expresion  goto 76
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 39
+	error_inv_metodo_clase : error '.' . ID '(' ')' ';'  (43)
+
+	ID  shift 77
+	.  error
+
+
+state 40
+	invocacion_metodo_clase : ID '.' . ID '(' ')' ';'  (41)
+	error_inv_metodo_clase : ID '.' . error '(' ')' ';'  (44)
+	error_inv_metodo_clase : ID '.' . error ')' ';'  (45)
+	error_inv_metodo_clase : ID '.' . ID '(' error ';'  (46)
+	error_inv_metodo_clase : ID '.' . ID '(' ')' error  (47)
+
+	error  shift 78
+	ID  shift 79
+	.  error
+
+
+state 41
+	variable : ID $$1 .  (12)
+
+	.  reduce 12
+
+
+state 42
+	factor : ID .  (87)
+	factor : ID . '.' ID  (88)
+
+	'.'  shift 80
+	error  reduce 87
+	ID  reduce 87
+	C_MAYORIGUAL  reduce 87
+	C_MENORIGUAL  reduce 87
+	C_DISTINTO  reduce 87
+	IF  reduce 87
+	ELSE  reduce 87
+	END_IF  reduce 87
+	BEGIN  reduce 87
+	END  reduce 87
+	PRINT  reduce 87
+	WHILE  reduce 87
+	DO  reduce 87
+	C_IGUAL  reduce 87
+	';'  reduce 87
+	')'  reduce 87
+	'<'  reduce 87
+	'>'  reduce 87
+	'='  reduce 87
+	'+'  reduce 87
+	'-'  reduce 87
+	'*'  reduce 87
+	'/'  reduce 87
+
+
+state 43
+	cte : CTE .  (90)
+
+	.  reduce 90
+
+
+state 44
+	comparador : C_MAYORIGUAL .  (63)
+
+	.  reduce 63
+
+
+state 45
+	comparador : C_MENORIGUAL .  (64)
+
+	.  reduce 64
+
+
+state 46
+	comparador : C_DISTINTO .  (65)
+
+	.  reduce 65
+
+
+state 47
+	comparador : C_IGUAL .  (66)
+
+	.  reduce 66
+
+
+state 48
+	cte : CTEFLOAT .  (92)
+
+	.  reduce 92
+
+
+state 49
+	if_condicion : IF '(' . condicion ')' bloque_anidado  (69)
+	if_condicion : IF '(' . condicion bloque_anidado  (71)
+
+	ID  shift 42
+	CTE  shift 43
+	C_MAYORIGUAL  shift 44
+	C_MENORIGUAL  shift 45
+	C_DISTINTO  shift 46
+	C_IGUAL  shift 47
+	CTEFLOAT  shift 48
+	'<'  shift 50
+	'>'  shift 51
+	'='  shift 52
+	'-'  shift 53
+	.  error
+
+	condicion  goto 81
+	expresion  goto 55
+	comparador  goto 56
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 50
+	comparador : '<' .  (60)
+
+	.  reduce 60
+
+
+state 51
+	comparador : '>' .  (61)
+
+	.  reduce 61
+
+
+state 52
+	comparador : '=' .  (62)
+
+	.  reduce 62
+
+
+state 53
+	cte : '-' . CTE  (91)
+	cte : '-' . CTEFLOAT  (93)
+
+	CTE  shift 82
+	CTEFLOAT  shift 83
+	.  error
+
+
+state 54
+	if_condicion : IF condicion . ')' bloque_anidado  (70)
+	if_condicion : IF condicion . bloque_anidado  (72)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	')'  shift 86
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 88
+	if_condicion  goto 29
+
+
+state 55
+	condicion : expresion . comparador expresion  (57)
+	condicion : expresion . comparador error  (59)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	C_MAYORIGUAL  shift 44
+	C_MENORIGUAL  shift 45
+	C_DISTINTO  shift 46
+	C_IGUAL  shift 47
+	'<'  shift 50
+	'>'  shift 51
+	'='  shift 52
+	'+'  shift 89
+	'-'  shift 90
+	.  error
+
+	comparador  goto 91
+
+
+state 56
+	condicion : comparador . expresion  (58)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	expresion  goto 92
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 57
+	expresion : termino .  (83)
+	termino : termino . '*' factor  (84)
+	termino : termino . '/' factor  (85)
+
+	'*'  shift 93
+	'/'  shift 94
+	error  reduce 83
+	ID  reduce 83
+	C_MAYORIGUAL  reduce 83
+	C_MENORIGUAL  reduce 83
+	C_DISTINTO  reduce 83
+	IF  reduce 83
+	ELSE  reduce 83
+	END_IF  reduce 83
+	BEGIN  reduce 83
+	END  reduce 83
+	PRINT  reduce 83
+	WHILE  reduce 83
+	DO  reduce 83
+	C_IGUAL  reduce 83
+	';'  reduce 83
+	')'  reduce 83
+	'<'  reduce 83
+	'>'  reduce 83
+	'='  reduce 83
+	'+'  reduce 83
+	'-'  reduce 83
+
+
+state 58
+	termino : factor .  (86)
+
+	.  reduce 86
+
+
+state 59
+	factor : cte .  (89)
+
+	.  reduce 89
+
+
+state 60
+	error_print : PRINT error . CADENA ')' ';'  (50)
+
+	CADENA  shift 95
+	.  error
+
+
+state 61
+	print : PRINT '(' . CADENA ')' ';'  (48)
+	error_print : PRINT '(' . CADENA error ';'  (51)
+	error_print : PRINT '(' . CADENA ')' error  (52)
+
+	CADENA  shift 96
+	.  error
+
+
+state 62
+	iteracion : WHILE '(' . condicion ')' DO bloque_anidado  (53)
+	iteracion : WHILE '(' . condicion DO bloque_anidado  (55)
+	iteracion : WHILE '(' . condicion ')' bloque_anidado  (56)
+
+	ID  shift 42
+	CTE  shift 43
+	C_MAYORIGUAL  shift 44
+	C_MENORIGUAL  shift 45
+	C_DISTINTO  shift 46
+	C_IGUAL  shift 47
+	CTEFLOAT  shift 48
+	'<'  shift 50
+	'>'  shift 51
+	'='  shift 52
+	'-'  shift 53
+	.  error
+
+	condicion  goto 97
+	expresion  goto 55
+	comparador  goto 56
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 63
+	iteracion : WHILE condicion . ')' DO bloque_anidado  (54)
+
+	')'  shift 98
+	.  error
+
+
+state 64
+	asig : variable ASIGNACION . expresion ';'  (77)
+	asig : variable ASIGNACION . expresion  (80)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	expresion  goto 99
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 65
+	asig : variable expresion . ';'  (78)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	';'  shift 100
+	'+'  shift 89
+	'-'  shift 90
+	.  error
+
+
+state 66
+	sentencias_ejecutables : error bloque_sentencias END . ';'  (30)
+
+	';'  shift 101
+	.  error
+
+
+state 67
+	bloque_sentencias : bloque_sentencias sentencia .  (33)
+
+	.  reduce 33
+
+
+state 68
+	seleccion : if_condicion ELSE . bloque_anidado END_IF  (68)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 102
+	if_condicion  goto 29
+
+
+state 69
+	seleccion : if_condicion END_IF .  (67)
+
+	.  reduce 67
+
+
+state 70
+	sentencias_ejecutables : BEGIN bloque_sentencias error . ';'  (31)
+	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
+	asig : error . ASIGNACION expresion ';'  (79)
+
+	ASIGNACION  shift 38
+	';'  shift 103
+	'.'  shift 39
+	.  error
+
+
+state 71
+	sentencias_ejecutables : BEGIN bloque_sentencias END . ';'  (29)
+	sentencias_ejecutables : BEGIN bloque_sentencias END . error  (32)
+
+	error  shift 104
+	';'  shift 105
+	.  error
+
+
+state 72
+	sentencia_de_clase : CLASS ID BEGIN . declaraciones_de_clase END  (13)
+
+	PUBLIC  shift 106
+	PRIVATE  shift 107
+	.  error
+
+	declaraciones_de_clase  goto 108
+	declaracion_atributos  goto 109
+	declaracion_metodos  goto 110
+	atributos_pub  goto 111
+	atributos_priv  goto 112
+
+
+state 73
+	sentencia_de_clase : CLASS ID EXTENDS . ID BEGIN declaraciones_de_clase END  (14)
+
+	ID  shift 113
+	.  error
+
+
+state 74
+	sentencia_declarativa : tipo lista_de_variables ';' .  (7)
+
+	.  reduce 7
+
+
+state 75
+	lista_de_variables : lista_de_variables ',' . variable  (9)
+
+	ID  shift 35
+	.  error
+
+	variable  goto 114
+
+
+state 76
+	asig : error ASIGNACION expresion . ';'  (79)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	';'  shift 115
+	'+'  shift 89
+	'-'  shift 90
+	.  error
+
+
+state 77
+	error_inv_metodo_clase : error '.' ID . '(' ')' ';'  (43)
+
+	'('  shift 116
+	.  error
+
+
+state 78
+	error_inv_metodo_clase : ID '.' error . '(' ')' ';'  (44)
+	error_inv_metodo_clase : ID '.' error . ')' ';'  (45)
+
+	'('  shift 117
+	')'  shift 118
+	.  error
+
+
+state 79
+	invocacion_metodo_clase : ID '.' ID . '(' ')' ';'  (41)
+	error_inv_metodo_clase : ID '.' ID . '(' error ';'  (46)
+	error_inv_metodo_clase : ID '.' ID . '(' ')' error  (47)
+
+	'('  shift 119
+	.  error
+
+
+state 80
+	factor : ID '.' . ID  (88)
+
+	ID  shift 120
+	.  error
+
+
+state 81
+	if_condicion : IF '(' condicion . ')' bloque_anidado  (69)
+	if_condicion : IF '(' condicion . bloque_anidado  (71)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	')'  shift 121
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 122
+	if_condicion  goto 29
+
+
+state 82
+	cte : '-' CTE .  (91)
+
+	.  reduce 91
+
+
+state 83
+	cte : '-' CTEFLOAT .  (93)
+
+	.  reduce 93
+
+
+state 84
+	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
+	bloque_anidado : error . bloque_sentencias END  (76)
+	asig : error . ASIGNACION expresion ';'  (79)
+
+	error  shift 13
+	ID  shift 14
+	ASIGNACION  shift 38
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	'.'  shift 39
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 123
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 85
+	bloque_anidado : BEGIN . bloque_sentencias END  (74)
+	bloque_anidado : BEGIN . bloque_sentencias error  (75)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 124
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 86
+	if_condicion : IF condicion ')' . bloque_anidado  (70)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 125
+	if_condicion  goto 29
+
+
+state 87
+	bloque_anidado : sentencia .  (73)
+
+	.  reduce 73
+
+
+state 88
+	if_condicion : IF condicion bloque_anidado .  (72)
+
+	.  reduce 72
+
+
+state 89
+	expresion : expresion '+' . termino  (81)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	termino  goto 126
+	factor  goto 58
+	cte  goto 59
+
+
+state 90
+	expresion : expresion '-' . termino  (82)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	termino  goto 127
+	factor  goto 58
+	cte  goto 59
+
+
+state 91
+	condicion : expresion comparador . expresion  (57)
+	condicion : expresion comparador . error  (59)
+
+	error  shift 128
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	expresion  goto 129
+	termino  goto 57
+	factor  goto 58
+	cte  goto 59
+
+
+state 92
+	condicion : comparador expresion .  (58)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	'+'  shift 89
+	'-'  shift 90
+	error  reduce 58
+	ID  reduce 58
+	IF  reduce 58
+	BEGIN  reduce 58
+	PRINT  reduce 58
+	WHILE  reduce 58
+	DO  reduce 58
+	')'  reduce 58
+
+
+state 93
+	termino : termino '*' . factor  (84)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	factor  goto 130
+	cte  goto 59
+
+
+state 94
+	termino : termino '/' . factor  (85)
+
+	ID  shift 42
+	CTE  shift 43
+	CTEFLOAT  shift 48
+	'-'  shift 53
+	.  error
+
+	factor  goto 131
+	cte  goto 59
+
+
+state 95
+	error_print : PRINT error CADENA . ')' ';'  (50)
+
+	')'  shift 132
+	.  error
+
+
+state 96
+	print : PRINT '(' CADENA . ')' ';'  (48)
+	error_print : PRINT '(' CADENA . error ';'  (51)
+	error_print : PRINT '(' CADENA . ')' error  (52)
+
+	error  shift 133
+	')'  shift 134
+	.  error
+
+
+state 97
+	iteracion : WHILE '(' condicion . ')' DO bloque_anidado  (53)
+	iteracion : WHILE '(' condicion . DO bloque_anidado  (55)
+	iteracion : WHILE '(' condicion . ')' bloque_anidado  (56)
+
+	DO  shift 135
+	')'  shift 136
+	.  error
+
+
+state 98
+	iteracion : WHILE condicion ')' . DO bloque_anidado  (54)
+
+	DO  shift 137
+	.  error
+
+
+state 99
+	asig : variable ASIGNACION expresion . ';'  (77)
+	asig : variable ASIGNACION expresion .  (80)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	';'  shift 138
+	'+'  shift 89
+	'-'  shift 90
+	error  reduce 80
+	ID  reduce 80
+	IF  reduce 80
+	ELSE  reduce 80
+	END_IF  reduce 80
+	END  reduce 80
+	PRINT  reduce 80
+	WHILE  reduce 80
+
+
+state 100
+	asig : variable expresion ';' .  (78)
+
+	.  reduce 78
+
+
+state 101
+	sentencias_ejecutables : error bloque_sentencias END ';' .  (30)
+
+	.  reduce 30
+
+
+state 102
+	seleccion : if_condicion ELSE bloque_anidado . END_IF  (68)
+
+	END_IF  shift 139
+	.  error
+
+
+state 103
+	sentencias_ejecutables : BEGIN bloque_sentencias error ';' .  (31)
+
+	.  reduce 31
+
+
+state 104
+	sentencias_ejecutables : BEGIN bloque_sentencias END error .  (32)
+
+	.  reduce 32
+
+
+state 105
+	sentencias_ejecutables : BEGIN bloque_sentencias END ';' .  (29)
+
+	.  reduce 29
+
+
+state 106
+	atributos_pub : PUBLIC . sentencia_declarativa  (22)
+	declaracion_metodos : PUBLIC . VOID ID '(' ')' bloque_sentencias  (24)
+
+	INT  shift 2
+	CLASS  shift 4
+	FLOAT  shift 5
+	VOID  shift 140
+	.  error
+
+	sentencia_declarativa  goto 141
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 107
+	atributos_priv : PRIVATE . conj_sentencias_declarativas  (23)
+	declaracion_metodos : PRIVATE . VOID ID '(' ')' bloque_sentencias  (25)
+
+	INT  shift 2
+	CLASS  shift 4
+	FLOAT  shift 5
+	VOID  shift 142
+	.  error
+
+	conj_sentencias_declarativas  goto 143
+	sentencia_declarativa  goto 10
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 108
+	sentencia_de_clase : CLASS ID BEGIN declaraciones_de_clase . END  (13)
+
+	END  shift 144
+	.  error
+
+
+state 109
+	declaraciones_de_clase : declaracion_atributos . declaracion_metodos  (15)
+	declaraciones_de_clase : declaracion_atributos .  (16)
+
+	PUBLIC  shift 145
+	PRIVATE  shift 146
+	END  reduce 16
+
+	declaracion_metodos  goto 147
+
+
+state 110
+	declaraciones_de_clase : declaracion_metodos .  (17)
+
+	.  reduce 17
+
+
+111: shift/reduce conflict (shift 148, reduce 20) on PUBLIC
+111: shift/reduce conflict (shift 149, reduce 20) on PRIVATE
+state 111
+	declaracion_atributos : atributos_pub . declaracion_atributos  (18)
+	declaracion_atributos : atributos_pub .  (20)
+
+	PUBLIC  shift 148
+	PRIVATE  shift 149
+	END  reduce 20
+
+	declaracion_atributos  goto 150
+	atributos_pub  goto 111
+	atributos_priv  goto 112
+
+
+112: shift/reduce conflict (shift 148, reduce 21) on PUBLIC
+112: shift/reduce conflict (shift 149, reduce 21) on PRIVATE
+state 112
+	declaracion_atributos : atributos_priv . declaracion_atributos  (19)
+	declaracion_atributos : atributos_priv .  (21)
+
+	PUBLIC  shift 148
+	PRIVATE  shift 149
+	END  reduce 21
+
+	declaracion_atributos  goto 151
+	atributos_pub  goto 111
+	atributos_priv  goto 112
+
+
+state 113
+	sentencia_de_clase : CLASS ID EXTENDS ID . BEGIN declaraciones_de_clase END  (14)
+
+	BEGIN  shift 152
+	.  error
+
+
+state 114
+	lista_de_variables : lista_de_variables ',' variable .  (9)
+
+	.  reduce 9
+
+
+state 115
+	asig : error ASIGNACION expresion ';' .  (79)
+
+	.  reduce 79
+
+
+state 116
+	error_inv_metodo_clase : error '.' ID '(' . ')' ';'  (43)
+
+	')'  shift 153
+	.  error
+
+
+state 117
+	error_inv_metodo_clase : ID '.' error '(' . ')' ';'  (44)
+
+	')'  shift 154
+	.  error
+
+
+state 118
+	error_inv_metodo_clase : ID '.' error ')' . ';'  (45)
+
+	';'  shift 155
+	.  error
+
+
+state 119
+	invocacion_metodo_clase : ID '.' ID '(' . ')' ';'  (41)
+	error_inv_metodo_clase : ID '.' ID '(' . error ';'  (46)
+	error_inv_metodo_clase : ID '.' ID '(' . ')' error  (47)
+
+	error  shift 156
+	')'  shift 157
+	.  error
+
+
+state 120
+	factor : ID '.' ID .  (88)
+
+	.  reduce 88
+
+
+state 121
+	if_condicion : IF '(' condicion ')' . bloque_anidado  (69)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 158
+	if_condicion  goto 29
+
+
+state 122
+	if_condicion : IF '(' condicion bloque_anidado .  (71)
+
+	.  reduce 71
+
+
+state 123
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+	bloque_anidado : error bloque_sentencias . END  (76)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	END  shift 159
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 124
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+	bloque_anidado : BEGIN bloque_sentencias . END  (74)
+	bloque_anidado : BEGIN bloque_sentencias . error  (75)
+
+	error  shift 160
+	ID  shift 14
+	IF  shift 15
+	END  shift 161
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 125
+	if_condicion : IF condicion ')' bloque_anidado .  (70)
+
+	.  reduce 70
+
+
+state 126
+	expresion : expresion '+' termino .  (81)
+	termino : termino . '*' factor  (84)
+	termino : termino . '/' factor  (85)
+
+	'*'  shift 93
+	'/'  shift 94
+	error  reduce 81
+	ID  reduce 81
+	C_MAYORIGUAL  reduce 81
+	C_MENORIGUAL  reduce 81
+	C_DISTINTO  reduce 81
+	IF  reduce 81
+	ELSE  reduce 81
+	END_IF  reduce 81
+	BEGIN  reduce 81
+	END  reduce 81
+	PRINT  reduce 81
+	WHILE  reduce 81
+	DO  reduce 81
+	C_IGUAL  reduce 81
+	';'  reduce 81
+	')'  reduce 81
+	'<'  reduce 81
+	'>'  reduce 81
+	'='  reduce 81
+	'+'  reduce 81
+	'-'  reduce 81
+
+
+state 127
+	expresion : expresion '-' termino .  (82)
+	termino : termino . '*' factor  (84)
+	termino : termino . '/' factor  (85)
+
+	'*'  shift 93
+	'/'  shift 94
+	error  reduce 82
+	ID  reduce 82
+	C_MAYORIGUAL  reduce 82
+	C_MENORIGUAL  reduce 82
+	C_DISTINTO  reduce 82
+	IF  reduce 82
+	ELSE  reduce 82
+	END_IF  reduce 82
+	BEGIN  reduce 82
+	END  reduce 82
+	PRINT  reduce 82
+	WHILE  reduce 82
+	DO  reduce 82
+	C_IGUAL  reduce 82
+	';'  reduce 82
+	')'  reduce 82
+	'<'  reduce 82
+	'>'  reduce 82
+	'='  reduce 82
+	'+'  reduce 82
+	'-'  reduce 82
+
+
+state 128
+	condicion : expresion comparador error .  (59)
+
+	.  reduce 59
+
+
+state 129
+	condicion : expresion comparador expresion .  (57)
+	expresion : expresion . '+' termino  (81)
+	expresion : expresion . '-' termino  (82)
+
+	'+'  shift 89
+	'-'  shift 90
+	error  reduce 57
+	ID  reduce 57
+	IF  reduce 57
+	BEGIN  reduce 57
+	PRINT  reduce 57
+	WHILE  reduce 57
+	DO  reduce 57
+	')'  reduce 57
+
+
+state 130
+	termino : termino '*' factor .  (84)
+
+	.  reduce 84
+
+
+state 131
+	termino : termino '/' factor .  (85)
+
+	.  reduce 85
+
+
+state 132
+	error_print : PRINT error CADENA ')' . ';'  (50)
+
+	';'  shift 162
+	.  error
+
+
+state 133
+	error_print : PRINT '(' CADENA error . ';'  (51)
+
+	';'  shift 163
+	.  error
+
+
+state 134
+	print : PRINT '(' CADENA ')' . ';'  (48)
+	error_print : PRINT '(' CADENA ')' . error  (52)
+
+	error  shift 164
+	';'  shift 165
+	.  error
+
+
+state 135
+	iteracion : WHILE '(' condicion DO . bloque_anidado  (55)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 166
+	if_condicion  goto 29
+
+
+state 136
+	iteracion : WHILE '(' condicion ')' . DO bloque_anidado  (53)
+	iteracion : WHILE '(' condicion ')' . bloque_anidado  (56)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	DO  shift 167
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 168
+	if_condicion  goto 29
+
+
+state 137
+	iteracion : WHILE condicion ')' DO . bloque_anidado  (54)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 169
+	if_condicion  goto 29
+
+
+state 138
+	asig : variable ASIGNACION expresion ';' .  (77)
+
+	.  reduce 77
+
+
+state 139
+	seleccion : if_condicion ELSE bloque_anidado END_IF .  (68)
+
+	.  reduce 68
+
+
+state 140
+	declaracion_metodos : PUBLIC VOID . ID '(' ')' bloque_sentencias  (24)
+
+	ID  shift 170
+	.  error
+
+
+state 141
+	atributos_pub : PUBLIC sentencia_declarativa .  (22)
+
+	.  reduce 22
+
+
+state 142
+	declaracion_metodos : PRIVATE VOID . ID '(' ')' bloque_sentencias  (25)
+
+	ID  shift 171
+	.  error
+
+
+state 143
+	atributos_priv : PRIVATE conj_sentencias_declarativas .  (23)
+
+	.  reduce 23
+
+
+state 144
+	sentencia_de_clase : CLASS ID BEGIN declaraciones_de_clase END .  (13)
+
+	.  reduce 13
+
+
+state 145
+	declaracion_metodos : PUBLIC . VOID ID '(' ')' bloque_sentencias  (24)
+
+	VOID  shift 140
+	.  error
+
+
+state 146
+	declaracion_metodos : PRIVATE . VOID ID '(' ')' bloque_sentencias  (25)
+
+	VOID  shift 142
+	.  error
+
+
+state 147
+	declaraciones_de_clase : declaracion_atributos declaracion_metodos .  (15)
+
+	.  reduce 15
+
+
+state 148
+	atributos_pub : PUBLIC . sentencia_declarativa  (22)
+
+	INT  shift 2
+	CLASS  shift 4
+	FLOAT  shift 5
+	.  error
+
+	sentencia_declarativa  goto 141
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 149
+	atributos_priv : PRIVATE . conj_sentencias_declarativas  (23)
+
+	INT  shift 2
+	CLASS  shift 4
+	FLOAT  shift 5
+	.  error
+
+	conj_sentencias_declarativas  goto 143
+	sentencia_declarativa  goto 10
+	tipo  goto 11
+	sentencia_de_clase  goto 12
+
+
+state 150
+	declaracion_atributos : atributos_pub declaracion_atributos .  (18)
+
+	.  reduce 18
+
+
+state 151
+	declaracion_atributos : atributos_priv declaracion_atributos .  (19)
+
+	.  reduce 19
+
+
+state 152
+	sentencia_de_clase : CLASS ID EXTENDS ID BEGIN . declaraciones_de_clase END  (14)
+
+	PUBLIC  shift 106
+	PRIVATE  shift 107
+	.  error
+
+	declaraciones_de_clase  goto 172
+	declaracion_atributos  goto 109
+	declaracion_metodos  goto 110
+	atributos_pub  goto 111
+	atributos_priv  goto 112
+
+
+state 153
+	error_inv_metodo_clase : error '.' ID '(' ')' . ';'  (43)
+
+	';'  shift 173
+	.  error
+
+
+state 154
+	error_inv_metodo_clase : ID '.' error '(' ')' . ';'  (44)
+
+	';'  shift 174
+	.  error
+
+
+state 155
+	error_inv_metodo_clase : ID '.' error ')' ';' .  (45)
+
+	.  reduce 45
+
+
+state 156
+	error_inv_metodo_clase : ID '.' ID '(' error . ';'  (46)
+
+	';'  shift 175
+	.  error
+
+
+state 157
+	invocacion_metodo_clase : ID '.' ID '(' ')' . ';'  (41)
+	error_inv_metodo_clase : ID '.' ID '(' ')' . error  (47)
+
+	error  shift 176
+	';'  shift 177
+	.  error
+
+
+state 158
+	if_condicion : IF '(' condicion ')' bloque_anidado .  (69)
+
+	.  reduce 69
+
+
+state 159
+	bloque_anidado : error bloque_sentencias END .  (76)
+
+	.  reduce 76
+
+
+state 160
+	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
+	bloque_anidado : BEGIN bloque_sentencias error .  (75)
+	asig : error . ASIGNACION expresion ';'  (79)
+
+	ASIGNACION  shift 38
+	'.'  shift 39
+	error  reduce 75
+	ID  reduce 75
+	IF  reduce 75
+	ELSE  reduce 75
+	END_IF  reduce 75
+	END  reduce 75
+	PRINT  reduce 75
+	WHILE  reduce 75
+
+
+state 161
+	bloque_anidado : BEGIN bloque_sentencias END .  (74)
+
+	.  reduce 74
+
+
+state 162
+	error_print : PRINT error CADENA ')' ';' .  (50)
+
+	.  reduce 50
+
+
+state 163
+	error_print : PRINT '(' CADENA error ';' .  (51)
+
+	.  reduce 51
+
+
+state 164
+	error_print : PRINT '(' CADENA ')' error .  (52)
+
+	.  reduce 52
+
+
+state 165
+	print : PRINT '(' CADENA ')' ';' .  (48)
+
+	.  reduce 48
+
+
+state 166
+	iteracion : WHILE '(' condicion DO bloque_anidado .  (55)
+
+	.  reduce 55
+
+
+state 167
+	iteracion : WHILE '(' condicion ')' DO . bloque_anidado  (53)
+
+	error  shift 84
+	ID  shift 14
+	IF  shift 15
+	BEGIN  shift 85
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	sentencia  goto 87
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 178
+	if_condicion  goto 29
+
+
+state 168
+	iteracion : WHILE '(' condicion ')' bloque_anidado .  (56)
+
+	.  reduce 56
+
+
+state 169
+	iteracion : WHILE condicion ')' DO bloque_anidado .  (54)
+
+	.  reduce 54
+
+
+state 170
+	declaracion_metodos : PUBLIC VOID ID . '(' ')' bloque_sentencias  (24)
+
+	'('  shift 179
+	.  error
+
+
+state 171
+	declaracion_metodos : PRIVATE VOID ID . '(' ')' bloque_sentencias  (25)
+
+	'('  shift 180
+	.  error
+
+
+state 172
+	sentencia_de_clase : CLASS ID EXTENDS ID BEGIN declaraciones_de_clase . END  (14)
+
+	END  shift 181
+	.  error
+
+
+state 173
+	error_inv_metodo_clase : error '.' ID '(' ')' ';' .  (43)
+
+	.  reduce 43
+
+
+state 174
+	error_inv_metodo_clase : ID '.' error '(' ')' ';' .  (44)
+
+	.  reduce 44
+
+
+state 175
+	error_inv_metodo_clase : ID '.' ID '(' error ';' .  (46)
+
+	.  reduce 46
+
+
+state 176
+	error_inv_metodo_clase : ID '.' ID '(' ')' error .  (47)
+
+	.  reduce 47
+
+
+state 177
+	invocacion_metodo_clase : ID '.' ID '(' ')' ';' .  (41)
+
+	.  reduce 41
+
+
+state 178
+	iteracion : WHILE '(' condicion ')' DO bloque_anidado .  (53)
+
+	.  reduce 53
+
+
+state 179
+	declaracion_metodos : PUBLIC VOID ID '(' . ')' bloque_sentencias  (24)
+
+	')'  shift 182
+	.  error
+
+
+state 180
+	declaracion_metodos : PRIVATE VOID ID '(' . ')' bloque_sentencias  (25)
+
+	')'  shift 183
+	.  error
+
+
+state 181
+	sentencia_de_clase : CLASS ID EXTENDS ID BEGIN declaraciones_de_clase END .  (14)
+
+	.  reduce 14
+
+
+state 182
+	declaracion_metodos : PUBLIC VOID ID '(' ')' . bloque_sentencias  (24)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 184
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 183
+	declaracion_metodos : PRIVATE VOID ID '(' ')' . bloque_sentencias  (25)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	.  error
+
+	variable  goto 18
+	bloque_sentencias  goto 185
+	sentencia  goto 20
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 184
+	declaracion_metodos : PUBLIC VOID ID '(' ')' bloque_sentencias .  (24)
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	END  reduce 24
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+state 185
+	declaracion_metodos : PRIVATE VOID ID '(' ')' bloque_sentencias .  (25)
+	bloque_sentencias : bloque_sentencias . sentencia  (33)
+
+	error  shift 13
+	ID  shift 14
+	IF  shift 15
+	PRINT  shift 16
+	WHILE  shift 17
+	END  reduce 25
+
+	variable  goto 18
+	sentencia  goto 67
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	if_condicion  goto 29
+
+
+State 111 contains 2 shift/reduce conflicts.
+State 112 contains 2 shift/reduce conflicts.
+
+
+39 terminals, 35 nonterminals
+94 grammar rules, 186 states

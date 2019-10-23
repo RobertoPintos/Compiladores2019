@@ -1,18 +1,24 @@
 package Lexico;
 
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+import javax.swing.JFileChooser;
+
 import java.io.FileReader;
 
 import Lexico.Controller;
 import Lexico.Fuente;
-
+import Sintactico.*;
 
 public class prueba {
 	
@@ -40,21 +46,14 @@ public class prueba {
     }
 	
 	 public static void mainr () {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Recuende que los subdirectorios van con doble barra invertida(\\\\)");
-		System.out.println("Ingrese la ruta del archivo con el codigo fuente:");
-		String s = new String();
-        try {
-			 s = br.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        File f = new File(s);
-        if (!(f.isFile()))
+		
+		JFileChooser file = new JFileChooser();
+		file.showOpenDialog(file);
+		File ruta = file.getSelectedFile();
+        if (!(ruta.isFile()))
         	System.out.println("Archivo no encontrado.");
         else {
-        	String direccion = new String(s);
+        	String direccion = new String(ruta.getAbsolutePath());
         	InputStream is = new ByteArrayInputStream(direccion.getBytes());
         	BufferedReader bf = new BufferedReader(new InputStreamReader(is));
         	StringBuilder codigo = null;
@@ -70,13 +69,30 @@ public class prueba {
         	System.out.println(codigo);
         	System.out.println("--------------------------------");
         	System.out.println("--------------------------------");
-        	controlador.recorrerCodFuente();
-        	controlador.mostrarListaTokens();
-        	controlador.mostrarTablaSimbolos();
-        	controlador.mostrarWarnings();
-        	controlador.mostrarErrores();
-        	}
+        	
+        	Parser parser = new Parser(controlador);
+            System.out.println(parser.yyparser()); 
+        	
+            File f = new File (ruta.getParent()+"\\resultadoCompilacion.txt");
+        	try {
+					PrintWriter writer = new PrintWriter(f, "UTF-8");
+					writer.println("Codigo:");
+					writer.println(codigo);
+					writer.close();
+	        } catch (Exception e) {
+	        		e.printStackTrace();
+	        }
+      
+            //controlador.recorrerCodFuente();
+        	//controlador.mostrarListaTokens();
+        	controlador.mostrarTablaSimbolos(f);
+        	controlador.getEstructuras(f);
+        	controlador.mostrarWarnings(f);
+        	controlador.mostrarErrores(f);
+        	
+        }	
 	 }
+	 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		

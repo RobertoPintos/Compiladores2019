@@ -1,5 +1,8 @@
 package Lexico;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +29,7 @@ public class Controller {
 	private AccSemantica err2 = new Error2();
 	private AccSemantica err3 = new Error3();
 	private AccSemantica err4 = new Error4();
-	private AccSemantica err5 = new Error5();
+	private AccSemantica as11 = new AS11();
 	private AccSemantica blanco = new ASBlanco();
 	
 	//MATRIZ DE TRANSICION DE ESTADOS
@@ -65,7 +68,7 @@ public class Controller {
 				/*6*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
 				/*7*/ { err4,err4, as3, err4,err4,err4,err4,err4,err4, err4,  err4,err4,err4,err4,err4,err4,err4,err4,err4, err4,err4,  err4},
 				/*8*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as3, as3,  as8, as8,   as8},
-				/*9*/ { err5,err5, err5,err5,err5,err5,err5,as3, err5, err5,  err5,err5,err5,err5,err5,err5,err5,err5,err5, err5,err5,  err5},
+				/*9*/ { as11,as11, as11,as11,as11,as11,as11,as3, as11, as11,  as11,as11,as11,as11,as11,as11,as11,as11,as11, as11,as11,  as11},
 				/*10*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
 				/*11*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
 				/*12*/{ as9, as9,  as9, as9, as9, as9, as9, as9, as9,  as9,   as5, as9, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
@@ -75,7 +78,7 @@ public class Controller {
 				/*16*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  err1,  as3, as3, as3, as3, as3, as3, as4, as3, as3,  as3, as3,   as3},	
 	};
 	
-	//CONSTANTES IDENTIFICADORAS
+	//PALABRAS RESERVADAS DEL CODIGO
 	
 	public static final int ID = 257;
 	public final static short CTE=258;
@@ -85,10 +88,6 @@ public class Controller {
 	public final static short C_MAYORIGUAL=262;
 	public final static short C_MENORIGUAL=263;
 	public final static short C_DISTINTO=264;
-	public final static short C_IGUAL=277;
-	public final static short CTEFLOAT=278;
-	
-	//PALABRAS RESERVADAS DEL CODIGO
 	public static final int IF = 265;
     public static final int ELSE = 266;
     public static final int END_IF = 267;
@@ -101,6 +100,8 @@ public class Controller {
 	public final static short CLASS = 274;
 	public final static short PUBLIC = 275;
 	public final static short PRIVATE = 276;
+	public final static short C_IGUAL=277;
+	public final static short CTEFLOAT=278;	
 	public final static short FLOAT = 279;
 	public final static short VOID = 280;
 	public final static short EXTENDS = 281;
@@ -135,7 +136,7 @@ public class Controller {
 	public static HashMap<String,String> tablaDeSimbolo = new HashMap<>();
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
-    private ArrayList<String> estructuras = new ArrayList<String>();// CARGO LAS ESTRUCTURAS QUE FUNCIONAN BIEN
+    private ArrayList<String> estructuras = new ArrayList<String>();
 
 	
 	
@@ -156,7 +157,8 @@ public class Controller {
 		palabrasReservadas.put("public", 275);
 		palabrasReservadas.put("private", 276);
 		palabrasReservadas.put("float", 279);
-
+		palabrasReservadas.put("void", 280);
+		palabrasReservadas.put("extends", 281);
 	}
 	
 	//CONSTRUCTOR
@@ -374,25 +376,52 @@ public class Controller {
 			System.out.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea());
 	}
 	
-	public void mostrarTablaSimbolos() {
-		System.out.println("Contenido de la tabla de simbolos:");
-		for (String s: tablaDeSimbolo.keySet()) {
-			String valor = tablaDeSimbolo.get(s);
-			System.out.println("ID: "+s+", tipo: "+valor+".");
+	public void mostrarTablaSimbolos(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Contenido de la tabla de simbolos:");
+			for (String s: tablaDeSimbolo.keySet()) {
+				String valor = tablaDeSimbolo.get(s);
+				writer.println("ID: "+s+", tipo: "+valor+".");
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
 		}
 	}
 	
-	public void mostrarWarnings() {
-		System.out.println("Warnings:");
-		for (Error e: warning) {
-			System.out.println("-"+e.getDescripcion()+" En la linea: "+e.getNroLinea());
+	public void mostrarWarnings(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Lista de warnings:");
+			for (Error e: warning) {
+				writer.println("-"+e.getDescripcion()+" En la linea: "+e.getNroLinea());
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
 		}
 	}
 	
-	public void mostrarErrores() {
-		System.out.println("Errores:");
-		for (Error e: errores) {
-			System.out.println("-"+e.getDescripcion()+" en la linea: "+e.getNroLinea());
+	public void mostrarErrores(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Lista de errores:");
+			for (Error e: errores) {
+				writer.println("-"+e.getDescripcion()+" En la linea: "+e.getNroLinea());
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
 		}
 	}
 	
@@ -404,10 +433,20 @@ public class Controller {
         return this;
     }
     
-    public void getEstructuras() {
-        System.out.println("SE ENCONTRARON "+getListaEstructuras().size()+" ESTRUCTURAS GRAMATICALES");
-        for (String s:estructuras){
-            System.out.println(s);}
+    public void getEstructuras(File f) {
+    	try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Se encontraron "+getListaEstructuras().size()+" estructuras gramaticales");
+			for (String s:estructuras){
+				writer.println(s);
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
+		}
     }
 
     public ArrayList<String> getListaEstructuras() {
