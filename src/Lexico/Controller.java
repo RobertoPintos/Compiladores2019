@@ -133,7 +133,7 @@ public class Controller {
 	public static final int minE = -32768;
 	public static final int maxE = 32767;
 
-	public static HashMap<String,String> tablaDeSimbolo = new HashMap<>();
+	public static HashMap<String,Atributo> tablaDeSimbolo = new HashMap<>();
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
     private ArrayList<String> estructuras = new ArrayList<String>();
@@ -293,7 +293,9 @@ public class Controller {
              }
 		if (getColumna(lex.charAt(0)) == 0 || getColumna(lex.charAt(0)) == 1)
 			return ID; //CASO DE LOS IDS DE UN SOLO CARACTER
-		else return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
+		else if (esNum(lex))
+				return CTE;
+			 else return (int) lex.charAt(0);  //CASO DE LOS TOKEN SIMPLES (  ) , ; ETC
 		
 	}
 	
@@ -328,9 +330,12 @@ public class Controller {
 			System.out.println("El lexema " + lex + " ya existe.");
 		else if (lex.charAt(0) == '%') {
 				String nuevo = lex.substring(1);
-				tablaDeSimbolo.put(nuevo, t);
-			} else 
-				tablaDeSimbolo.put(lex, t);
+				Atributo a = new Atributo(t, t, 0, "", "");
+				tablaDeSimbolo.put(nuevo, a);
+			} else {
+				Atributo a = new Atributo(t,t,0,"","");
+				tablaDeSimbolo.put(lex, a);
+			}
 	}
 	
 	public void addError(String desc, int nLinea) {
@@ -384,8 +389,8 @@ public class Controller {
 			writer.println("-----------------------------------");
 			writer.println("Contenido de la tabla de simbolos:");
 			for (String s: tablaDeSimbolo.keySet()) {
-				String valor = tablaDeSimbolo.get(s);
-				writer.println("ID: "+s+", tipo: "+valor+".");
+				String valor = tablaDeSimbolo.get(s).getTipo();
+				writer.println("Lexema: "+s+", tipo: "+valor+".");
 			}
 			writer.close();
 		} catch (Exception e) {

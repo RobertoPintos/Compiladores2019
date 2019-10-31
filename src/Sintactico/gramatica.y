@@ -45,93 +45,96 @@ conjunto_sentencias : conj_sentencias_declarativas sentencias_ejecutables {Syste
 					;
 					
 conj_sentencias_declarativas : sentencia_declarativa 
-							| sentencia_declarativa conj_sentencias_declarativas 
-							;
+							 | sentencia_declarativa conj_sentencias_declarativas 
+							 ;
 
 sentencia_declarativa  :  tipo lista_de_variables ';' {System.out.println("Llegue a una declaracion valida");}
-			| sentencia_de_clase
-            ;
+					   |  sentencia_de_clase {System.out.println("Llegue a una declaracion de clase");}
+           	 		   ;
 
 
 lista_de_variables : lista_de_variables ',' variable 
-		    | variable 
-	        ;
+		    	   | variable 
+	               ;
 
-variable : ID {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego el identificador: "+ID);}{System.out.println("lei un ID");}
-			;
+variable : ID {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego el identificador: "+ ((Token)$1.obj).getLexema());}{System.out.println("Leo un ID: "+ ((Token)$1.obj).getLexema());}
+		 ;
 
   
-sentencia_de_clase : CLASS ID BEGIN declaraciones_de_clase END
-					| CLASS ID EXTENDS ID BEGIN declaraciones_de_clase END
+sentencia_de_clase  : CLASS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());}
+					| CLASS ID EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$4.obj).getLexema());}
 					;
 
-declaraciones_de_clase : declaracion_atributos declaracion_metodos
-					   | declaracion_atributos
-					   | declaracion_metodos
-					   ;
-					
-declaracion_atributos : atributos_pub atributos_priv
-					  | atributos_priv atributos_pub
-					  | atributos_pub
-					  | atributos_priv
-					  ;
-					  
-atributos_pub : PUBLIC sentencia_declarativa
-			  ;
+definicion_clase : BEGIN sentencias_clase END
+				 ;
 			
-atributos_priv : PRIVATE conj_sentencias_declarativas
-			   ;
+sentencias_clase : sentencias_clase cuerpo_clase
+				 | cuerpo_clase
+				 ;
+				
+cuerpo_clase : lista_atributos
+			 | metodo_clase
+			 ;				
+					  
+lista_atributos : visibilidad sentencia_declarativa {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un atributo de clase");}
+				;
+									 
+metodo_clase : visibilidad VOID ID '(' ')' bloque_anidado_metclase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un metodo de clase");} { System.out.println("Viene un metodo");}
+			 ;
 
-declaracion_metodos : PUBLIC VOID ID '(' ')' bloque_sentencias
-					| PRIVATE VOID ID '(' ')' bloque_sentencias
-					;
-
-tipo : FLOAT { System.out.println("Viene una variable tipo FLOAT");}
-	| INT    { System.out.println("Viene una variable tipo INT" );}
-{/*	| ID { System.out.println("Viene una variable de la clase: "+ID );} */}
-        ;
-
-
-sentencias_ejecutables : BEGIN bloque_sentencias END ';'
-						| error bloque_sentencias END ';' {lexico.getLexico().addError("Falta el BEGIN para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
-						| BEGIN bloque_sentencias error ';' {lexico.getLexico().addError("Falta el END para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
-						| BEGIN bloque_sentencias END error {lexico.getLexico().addError("Falta el ';' que cierra el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
+bloque_anidado_metclase : BEGIN bloque_sentencias END
 						;
 
+
+tipo : FLOAT { System.out.println("Viene una variable tipo FLOAT");}
+	 | INT    { System.out.println("Viene una variable tipo INT" );}
+   	 | ID { System.out.println("Viene una variable de la clase: "+ID );}
+     ;
+
+visibilidad : PUBLIC
+		 	| PRIVATE
+		 	;
+
+sentencias_ejecutables : BEGIN bloque_sentencias END ';'
+					   | error bloque_sentencias END ';' {lexico.getLexico().addError("Falta el BEGIN para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
+					   | BEGIN bloque_sentencias error ';' {lexico.getLexico().addError("Falta el END para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
+					   | BEGIN bloque_sentencias END error {lexico.getLexico().addError("Falta el ';' que cierra el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
+					   ;
+
 bloque_sentencias : bloque_sentencias sentencia
-				|	sentencia {System.out.println("Se cargo una sentencia");} 
-       			;
+				  |	sentencia {System.out.println("Se cargo una sentencia");} 
+       			  ;
 
 sentencia   :  ejecucion
             ;
 
 ejecucion : iteracion 
-	 	 | seleccion 
-	  	 | print 
-	 	 | asig
-	  	 | invocacion_metodo_clase
-	  	 ;		
+	 	  | seleccion 
+	  	  | print 
+	 	  | asig
+	  	  | invocacion_metodo_clase
+	  	  ;		
 	  
 invocacion_metodo_clase : ID '.' ID '(' ')' ';'
-			| error_inv_metodo_clase
-			;
+						| error_inv_metodo_clase
+						;
 			
 error_inv_metodo_clase : error '.' ID '(' ')' ';' {lexico.getLexico().addError("Falta la clase que contiene el metodo", lexico.getLexico().getNroLinea());}
-			| ID '.' error '(' ')' ';' {lexico.getLexico().addError("Falta definir el metodo de clase ", lexico.getLexico().getNroLinea());}
-			| ID '.'  error ')' ';' {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
-			| ID '.' ID '(' error ';' {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
-			| ID '.' ID '(' ')' error {lexico.getLexico().addError("Falta el ';' ", lexico.getLexico().getNroLinea());}
-			;
+	   				   | ID '.' error '(' ')' ';' {lexico.getLexico().addError("Falta definir el metodo de clase ", lexico.getLexico().getNroLinea());}
+					   | ID '.'  error ')' ';' {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
+					   | ID '.' ID '(' error ';' {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
+					   | ID '.' ID '(' ')' error {lexico.getLexico().addError("Falta el ';' ", lexico.getLexico().getNroLinea());}
+					   ;
 
 print : PRINT '(' CADENA ')' ';'  {lexico.getLexico().agregarEstructura( "En la linea "+lexico.getLexico().getNroLinea()+" se hizo un print");}
-	| error_print
-	;
+	  | error_print
+	  ;
 
 
 error_print : PRINT error CADENA ')' ';' {lexico.getLexico().addError("Falta el '('.", lexico.getLexico().getNroLinea());}
-	     | PRINT '(' CADENA error ';' {lexico.getLexico().addError("Falta el ')'.", lexico.getLexico().getNroLinea());} 
-	     | PRINT '(' CADENA ')' error {lexico.getLexico().addError("Falta el ';' que cierra el print.", lexico.getLexico().getNroLinea());}
-	     ;
+	        | PRINT '(' CADENA error ';' {lexico.getLexico().addError("Falta el ')'.", lexico.getLexico().getNroLinea());} 
+	        | PRINT '(' CADENA ')' error {lexico.getLexico().addError("Falta el ';' que cierra el print.", lexico.getLexico().getNroLinea());}
+	        ;
 
 
 iteracion   : WHILE '(' condicion ')' DO bloque_anidado {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");}
@@ -164,7 +167,7 @@ if_condicion : IF '(' condicion ')' bloque_anidado
              | IF condicion bloque_anidado {lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
              ;
 
-bloque_anidado  :  sentencia
+bloque_anidado  : sentencia
 				| BEGIN bloque_sentencias END
 				| BEGIN bloque_sentencias error {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
 				| error bloque_sentencias END {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
@@ -217,7 +220,7 @@ public int yylex(){
     Token token = this.lexico.getToken();
    	if(token != null ){ 
     	int val = token.getId();
-    	yyval = new ParserVal(token);
+    	yylval = new ParserVal(token);
     	return val;
 	}
    	else return 0;
