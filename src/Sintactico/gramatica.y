@@ -2,6 +2,7 @@
 package Sintactico; 
 import Lexico.Controller;
 import Lexico.Token;
+import java.util.*;
 %}
 
 %token ID
@@ -48,21 +49,24 @@ conj_sentencias_declarativas : sentencia_declarativa
 							 | sentencia_declarativa conj_sentencias_declarativas 
 							 ;
 
-sentencia_declarativa  :  tipo lista_de_variables ';' {System.out.println("Llegue a una declaracion valida");}
+sentencia_declarativa  :  tipo lista_de_variables ';' {System.out.println("Llegue a una declaracion valida");
+													  System.out.println(((Token)$1.obj).getLexema()); addVariableTS(((Token)$1.obj).getLexema());}
 					   |  sentencia_de_clase {System.out.println("Llegue a una declaracion de clase");}
            	 		   ;
 
 
-lista_de_variables : lista_de_variables ',' variable 
-		    	   | variable 
+lista_de_variables : lista_de_variables ',' variable {listaVar.add(((Token)$3.obj));}
+		    	   | variable {listaVar.add(((Token)$1.obj));}
 	               ;
 
-variable : ID {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego el identificador: "+ ((Token)$1.obj).getLexema());}{System.out.println("Leo un ID: "+ ((Token)$1.obj).getLexema());}
-		 ;
+variable : ID {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego el identificador: "+ ((Token)$1.obj).getLexema());}
+		 ; 
 
   
-sentencia_de_clase  : CLASS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());}
-					| CLASS ID EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$4.obj).getLexema());}
+sentencia_de_clase  : CLASS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());
+																																											   setClass(((Token)$2.obj).getLexema());}
+					| CLASS ID EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$4.obj).getLexema());
+																																																													  setClass(((Token)$2.obj).getLexema());}
 					;
 
 definicion_clase : BEGIN sentencias_clase END
@@ -207,7 +211,9 @@ cte : CTE {System.out.println("Leo una constante INT");}
 %%
 
 
-
+private ArrayList <Token> listaVar = new ArrayList <Token>();
+private boolean classFlag;
+private String className;
 
 
 private Controller lexico;
@@ -232,5 +238,36 @@ public void yyerror(String s){
 
 public int yyparser(){
 	return yyparse();
+}
+
+
+public void addVariableTS (String type) {
+	for (Token t : listaVar) {
+		if (classFlag == true) {
+			if (type.equals("int"))
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, className, "-");
+			else if (type.equals("float"))
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, className, "-");
+		} else {
+			if (type.equals("int"))
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, "-", "-");
+			else if (type.equals("float"))
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, "-", "-");
+		}
+	}
+	removeVars();
+	classFlag = false;
+	className = "";
+}
+
+public void setClass(String cn) {
+	classFlag = true;
+	className = cn;
+}
+
+public void removeVars() {
+	int size = listaVar.size();
+	for (int i = 0; i < size; i++) 
+		listaVar.remove(0);
 }
 

@@ -330,12 +330,22 @@ public class Controller {
 			System.out.println("El lexema " + lex + " ya existe.");
 		else if (lex.charAt(0) == '%') {
 				String nuevo = lex.substring(1);
-				Atributo a = new Atributo(t, t, 0, "", "");
+				Atributo a = new Atributo(t, t, 0, "-", "-");
 				tablaDeSimbolo.put(nuevo, a);
 			} else {
-				Atributo a = new Atributo(t,t,0,"","");
+				Atributo a = new Atributo(t,t,0,"-","-");
 				tablaDeSimbolo.put(lex, a);
 			}
+	}
+	
+	public void addVarTS (String lex, String t, String u, int v, String dc, String cp) {
+		Atributo a = new Atributo(t,u,v,dc,cp);
+		tablaDeSimbolo.put(lex, a);
+	}
+	
+	public void addVarTS (String lex, String t, String u, double v, String dc, String cp) {
+		Atributo a = new Atributo(t,u,v,dc,cp);
+		tablaDeSimbolo.put(lex, a);
 	}
 	
 	public void addError(String desc, int nLinea) {
@@ -389,8 +399,12 @@ public class Controller {
 			writer.println("-----------------------------------");
 			writer.println("Contenido de la tabla de simbolos:");
 			for (String s: tablaDeSimbolo.keySet()) {
-				String valor = tablaDeSimbolo.get(s).getTipo();
-				writer.println("Lexema: "+s+", tipo: "+valor+".");
+				String tipo = tablaDeSimbolo.get(s).getTipo();
+				String uso = tablaDeSimbolo.get(s).getUso();
+				Object valor = tablaDeSimbolo.get(s).getValor();
+				String declase = tablaDeSimbolo.get(s).getDeClase();
+				String clasePadre = tablaDeSimbolo.get(s).getClasePadre();
+				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+".");
 			}
 			writer.close();
 		} catch (Exception e) {
