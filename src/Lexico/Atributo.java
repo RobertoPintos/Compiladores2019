@@ -4,11 +4,11 @@ public class Atributo {
 
 	private String tipo;
 	private String uso;
-	private int valor;
+	private Object valor;
 	private String deClase;
 	private String clasePadre;
 	
-	public Atributo (String t, String u, int v, String dc, String cp){
+	public Atributo (String t, String u, Object v, String dc, String cp){
 		this.tipo = t;
 		this.uso = u;
 		this.valor = v;
@@ -32,7 +32,7 @@ public class Atributo {
 		this.uso = uso;
 	}
 
-	public int getValor() {
+	public Object getValor() {
 		return valor;
 	}
 
