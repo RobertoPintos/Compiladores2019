@@ -2,6 +2,7 @@
 package Sintactico; 
 import Lexico.Controller;
 import Lexico.Token;
+import Lexico.Atributo;
 import java.util.*;
 %}
 
@@ -50,7 +51,7 @@ conj_sentencias_declarativas : sentencia_declarativa
 							 ;
 
 sentencia_declarativa  :  tipo lista_de_variables ';' {System.out.println("Llegue a una declaracion valida");
-													  System.out.println(((Token)$1.obj).getLexema()); addVariableTS(((Token)$1.obj).getLexema());}
+													   			  addVariableTS(((Token)$1.obj).getLexema());}
 					   |  sentencia_de_clase {System.out.println("Llegue a una declaracion de clase");}
            	 		   ;
 
@@ -63,10 +64,14 @@ variable : ID {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLex
 		 ; 
 
   
-sentencia_de_clase  : CLASS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());
-																																											   setClass(((Token)$2.obj).getLexema());}
-					| CLASS ID EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$4.obj).getLexema());
-																																																													  setClass(((Token)$2.obj).getLexema());}
+sentencia_de_clase  : CLASS ID {setClass(((Token)$2.obj).getLexema());} definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());
+																																											 										  addClaseTS(((Token)$2.obj).getLexema());
+																																											 										  						classFlag = false;
+																																											 										  						   className = "";}
+					| CLASS ID {setClass(((Token)$2.obj).getLexema());} EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$5.obj).getLexema());
+																																																														 addClaseHeredadaTS(((Token)$2.obj).getLexema(),((Token)$5.obj).getLexema());
+																																																														 														   classFlag = false;
+																																											 										  						   																		  className = "";}
 					;
 
 definicion_clase : BEGIN sentencias_clase END
@@ -83,7 +88,9 @@ cuerpo_clase : lista_atributos
 lista_atributos : visibilidad sentencia_declarativa {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un atributo de clase");}
 				;
 									 
-metodo_clase : visibilidad VOID ID '(' ')' bloque_anidado_metclase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un metodo de clase");} { System.out.println("Viene un metodo");}
+metodo_clase : visibilidad VOID ID '(' ')' bloque_anidado_metclase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un metodo de clase"); 
+																																				  System.out.println("Viene un metodo");
+																												  addMetodoTS(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());}
 			 ;
 
 bloque_anidado_metclase : BEGIN bloque_sentencias END
@@ -177,10 +184,10 @@ bloque_anidado  : sentencia
 				| error bloque_sentencias END {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
 				;
 
-asig 	: variable ASIGNACION expresion ';' {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());}
-        | variable expresion ';' { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());} 
+asig 	: ID ASIGNACION expresion ';' {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());}
+        | ID expresion ';' { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());} 
         | error ASIGNACION expresion ';' { System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
-        | variable ASIGNACION expresion  {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
+        | ID ASIGNACION expresion  {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
         ;
 
 expresion 	:  expresion '+' termino {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");} 
@@ -200,7 +207,9 @@ factor  : ID {System.out.println("Cargo un identificador");}
 
 
 cte : CTE {System.out.println("Leo una constante INT");}
-	| '-' CTE {System.out.println("Leo una constante negada");}
+	| '-' CTE {System.out.println("Leo una constante negada");
+		  actualizarTablaNegativo(((Token)$2.obj).getLexema());
+		  	   System.out.println("cambio la cte");}
     | CTEFLOAT {System.out.println("Leo una constante FLOAT");}
     | '-' CTEFLOAT {System.out.println("Leo una float negada");}
 	;
@@ -243,21 +252,20 @@ public int yyparser(){
 
 public void addVariableTS (String type) {
 	for (Token t : listaVar) {
+		System.out.println(t.getLexema());
 		if (classFlag == true) {
 			if (type.equals("int"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, className, "-");
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0, className, "-");
 			else if (type.equals("float"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, className, "-");
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0.0, className, "-");	
 		} else {
 			if (type.equals("int"))
 				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, "-", "-");
 			else if (type.equals("float"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, "-", "-");
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, "-", "-");	
 		}
-	}
+	}	
 	removeVars();
-	classFlag = false;
-	className = "";
 }
 
 public void setClass(String cn) {
@@ -269,5 +277,53 @@ public void removeVars() {
 	int size = listaVar.size();
 	for (int i = 0; i < size; i++) 
 		listaVar.remove(0);
+}
+
+public void addClaseTS(String lex) {
+	lexico.getLexico().addClassTS(lex);
+}
+
+public void addClaseHeredadaTS(String lex, String lex2){
+	lexico.getLexico().addClassHeredadaTS(lex,lex2);
+}
+
+public void addMetodoTS(String vis, String lex) {
+	lexico.getLexico().addMethodTS(vis, lex, className);
+}
+
+private void actualizarTablaDeSimbolosCte(String lexema, String nuevoLexema, Atributo atr){
+
+	if(atr.getCantRef() < 1){
+		lexico.getTS().remove(lexema);
+	}else
+		//lexico.getTS().get(lexema).decrementoCantRef();
+	if(lexico.getTS().containsKey(nuevoLexema)){
+		lexico.getTS().get(nuevoLexema).incrementoCantRef();
+	}else{
+		lexico.getTS().put(nuevoLexema, new Atributo(atr.getTipo(), atr.getUso(), atr.getValor(), atr.getDeClase(), atr.getClasePadre(), 1));
+	}
+}
+
+public void actualizarTablaNegativo(String lexema){
+	
+	String nuevoLexema = "-"+lexema;
+	if(lexico.getTS().containsKey(lexema)){
+		lexico.getTS().get(lexema).decrementoCantRef();
+		Atributo atr = lexico.getTS().get(lexema);
+		System.out.println(atr.getCantRef());
+		if(atr.getTipo() == "int"){
+			int i = Integer.parseInt(nuevoLexema);
+			if ((i <= lexico.maxE) && (i >= lexico.minE)) {
+				actualizarTablaDeSimbolosCte(lexema, nuevoLexema, atr);
+			} else 
+				lexico.getLexico().addError("CTE fuera de rango: "+nuevoLexema, lexico.getLexico().getNroLinea());
+		}else{
+		 	float valor = Float.parseFloat(nuevoLexema);
+			if (((valor > lexico.minPosF) && (valor < lexico.maxPosF)) || ((valor > lexico.minNegF) && (valor < lexico.maxNegF)) || (valor == lexico.zeroF)) {
+				actualizarTablaDeSimbolosCte(lexema, nuevoLexema, atr);
+			} else
+				lexico.getLexico().addError("CTE fuera de rango: "+nuevoLexema, lexico.getLexico().getNroLinea());
+		}
+	}
 }
 

@@ -11,19 +11,19 @@ public class AS7 extends AccSemantica{
 		int i = Integer.parseInt(bf);
 		if ((i <= ct.maxE) && (i >= ct.minE)) {
 			ct.addTokenListCompuesto(bf, ct.getNroLinea());
-			ct.addTokenTS(bf, "CONST");
+			ct.addTokenTS(bf, "CONST INT");
 		} else { //ESTA FUERA DEL RANGO
 			ct.addWarning("Warning: Constante "+bf+" fuera de rango, truncada.", ct.getNroLinea());
 			if (i >= ct.maxE) {
 				i = ct.maxE;
 				String aux = Integer.toString(i);
 				ct.addTokenListCompuesto(aux, ct.getNroLinea());
-				ct.addTokenTS(aux, "CONST");
+				ct.addTokenTS(aux, "CONST INT");
 			}	else {
 				i = ct.minE;
 				String aux = Integer.toString(i);
 				ct.addTokenListCompuesto(aux, ct.getNroLinea());
-				ct.addTokenTS(aux, "CONST");
+				ct.addTokenTS(aux, "CONST INT");
 			}
 		}
 		ct.setEstadoFinal();

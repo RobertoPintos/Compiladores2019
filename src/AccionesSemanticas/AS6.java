@@ -14,11 +14,11 @@ public class AS6 extends AccSemantica{
 		else 
 			if (bf.length() <= ct.maxId) {
 				ct.addTokenListCompuesto(bf, ct.getNroLinea());
-				ct.addTokenTS(bf, "ID");
+				//ct.addTokenTS(bf, "ID");
 			} else { //LA LONGITUD ES MAYOR A 25 Y SE TRUNCA Y AGREGA EL WARNING
 				String nuevo = bf.substring(0, 24);
 				ct.addTokenListCompuesto(nuevo, ct.getNroLinea());
-				ct.addTokenTS(nuevo, "ID");
+				//ct.addTokenTS(nuevo, "ID");
 				ct.addWarning("Warning: ID truncado: "+bf, ct.getNroLinea());
 			}
 		ct.setEstadoFinal();
