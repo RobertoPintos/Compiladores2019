@@ -133,7 +133,7 @@ public class Controller {
 	public static final int minE = -32768;
 	public static final int maxE = 32767;
 
-	public static HashMap<String,Atributo> tablaDeSimbolo = new HashMap<>();
+	public HashMap<String,Atributo> tablaDeSimbolo = new HashMap<>();
 	public static HashMap<String,Integer> palabrasReservadas = new HashMap<>();
 	public static List<Token> listToken = new ArrayList<Token>(); 
     private ArrayList<String> estructuras = new ArrayList<String>();
@@ -326,26 +326,61 @@ public class Controller {
 	}
 	
 	public void addTokenTS(String lex, String t) {
-		if (tablaDeSimbolo.containsKey(lex))
-			System.out.println("El lexema " + lex + " ya existe.");
-		else if (lex.charAt(0) == '%') {
-				String nuevo = lex.substring(1);
-				Atributo a = new Atributo(t, t, 0, "-", "-");
-				tablaDeSimbolo.put(nuevo, a);
+		if (t.equals("CONST INT") || t.equals("CONST FLOAT")) {
+			if (tablaDeSimbolo.containsKey(lex)) {
+				System.out.println("La constante "+lex+" ya existe. Aumentando referencias");
+				tablaDeSimbolo.get(lex).incrementoCantRef();
 			} else {
-				Atributo a = new Atributo(t,t,0,"-","-");
-				tablaDeSimbolo.put(lex, a);
+				Atributo a = new Atributo(t, t, lex, "-", "-", 1);
+		 		tablaDeSimbolo.put(lex, a);
 			}
+		}
+		else if (tablaDeSimbolo.containsKey(lex)) 
+				System.out.println("El lexema " + lex + " ya existe.");
+			 else if (lex.charAt(0) == '%') {
+				 	String nuevo = lex.substring(1);
+				 	Atributo a = new Atributo(t, t, 0, "-", "-", 1);
+				 	tablaDeSimbolo.put(nuevo, a);
+			 	} else {
+			 		Atributo a = new Atributo(t, t, 0, "-", "-", 1);
+			 		tablaDeSimbolo.put(lex, a);
+			 	}
 	}
 	
-	public void addVarTS (String lex, String t, String u, int v, String dc, String cp) {
-		Atributo a = new Atributo(t,u,v,dc,cp);
-		tablaDeSimbolo.put(lex, a);
+	public void addVarTS (String lex, String t, String u, Object v, String dc, String cp) {
+		if (tablaDeSimbolo.containsKey(lex)) 
+			System.out.println("La variable "+lex+" ya existe.");
+		else {
+			Atributo a = new Atributo(t, u, v, dc, cp, 1);
+			tablaDeSimbolo.put(lex, a);
+		}
 	}
 	
-	public void addVarTS (String lex, String t, String u, double v, String dc, String cp) {
-		Atributo a = new Atributo(t,u,v,dc,cp);
-		tablaDeSimbolo.put(lex, a);
+	public void addClassTS (String lex) {
+		if (tablaDeSimbolo.containsKey(lex)) 
+			System.out.println("La clase "+lex+" ya existe.");
+		else {
+			Atributo a = new Atributo("-", "Nombre de clase", "-", lex, "-", 1);
+			tablaDeSimbolo.put(lex, a);
+		}
+	}
+	
+	public void addClassHeredadaTS (String lex, String lex2) {
+		if (tablaDeSimbolo.containsKey(lex)) 
+			System.out.println("La clase "+lex+" ya existe.");
+		else {
+			Atributo a = new Atributo("-", "Nombre de clase", "-", lex, lex2, 1);
+			tablaDeSimbolo.put(lex, a);
+		}
+	}
+	
+	public void addMethodTS (String visibilidad, String lex, String cn) {
+		if (tablaDeSimbolo.containsKey(lex)) 
+			System.out.println("El metodo "+lex+" ya existe.");
+		else {
+			Atributo a = new Atributo(visibilidad+" void", "Metodo de clase", "-", cn, "-", 1);
+			tablaDeSimbolo.put(lex, a);
+		}
 	}
 	
 	public void addError(String desc, int nLinea) {
@@ -404,7 +439,8 @@ public class Controller {
 				Object valor = tablaDeSimbolo.get(s).getValor();
 				String declase = tablaDeSimbolo.get(s).getDeClase();
 				String clasePadre = tablaDeSimbolo.get(s).getClasePadre();
-				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+".");
+				int cantref = tablaDeSimbolo.get(s).getCantRef();
+				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+", cantref:"+cantref);
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -474,5 +510,9 @@ public class Controller {
     
     public void agregarEstructura(String error){
         estructuras.add(error);
-}
+    }
+    
+    public HashMap <String,Atributo> getTS(){
+    	return this.tablaDeSimbolo;
+    }
 }

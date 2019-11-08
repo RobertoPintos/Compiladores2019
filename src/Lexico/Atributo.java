@@ -7,13 +7,15 @@ public class Atributo {
 	private Object valor;
 	private String deClase;
 	private String clasePadre;
+	private int cantRef;
 	
-	public Atributo (String t, String u, Object v, String dc, String cp){
+	public Atributo (String t, String u, Object v, String dc, String cp, int cr){
 		this.tipo = t;
 		this.uso = u;
 		this.valor = v;
 		this.deClase = dc;
 		this.clasePadre = cp;
+		this.cantRef = cr;
 	}
 
 	public String getTipo() {
@@ -54,5 +56,21 @@ public class Atributo {
 
 	public void setClasePadre(String clasePadre) {
 		this.clasePadre = clasePadre;
+	}
+
+	public int getCantRef() {
+		return cantRef;
+	}
+
+	public void setCantRef(int cantRef) {
+		this.cantRef = cantRef;
+	}
+	
+	public void incrementoCantRef () {
+		this.cantRef++;
+	}
+	
+	public void decrementoCantRef () {
+		this.cantRef--;
 	}
 }
