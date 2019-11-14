@@ -19,6 +19,7 @@ import java.io.FileReader;
 import Lexico.Controller;
 import Lexico.Fuente;
 import Sintactico.*;
+import GeneracionDeCodigo.*;
 
 public class prueba {
 	
@@ -63,6 +64,7 @@ public class prueba {
        
         	Fuente archivo = new Fuente(codigo);
         	Controller controlador = new Controller(archivo);
+            TercetosController tc = new TercetosController();
 
         	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.
         	System.out.println("Codigo fuente:");
@@ -70,8 +72,10 @@ public class prueba {
         	System.out.println("--------------------------------");
         	System.out.println("--------------------------------");
         	
-        	Parser parser = new Parser(controlador);
-            System.out.println(parser.yyparser()); 
+        	Parser parser = new Parser(controlador, tc);
+            System.out.println(parser.yyparser());
+            
+
         	
             File f = new File (ruta.getParent()+"\\resultadoCompilacion.txt");
         	try {
@@ -89,7 +93,7 @@ public class prueba {
         	controlador.getEstructuras(f);
         	controlador.mostrarWarnings(f);
         	controlador.mostrarErrores(f);
-        	
+        	tc.printTercetos();
         }	
 	 }
 	 
