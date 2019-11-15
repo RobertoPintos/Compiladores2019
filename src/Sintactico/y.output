@@ -78,62 +78,64 @@
   51              | PRINT '(' CADENA error ';'
   52              | PRINT '(' CADENA ')' error
 
-  53  iteracion : WHILE '(' condicion ')' DO bloque_anidado
-  54            | WHILE condicion ')' DO bloque_anidado
-  55            | WHILE '(' condicion DO bloque_anidado
-  56            | WHILE '(' condicion ')' bloque_anidado
+  53  $$3 :
 
-  57  $$3 :
+  54  iteracion : WHILE '(' condicion ')' $$3 DO bloque_anidado
+  55            | WHILE condicion ')' DO bloque_anidado
+  56            | WHILE '(' condicion DO bloque_anidado
+  57            | WHILE '(' condicion ')' bloque_anidado
 
-  58  condicion : expresion $$3 comparador expresion
+  58  $$4 :
 
-  59  comparador : '<'
-  60             | '>'
-  61             | '='
-  62             | C_MAYORIGUAL
-  63             | C_MENORIGUAL
-  64             | C_DISTINTO
-  65             | C_IGUAL
+  59  condicion : expresion $$4 comparador expresion
 
-  66  seleccion : if_condicion END_IF
+  60  comparador : '<'
+  61             | '>'
+  62             | '='
+  63             | C_MAYORIGUAL
+  64             | C_MENORIGUAL
+  65             | C_DISTINTO
+  66             | C_IGUAL
 
-  67  $$4 :
+  67  seleccion : if_condicion END_IF
 
-  68  seleccion : if_condicion $$4 ELSE bloque_anidado END_IF
+  68  $$5 :
 
-  69  $$5 :
+  69  seleccion : if_condicion $$5 ELSE bloque_anidado END_IF
 
-  70  if_condicion : IF '(' condicion ')' $$5 bloque_anidado
-  71               | IF condicion ')' bloque_anidado
-  72               | IF '(' condicion bloque_anidado
-  73               | IF condicion bloque_anidado
+  70  $$6 :
 
-  74  bloque_anidado : sentencia
-  75                 | BEGIN bloque_sentencias END
-  76                 | BEGIN bloque_sentencias error
-  77                 | error bloque_sentencias END
+  71  if_condicion : IF '(' condicion ')' $$6 bloque_anidado
+  72               | IF condicion ')' bloque_anidado
+  73               | IF '(' condicion bloque_anidado
+  74               | IF condicion bloque_anidado
 
-  78  asig : ID ASIGNACION expresion ';'
-  79       | ID expresion ';'
-  80       | error ASIGNACION expresion ';'
-  81       | ID ASIGNACION expresion
+  75  bloque_anidado : sentencia
+  76                 | BEGIN bloque_sentencias END
+  77                 | BEGIN bloque_sentencias error
+  78                 | error bloque_sentencias END
 
-  82  expresion : expresion '+' termino
-  83            | expresion '-' termino
-  84            | termino
+  79  asig : ID ASIGNACION expresion ';'
+  80       | ID expresion ';'
+  81       | error ASIGNACION expresion ';'
+  82       | ID ASIGNACION expresion
 
-  85  termino : termino '*' factor
-  86          | termino '/' factor
-  87          | factor
+  83  expresion : expresion '+' termino
+  84            | expresion '-' termino
+  85            | termino
 
-  88  factor : ID
-  89         | ID '.' ID
-  90         | cte
+  86  termino : termino '*' factor
+  87          | termino '/' factor
+  88          | factor
 
-  91  cte : CTE
-  92      | '-' CTE
-  93      | CTEFLOAT
-  94      | '-' CTEFLOAT
+  89  factor : ID
+  90         | ID '.' ID
+  91         | cte
+
+  92  cte : CTE
+  93      | '-' CTE
+  94      | CTEFLOAT
+  95      | '-' CTEFLOAT
 
 state 0
 	$accept : . programa $end  (0)
@@ -294,7 +296,7 @@ state 13
 
 state 14
 	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
-	asig : error . ASIGNACION expresion ';'  (80)
+	asig : error . ASIGNACION expresion ';'  (81)
 
 	ASIGNACION  shift 37
 	'.'  shift 38
@@ -307,9 +309,9 @@ state 15
 	error_inv_metodo_clase : ID . '.' error ')' ';'  (45)
 	error_inv_metodo_clase : ID . '.' ID '(' error ';'  (46)
 	error_inv_metodo_clase : ID . '.' ID '(' ')' error  (47)
-	asig : ID . ASIGNACION expresion ';'  (78)
-	asig : ID . expresion ';'  (79)
-	asig : ID . ASIGNACION expresion  (81)
+	asig : ID . ASIGNACION expresion ';'  (79)
+	asig : ID . expresion ';'  (80)
+	asig : ID . ASIGNACION expresion  (82)
 
 	ID  shift 39
 	CTE  shift 40
@@ -326,10 +328,10 @@ state 15
 
 
 state 16
-	if_condicion : IF . '(' condicion ')' $$5 bloque_anidado  (70)
-	if_condicion : IF . condicion ')' bloque_anidado  (71)
-	if_condicion : IF . '(' condicion bloque_anidado  (72)
-	if_condicion : IF . condicion bloque_anidado  (73)
+	if_condicion : IF . '(' condicion ')' $$6 bloque_anidado  (71)
+	if_condicion : IF . condicion ')' bloque_anidado  (72)
+	if_condicion : IF . '(' condicion bloque_anidado  (73)
+	if_condicion : IF . condicion bloque_anidado  (74)
 
 	ID  shift 39
 	CTE  shift 40
@@ -357,10 +359,10 @@ state 17
 
 
 state 18
-	iteracion : WHILE . '(' condicion ')' DO bloque_anidado  (53)
-	iteracion : WHILE . condicion ')' DO bloque_anidado  (54)
-	iteracion : WHILE . '(' condicion DO bloque_anidado  (55)
-	iteracion : WHILE . '(' condicion ')' bloque_anidado  (56)
+	iteracion : WHILE . '(' condicion ')' $$3 DO bloque_anidado  (54)
+	iteracion : WHILE . condicion ')' DO bloque_anidado  (55)
+	iteracion : WHILE . '(' condicion DO bloque_anidado  (56)
+	iteracion : WHILE . '(' condicion ')' bloque_anidado  (57)
 
 	ID  shift 39
 	CTE  shift 40
@@ -455,14 +457,14 @@ state 28
 
 
 state 29
-	seleccion : if_condicion . END_IF  (66)
-	seleccion : if_condicion . $$4 ELSE bloque_anidado END_IF  (68)
-	$$4 : .  (67)
+	seleccion : if_condicion . END_IF  (67)
+	seleccion : if_condicion . $$5 ELSE bloque_anidado END_IF  (69)
+	$$5 : .  (68)
 
 	END_IF  shift 58
-	ELSE  reduce 67
+	ELSE  reduce 68
 
-	$$4  goto 59
+	$$5  goto 59
 
 
 state 30
@@ -538,7 +540,7 @@ state 36
 
 
 state 37
-	asig : error ASIGNACION . expresion ';'  (80)
+	asig : error ASIGNACION . expresion ';'  (81)
 
 	ID  shift 39
 	CTE  shift 40
@@ -560,44 +562,44 @@ state 38
 
 
 state 39
-	factor : ID .  (88)
-	factor : ID . '.' ID  (89)
+	factor : ID .  (89)
+	factor : ID . '.' ID  (90)
 
 	'.'  shift 68
-	error  reduce 88
-	ID  reduce 88
-	C_MAYORIGUAL  reduce 88
-	C_MENORIGUAL  reduce 88
-	C_DISTINTO  reduce 88
-	IF  reduce 88
-	ELSE  reduce 88
-	END_IF  reduce 88
-	BEGIN  reduce 88
-	END  reduce 88
-	PRINT  reduce 88
-	WHILE  reduce 88
-	DO  reduce 88
-	C_IGUAL  reduce 88
-	';'  reduce 88
-	')'  reduce 88
-	'<'  reduce 88
-	'>'  reduce 88
-	'='  reduce 88
-	'+'  reduce 88
-	'-'  reduce 88
-	'*'  reduce 88
-	'/'  reduce 88
+	error  reduce 89
+	ID  reduce 89
+	C_MAYORIGUAL  reduce 89
+	C_MENORIGUAL  reduce 89
+	C_DISTINTO  reduce 89
+	IF  reduce 89
+	ELSE  reduce 89
+	END_IF  reduce 89
+	BEGIN  reduce 89
+	END  reduce 89
+	PRINT  reduce 89
+	WHILE  reduce 89
+	DO  reduce 89
+	C_IGUAL  reduce 89
+	';'  reduce 89
+	')'  reduce 89
+	'<'  reduce 89
+	'>'  reduce 89
+	'='  reduce 89
+	'+'  reduce 89
+	'-'  reduce 89
+	'*'  reduce 89
+	'/'  reduce 89
 
 
 state 40
-	cte : CTE .  (91)
+	cte : CTE .  (92)
 
-	.  reduce 91
+	.  reduce 92
 
 
 state 41
-	asig : ID ASIGNACION . expresion ';'  (78)
-	asig : ID ASIGNACION . expresion  (81)
+	asig : ID ASIGNACION . expresion ';'  (79)
+	asig : ID ASIGNACION . expresion  (82)
 
 	ID  shift 39
 	CTE  shift 40
@@ -612,9 +614,9 @@ state 41
 
 
 state 42
-	cte : CTEFLOAT .  (93)
+	cte : CTEFLOAT .  (94)
 
-	.  reduce 93
+	.  reduce 94
 
 
 state 43
@@ -630,8 +632,8 @@ state 43
 
 
 state 44
-	cte : '-' . CTE  (92)
-	cte : '-' . CTEFLOAT  (94)
+	cte : '-' . CTE  (93)
+	cte : '-' . CTEFLOAT  (95)
 
 	CTE  shift 72
 	CTEFLOAT  shift 73
@@ -639,9 +641,9 @@ state 44
 
 
 state 45
-	asig : ID expresion . ';'  (79)
-	expresion : expresion . '+' termino  (82)
-	expresion : expresion . '-' termino  (83)
+	asig : ID expresion . ';'  (80)
+	expresion : expresion . '+' termino  (83)
+	expresion : expresion . '-' termino  (84)
 
 	';'  shift 74
 	'+'  shift 75
@@ -650,50 +652,50 @@ state 45
 
 
 state 46
-	expresion : termino .  (84)
-	termino : termino . '*' factor  (85)
-	termino : termino . '/' factor  (86)
+	expresion : termino .  (85)
+	termino : termino . '*' factor  (86)
+	termino : termino . '/' factor  (87)
 
 	'*'  shift 77
 	'/'  shift 78
-	error  reduce 84
-	ID  reduce 84
-	C_MAYORIGUAL  reduce 84
-	C_MENORIGUAL  reduce 84
-	C_DISTINTO  reduce 84
-	IF  reduce 84
-	ELSE  reduce 84
-	END_IF  reduce 84
-	BEGIN  reduce 84
-	END  reduce 84
-	PRINT  reduce 84
-	WHILE  reduce 84
-	DO  reduce 84
-	C_IGUAL  reduce 84
-	';'  reduce 84
-	')'  reduce 84
-	'<'  reduce 84
-	'>'  reduce 84
-	'='  reduce 84
-	'+'  reduce 84
-	'-'  reduce 84
+	error  reduce 85
+	ID  reduce 85
+	C_MAYORIGUAL  reduce 85
+	C_MENORIGUAL  reduce 85
+	C_DISTINTO  reduce 85
+	IF  reduce 85
+	ELSE  reduce 85
+	END_IF  reduce 85
+	BEGIN  reduce 85
+	END  reduce 85
+	PRINT  reduce 85
+	WHILE  reduce 85
+	DO  reduce 85
+	C_IGUAL  reduce 85
+	';'  reduce 85
+	')'  reduce 85
+	'<'  reduce 85
+	'>'  reduce 85
+	'='  reduce 85
+	'+'  reduce 85
+	'-'  reduce 85
 
 
 state 47
-	termino : factor .  (87)
+	termino : factor .  (88)
 
-	.  reduce 87
+	.  reduce 88
 
 
 state 48
-	factor : cte .  (90)
+	factor : cte .  (91)
 
-	.  reduce 90
+	.  reduce 91
 
 
 state 49
-	if_condicion : IF '(' . condicion ')' $$5 bloque_anidado  (70)
-	if_condicion : IF '(' . condicion bloque_anidado  (72)
+	if_condicion : IF '(' . condicion ')' $$6 bloque_anidado  (71)
+	if_condicion : IF '(' . condicion bloque_anidado  (73)
 
 	ID  shift 39
 	CTE  shift 40
@@ -709,8 +711,8 @@ state 49
 
 
 state 50
-	if_condicion : IF condicion . ')' bloque_anidado  (71)
-	if_condicion : IF condicion . bloque_anidado  (73)
+	if_condicion : IF condicion . ')' bloque_anidado  (72)
+	if_condicion : IF condicion . bloque_anidado  (74)
 
 	error  shift 80
 	ID  shift 15
@@ -735,22 +737,22 @@ state 50
 
 
 state 51
-	condicion : expresion . $$3 comparador expresion  (58)
-	expresion : expresion . '+' termino  (82)
-	expresion : expresion . '-' termino  (83)
-	$$3 : .  (57)
+	condicion : expresion . $$4 comparador expresion  (59)
+	expresion : expresion . '+' termino  (83)
+	expresion : expresion . '-' termino  (84)
+	$$4 : .  (58)
 
 	'+'  shift 75
 	'-'  shift 76
-	C_MAYORIGUAL  reduce 57
-	C_MENORIGUAL  reduce 57
-	C_DISTINTO  reduce 57
-	C_IGUAL  reduce 57
-	'<'  reduce 57
-	'>'  reduce 57
-	'='  reduce 57
+	C_MAYORIGUAL  reduce 58
+	C_MENORIGUAL  reduce 58
+	C_DISTINTO  reduce 58
+	C_IGUAL  reduce 58
+	'<'  reduce 58
+	'>'  reduce 58
+	'='  reduce 58
 
-	$$3  goto 85
+	$$4  goto 85
 
 
 state 52
@@ -770,9 +772,9 @@ state 53
 
 
 state 54
-	iteracion : WHILE '(' . condicion ')' DO bloque_anidado  (53)
-	iteracion : WHILE '(' . condicion DO bloque_anidado  (55)
-	iteracion : WHILE '(' . condicion ')' bloque_anidado  (56)
+	iteracion : WHILE '(' . condicion ')' $$3 DO bloque_anidado  (54)
+	iteracion : WHILE '(' . condicion DO bloque_anidado  (56)
+	iteracion : WHILE '(' . condicion ')' bloque_anidado  (57)
 
 	ID  shift 39
 	CTE  shift 40
@@ -788,7 +790,7 @@ state 54
 
 
 state 55
-	iteracion : WHILE condicion . ')' DO bloque_anidado  (54)
+	iteracion : WHILE condicion . ')' DO bloque_anidado  (55)
 
 	')'  shift 89
 	.  error
@@ -808,13 +810,13 @@ state 57
 
 
 state 58
-	seleccion : if_condicion END_IF .  (66)
+	seleccion : if_condicion END_IF .  (67)
 
-	.  reduce 66
+	.  reduce 67
 
 
 state 59
-	seleccion : if_condicion $$4 . ELSE bloque_anidado END_IF  (68)
+	seleccion : if_condicion $$5 . ELSE bloque_anidado END_IF  (69)
 
 	ELSE  shift 91
 	.  error
@@ -823,7 +825,7 @@ state 59
 state 60
 	sentencias_ejecutables : BEGIN bloque_sentencias error . ';'  (31)
 	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
-	asig : error . ASIGNACION expresion ';'  (80)
+	asig : error . ASIGNACION expresion ';'  (81)
 
 	ASIGNACION  shift 37
 	';'  shift 92
@@ -872,9 +874,9 @@ state 65
 
 
 state 66
-	asig : error ASIGNACION expresion . ';'  (80)
-	expresion : expresion . '+' termino  (82)
-	expresion : expresion . '-' termino  (83)
+	asig : error ASIGNACION expresion . ';'  (81)
+	expresion : expresion . '+' termino  (83)
+	expresion : expresion . '-' termino  (84)
 
 	';'  shift 99
 	'+'  shift 75
@@ -890,29 +892,29 @@ state 67
 
 
 state 68
-	factor : ID '.' . ID  (89)
+	factor : ID '.' . ID  (90)
 
 	ID  shift 101
 	.  error
 
 
 state 69
-	asig : ID ASIGNACION expresion . ';'  (78)
-	asig : ID ASIGNACION expresion .  (81)
-	expresion : expresion . '+' termino  (82)
-	expresion : expresion . '-' termino  (83)
+	asig : ID ASIGNACION expresion . ';'  (79)
+	asig : ID ASIGNACION expresion .  (82)
+	expresion : expresion . '+' termino  (83)
+	expresion : expresion . '-' termino  (84)
 
 	';'  shift 102
 	'+'  shift 75
 	'-'  shift 76
-	error  reduce 81
-	ID  reduce 81
-	IF  reduce 81
-	ELSE  reduce 81
-	END_IF  reduce 81
-	END  reduce 81
-	PRINT  reduce 81
-	WHILE  reduce 81
+	error  reduce 82
+	ID  reduce 82
+	IF  reduce 82
+	ELSE  reduce 82
+	END_IF  reduce 82
+	END  reduce 82
+	PRINT  reduce 82
+	WHILE  reduce 82
 
 
 state 70
@@ -934,25 +936,25 @@ state 71
 
 
 state 72
-	cte : '-' CTE .  (92)
+	cte : '-' CTE .  (93)
 
-	.  reduce 92
+	.  reduce 93
 
 
 state 73
-	cte : '-' CTEFLOAT .  (94)
+	cte : '-' CTEFLOAT .  (95)
 
-	.  reduce 94
+	.  reduce 95
 
 
 state 74
-	asig : ID expresion ';' .  (79)
+	asig : ID expresion ';' .  (80)
 
-	.  reduce 79
+	.  reduce 80
 
 
 state 75
-	expresion : expresion '+' . termino  (82)
+	expresion : expresion '+' . termino  (83)
 
 	ID  shift 39
 	CTE  shift 40
@@ -966,7 +968,7 @@ state 75
 
 
 state 76
-	expresion : expresion '-' . termino  (83)
+	expresion : expresion '-' . termino  (84)
 
 	ID  shift 39
 	CTE  shift 40
@@ -980,7 +982,7 @@ state 76
 
 
 state 77
-	termino : termino '*' . factor  (85)
+	termino : termino '*' . factor  (86)
 
 	ID  shift 39
 	CTE  shift 40
@@ -993,7 +995,7 @@ state 77
 
 
 state 78
-	termino : termino '/' . factor  (86)
+	termino : termino '/' . factor  (87)
 
 	ID  shift 39
 	CTE  shift 40
@@ -1006,8 +1008,8 @@ state 78
 
 
 state 79
-	if_condicion : IF '(' condicion . ')' $$5 bloque_anidado  (70)
-	if_condicion : IF '(' condicion . bloque_anidado  (72)
+	if_condicion : IF '(' condicion . ')' $$6 bloque_anidado  (71)
+	if_condicion : IF '(' condicion . bloque_anidado  (73)
 
 	error  shift 80
 	ID  shift 15
@@ -1033,8 +1035,8 @@ state 79
 
 state 80
 	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
-	bloque_anidado : error . bloque_sentencias END  (77)
-	asig : error . ASIGNACION expresion ';'  (80)
+	bloque_anidado : error . bloque_sentencias END  (78)
+	asig : error . ASIGNACION expresion ';'  (81)
 
 	error  shift 14
 	ID  shift 15
@@ -1059,8 +1061,8 @@ state 80
 
 
 state 81
-	bloque_anidado : BEGIN . bloque_sentencias END  (75)
-	bloque_anidado : BEGIN . bloque_sentencias error  (76)
+	bloque_anidado : BEGIN . bloque_sentencias END  (76)
+	bloque_anidado : BEGIN . bloque_sentencias error  (77)
 
 	error  shift 14
 	ID  shift 15
@@ -1083,7 +1085,7 @@ state 81
 
 
 state 82
-	if_condicion : IF condicion ')' . bloque_anidado  (71)
+	if_condicion : IF condicion ')' . bloque_anidado  (72)
 
 	error  shift 80
 	ID  shift 15
@@ -1107,19 +1109,19 @@ state 82
 
 
 state 83
-	bloque_anidado : sentencia .  (74)
+	bloque_anidado : sentencia .  (75)
+
+	.  reduce 75
+
+
+state 84
+	if_condicion : IF condicion bloque_anidado .  (74)
 
 	.  reduce 74
 
 
-state 84
-	if_condicion : IF condicion bloque_anidado .  (73)
-
-	.  reduce 73
-
-
 state 85
-	condicion : expresion $$3 . comparador expresion  (58)
+	condicion : expresion $$4 . comparador expresion  (59)
 
 	C_MAYORIGUAL  shift 115
 	C_MENORIGUAL  shift 116
@@ -1151,9 +1153,9 @@ state 87
 
 
 state 88
-	iteracion : WHILE '(' condicion . ')' DO bloque_anidado  (53)
-	iteracion : WHILE '(' condicion . DO bloque_anidado  (55)
-	iteracion : WHILE '(' condicion . ')' bloque_anidado  (56)
+	iteracion : WHILE '(' condicion . ')' $$3 DO bloque_anidado  (54)
+	iteracion : WHILE '(' condicion . DO bloque_anidado  (56)
+	iteracion : WHILE '(' condicion . ')' bloque_anidado  (57)
 
 	DO  shift 126
 	')'  shift 127
@@ -1161,7 +1163,7 @@ state 88
 
 
 state 89
-	iteracion : WHILE condicion ')' . DO bloque_anidado  (54)
+	iteracion : WHILE condicion ')' . DO bloque_anidado  (55)
 
 	DO  shift 128
 	.  error
@@ -1174,7 +1176,7 @@ state 90
 
 
 state 91
-	seleccion : if_condicion $$4 ELSE . bloque_anidado END_IF  (68)
+	seleccion : if_condicion $$5 ELSE . bloque_anidado END_IF  (69)
 
 	error  shift 80
 	ID  shift 15
@@ -1249,9 +1251,9 @@ state 98
 
 
 state 99
-	asig : error ASIGNACION expresion ';' .  (80)
+	asig : error ASIGNACION expresion ';' .  (81)
 
-	.  reduce 80
+	.  reduce 81
 
 
 state 100
@@ -1262,15 +1264,15 @@ state 100
 
 
 state 101
-	factor : ID '.' ID .  (89)
+	factor : ID '.' ID .  (90)
 
-	.  reduce 89
+	.  reduce 90
 
 
 state 102
-	asig : ID ASIGNACION expresion ';' .  (78)
+	asig : ID ASIGNACION expresion ';' .  (79)
 
-	.  reduce 78
+	.  reduce 79
 
 
 state 103
@@ -1298,39 +1300,9 @@ state 105
 
 
 state 106
-	expresion : expresion '+' termino .  (82)
-	termino : termino . '*' factor  (85)
-	termino : termino . '/' factor  (86)
-
-	'*'  shift 77
-	'/'  shift 78
-	error  reduce 82
-	ID  reduce 82
-	C_MAYORIGUAL  reduce 82
-	C_MENORIGUAL  reduce 82
-	C_DISTINTO  reduce 82
-	IF  reduce 82
-	ELSE  reduce 82
-	END_IF  reduce 82
-	BEGIN  reduce 82
-	END  reduce 82
-	PRINT  reduce 82
-	WHILE  reduce 82
-	DO  reduce 82
-	C_IGUAL  reduce 82
-	';'  reduce 82
-	')'  reduce 82
-	'<'  reduce 82
-	'>'  reduce 82
-	'='  reduce 82
-	'+'  reduce 82
-	'-'  reduce 82
-
-
-state 107
-	expresion : expresion '-' termino .  (83)
-	termino : termino . '*' factor  (85)
-	termino : termino . '/' factor  (86)
+	expresion : expresion '+' termino .  (83)
+	termino : termino . '*' factor  (86)
+	termino : termino . '/' factor  (87)
 
 	'*'  shift 77
 	'/'  shift 78
@@ -1357,36 +1329,66 @@ state 107
 	'-'  reduce 83
 
 
+state 107
+	expresion : expresion '-' termino .  (84)
+	termino : termino . '*' factor  (86)
+	termino : termino . '/' factor  (87)
+
+	'*'  shift 77
+	'/'  shift 78
+	error  reduce 84
+	ID  reduce 84
+	C_MAYORIGUAL  reduce 84
+	C_MENORIGUAL  reduce 84
+	C_DISTINTO  reduce 84
+	IF  reduce 84
+	ELSE  reduce 84
+	END_IF  reduce 84
+	BEGIN  reduce 84
+	END  reduce 84
+	PRINT  reduce 84
+	WHILE  reduce 84
+	DO  reduce 84
+	C_IGUAL  reduce 84
+	';'  reduce 84
+	')'  reduce 84
+	'<'  reduce 84
+	'>'  reduce 84
+	'='  reduce 84
+	'+'  reduce 84
+	'-'  reduce 84
+
+
 state 108
-	termino : termino '*' factor .  (85)
-
-	.  reduce 85
-
-
-state 109
-	termino : termino '/' factor .  (86)
+	termino : termino '*' factor .  (86)
 
 	.  reduce 86
 
 
+state 109
+	termino : termino '/' factor .  (87)
+
+	.  reduce 87
+
+
 state 110
-	if_condicion : IF '(' condicion ')' . $$5 bloque_anidado  (70)
-	$$5 : .  (69)
+	if_condicion : IF '(' condicion ')' . $$6 bloque_anidado  (71)
+	$$6 : .  (70)
 
-	.  reduce 69
+	.  reduce 70
 
-	$$5  goto 143
+	$$6  goto 143
 
 
 state 111
-	if_condicion : IF '(' condicion bloque_anidado .  (72)
+	if_condicion : IF '(' condicion bloque_anidado .  (73)
 
-	.  reduce 72
+	.  reduce 73
 
 
 state 112
 	bloque_sentencias : bloque_sentencias . sentencia  (33)
-	bloque_anidado : error bloque_sentencias . END  (77)
+	bloque_anidado : error bloque_sentencias . END  (78)
 
 	error  shift 14
 	ID  shift 15
@@ -1410,8 +1412,8 @@ state 112
 
 state 113
 	bloque_sentencias : bloque_sentencias . sentencia  (33)
-	bloque_anidado : BEGIN bloque_sentencias . END  (75)
-	bloque_anidado : BEGIN bloque_sentencias . error  (76)
+	bloque_anidado : BEGIN bloque_sentencias . END  (76)
+	bloque_anidado : BEGIN bloque_sentencias . error  (77)
 
 	error  shift 145
 	ID  shift 15
@@ -1434,55 +1436,55 @@ state 113
 
 
 state 114
-	if_condicion : IF condicion ')' bloque_anidado .  (71)
+	if_condicion : IF condicion ')' bloque_anidado .  (72)
 
-	.  reduce 71
+	.  reduce 72
 
 
 state 115
-	comparador : C_MAYORIGUAL .  (62)
-
-	.  reduce 62
-
-
-state 116
-	comparador : C_MENORIGUAL .  (63)
+	comparador : C_MAYORIGUAL .  (63)
 
 	.  reduce 63
 
 
-state 117
-	comparador : C_DISTINTO .  (64)
+state 116
+	comparador : C_MENORIGUAL .  (64)
 
 	.  reduce 64
 
 
-state 118
-	comparador : C_IGUAL .  (65)
+state 117
+	comparador : C_DISTINTO .  (65)
 
 	.  reduce 65
 
 
+state 118
+	comparador : C_IGUAL .  (66)
+
+	.  reduce 66
+
+
 state 119
-	comparador : '<' .  (59)
-
-	.  reduce 59
-
-
-state 120
-	comparador : '>' .  (60)
+	comparador : '<' .  (60)
 
 	.  reduce 60
 
 
-state 121
-	comparador : '=' .  (61)
+state 120
+	comparador : '>' .  (61)
 
 	.  reduce 61
 
 
+state 121
+	comparador : '=' .  (62)
+
+	.  reduce 62
+
+
 state 122
-	condicion : expresion $$3 comparador . expresion  (58)
+	condicion : expresion $$4 comparador . expresion  (59)
 
 	ID  shift 39
 	CTE  shift 40
@@ -1520,7 +1522,7 @@ state 125
 
 
 state 126
-	iteracion : WHILE '(' condicion DO . bloque_anidado  (55)
+	iteracion : WHILE '(' condicion DO . bloque_anidado  (56)
 
 	error  shift 80
 	ID  shift 15
@@ -1544,8 +1546,9 @@ state 126
 
 
 state 127
-	iteracion : WHILE '(' condicion ')' . DO bloque_anidado  (53)
-	iteracion : WHILE '(' condicion ')' . bloque_anidado  (56)
+	iteracion : WHILE '(' condicion ')' . $$3 DO bloque_anidado  (54)
+	iteracion : WHILE '(' condicion ')' . bloque_anidado  (57)
+	$$3 : .  (53)
 
 	error  shift 80
 	ID  shift 15
@@ -1553,8 +1556,7 @@ state 127
 	BEGIN  shift 81
 	PRINT  shift 17
 	WHILE  shift 18
-	DO  shift 153
-	.  error
+	DO  reduce 53
 
 	sentencia  goto 83
 	ejecucion  goto 21
@@ -1565,12 +1567,13 @@ state 127
 	invocacion_metodo_clase  goto 26
 	error_inv_metodo_clase  goto 27
 	error_print  goto 28
+	$$3  goto 153
 	bloque_anidado  goto 154
 	if_condicion  goto 29
 
 
 state 128
-	iteracion : WHILE condicion ')' DO . bloque_anidado  (54)
+	iteracion : WHILE condicion ')' DO . bloque_anidado  (55)
 
 	error  shift 80
 	ID  shift 15
@@ -1594,7 +1597,7 @@ state 128
 
 
 state 129
-	seleccion : if_condicion $$4 ELSE bloque_anidado . END_IF  (68)
+	seleccion : if_condicion $$5 ELSE bloque_anidado . END_IF  (69)
 
 	END_IF  shift 156
 	.  error
@@ -1707,7 +1710,7 @@ state 142
 
 
 state 143
-	if_condicion : IF '(' condicion ')' $$5 . bloque_anidado  (70)
+	if_condicion : IF '(' condicion ')' $$6 . bloque_anidado  (71)
 
 	error  shift 80
 	ID  shift 15
@@ -1731,49 +1734,49 @@ state 143
 
 
 state 144
-	bloque_anidado : error bloque_sentencias END .  (77)
+	bloque_anidado : error bloque_sentencias END .  (78)
 
-	.  reduce 77
+	.  reduce 78
 
 
 state 145
 	error_inv_metodo_clase : error . '.' ID '(' ')' ';'  (43)
-	bloque_anidado : BEGIN bloque_sentencias error .  (76)
-	asig : error . ASIGNACION expresion ';'  (80)
+	bloque_anidado : BEGIN bloque_sentencias error .  (77)
+	asig : error . ASIGNACION expresion ';'  (81)
 
 	ASIGNACION  shift 37
 	'.'  shift 38
-	error  reduce 76
-	ID  reduce 76
-	IF  reduce 76
-	ELSE  reduce 76
-	END_IF  reduce 76
-	END  reduce 76
-	PRINT  reduce 76
-	WHILE  reduce 76
+	error  reduce 77
+	ID  reduce 77
+	IF  reduce 77
+	ELSE  reduce 77
+	END_IF  reduce 77
+	END  reduce 77
+	PRINT  reduce 77
+	WHILE  reduce 77
 
 
 state 146
-	bloque_anidado : BEGIN bloque_sentencias END .  (75)
+	bloque_anidado : BEGIN bloque_sentencias END .  (76)
 
-	.  reduce 75
+	.  reduce 76
 
 
 state 147
-	condicion : expresion $$3 comparador expresion .  (58)
-	expresion : expresion . '+' termino  (82)
-	expresion : expresion . '-' termino  (83)
+	condicion : expresion $$4 comparador expresion .  (59)
+	expresion : expresion . '+' termino  (83)
+	expresion : expresion . '-' termino  (84)
 
 	'+'  shift 75
 	'-'  shift 76
-	error  reduce 58
-	ID  reduce 58
-	IF  reduce 58
-	BEGIN  reduce 58
-	PRINT  reduce 58
-	WHILE  reduce 58
-	DO  reduce 58
-	')'  reduce 58
+	error  reduce 59
+	ID  reduce 59
+	IF  reduce 59
+	BEGIN  reduce 59
+	PRINT  reduce 59
+	WHILE  reduce 59
+	DO  reduce 59
+	')'  reduce 59
 
 
 state 148
@@ -1801,51 +1804,34 @@ state 151
 
 
 state 152
-	iteracion : WHILE '(' condicion DO bloque_anidado .  (55)
-
-	.  reduce 55
-
-
-state 153
-	iteracion : WHILE '(' condicion ')' DO . bloque_anidado  (53)
-
-	error  shift 80
-	ID  shift 15
-	IF  shift 16
-	BEGIN  shift 81
-	PRINT  shift 17
-	WHILE  shift 18
-	.  error
-
-	sentencia  goto 83
-	ejecucion  goto 21
-	iteracion  goto 22
-	seleccion  goto 23
-	print  goto 24
-	asig  goto 25
-	invocacion_metodo_clase  goto 26
-	error_inv_metodo_clase  goto 27
-	error_print  goto 28
-	bloque_anidado  goto 168
-	if_condicion  goto 29
-
-
-state 154
-	iteracion : WHILE '(' condicion ')' bloque_anidado .  (56)
+	iteracion : WHILE '(' condicion DO bloque_anidado .  (56)
 
 	.  reduce 56
 
 
-state 155
-	iteracion : WHILE condicion ')' DO bloque_anidado .  (54)
+state 153
+	iteracion : WHILE '(' condicion ')' $$3 . DO bloque_anidado  (54)
 
-	.  reduce 54
+	DO  shift 168
+	.  error
+
+
+state 154
+	iteracion : WHILE '(' condicion ')' bloque_anidado .  (57)
+
+	.  reduce 57
+
+
+state 155
+	iteracion : WHILE condicion ')' DO bloque_anidado .  (55)
+
+	.  reduce 55
 
 
 state 156
-	seleccion : if_condicion $$4 ELSE bloque_anidado END_IF .  (68)
+	seleccion : if_condicion $$5 ELSE bloque_anidado END_IF .  (69)
 
-	.  reduce 68
+	.  reduce 69
 
 
 state 157
@@ -1910,41 +1896,65 @@ state 166
 
 
 state 167
-	if_condicion : IF '(' condicion ')' $$5 bloque_anidado .  (70)
+	if_condicion : IF '(' condicion ')' $$6 bloque_anidado .  (71)
 
-	.  reduce 70
+	.  reduce 71
 
 
 state 168
-	iteracion : WHILE '(' condicion ')' DO bloque_anidado .  (53)
+	iteracion : WHILE '(' condicion ')' $$3 DO . bloque_anidado  (54)
 
-	.  reduce 53
+	error  shift 80
+	ID  shift 15
+	IF  shift 16
+	BEGIN  shift 81
+	PRINT  shift 17
+	WHILE  shift 18
+	.  error
+
+	sentencia  goto 83
+	ejecucion  goto 21
+	iteracion  goto 22
+	seleccion  goto 23
+	print  goto 24
+	asig  goto 25
+	invocacion_metodo_clase  goto 26
+	error_inv_metodo_clase  goto 27
+	error_print  goto 28
+	bloque_anidado  goto 170
+	if_condicion  goto 29
 
 
 state 169
 	metodo_clase : visibilidad VOID ID . '(' ')' bloque_anidado_metclase  (22)
 
-	'('  shift 170
+	'('  shift 171
 	.  error
 
 
 state 170
-	metodo_clase : visibilidad VOID ID '(' . ')' bloque_anidado_metclase  (22)
+	iteracion : WHILE '(' condicion ')' $$3 DO bloque_anidado .  (54)
 
-	')'  shift 171
-	.  error
+	.  reduce 54
 
 
 state 171
-	metodo_clase : visibilidad VOID ID '(' ')' . bloque_anidado_metclase  (22)
+	metodo_clase : visibilidad VOID ID '(' . ')' bloque_anidado_metclase  (22)
 
-	BEGIN  shift 172
+	')'  shift 172
 	.  error
-
-	bloque_anidado_metclase  goto 173
 
 
 state 172
+	metodo_clase : visibilidad VOID ID '(' ')' . bloque_anidado_metclase  (22)
+
+	BEGIN  shift 173
+	.  error
+
+	bloque_anidado_metclase  goto 174
+
+
+state 173
 	bloque_anidado_metclase : BEGIN . bloque_sentencias END  (23)
 
 	error  shift 14
@@ -1954,7 +1964,7 @@ state 172
 	WHILE  shift 18
 	.  error
 
-	bloque_sentencias  goto 174
+	bloque_sentencias  goto 175
 	sentencia  goto 20
 	ejecucion  goto 21
 	iteracion  goto 22
@@ -1967,20 +1977,20 @@ state 172
 	if_condicion  goto 29
 
 
-state 173
+state 174
 	metodo_clase : visibilidad VOID ID '(' ')' bloque_anidado_metclase .  (22)
 
 	.  reduce 22
 
 
-state 174
+state 175
 	bloque_anidado_metclase : BEGIN bloque_sentencias . END  (23)
 	bloque_sentencias : bloque_sentencias . sentencia  (33)
 
 	error  shift 14
 	ID  shift 15
 	IF  shift 16
-	END  shift 175
+	END  shift 176
 	PRINT  shift 17
 	WHILE  shift 18
 	.  error
@@ -1997,11 +2007,11 @@ state 174
 	if_condicion  goto 29
 
 
-state 175
+state 176
 	bloque_anidado_metclase : BEGIN bloque_sentencias END .  (23)
 
 	.  reduce 23
 
 
-39 terminals, 40 nonterminals
-95 grammar rules, 176 states
+39 terminals, 41 nonterminals
+96 grammar rules, 177 states
