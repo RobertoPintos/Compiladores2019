@@ -150,7 +150,9 @@ error_print : PRINT error CADENA ')' ';' {lexico.getLexico().addError("Falta el 
 	        ;
 
 
-iteracion   : WHILE '(' condicion ')' DO bloque_anidado {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");}
+iteracion   : WHILE '(' condicion ')' {apilarTercetoIncompletoWHILE();} DO bloque_anidado {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");
+																																										   apilarTercetoIncompletoWHILE();
+																																								cmp1 = false; cmp2 = false; condStart = 0;}
 			| WHILE condicion ')' DO bloque_anidado {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
 			| WHILE '(' condicion DO bloque_anidado {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
 	   		| WHILE '(' condicion ')' bloque_anidado {lexico.getLexico().addError("Falta la palabra DO en la iteracion", lexico.getLexico().getNroLinea());}
@@ -174,9 +176,11 @@ comparador 	: '<'
             ;
 
 seleccion : if_condicion END_IF {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF");
-																														   completarTercetoFinalIF();}
+																														   completarTercetoFinalIF();
+																										   cmp1 = false; cmp2 = false; condStart = 0;}
           | if_condicion {apilarTercetoIncompletoIF();} ELSE bloque_anidado END_IF {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF con ELSE");
-          																																											   completarTercetoFinalIF();}
+          																																											   completarTercetoFinalIF();
+          																																											  cmp1 = false; cmp2 = false;}
           ;
 
 if_condicion : IF '(' condicion ')' {apilarTercetoIncompletoIF();} bloque_anidado 
@@ -238,6 +242,7 @@ private boolean classFlag;
 private String className;
 private boolean cmp1 = false;
 private boolean cmp2 = false;
+private int condStart = 0;
 
 
 private Controller lexico;
@@ -409,16 +414,20 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 		if (cmp2 == true) {
 			Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()-1)+"]", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 			genCodigo.getTercetosController().addTercetoLista(t);
+			condStart = genCodigo.getTercetosController().getCantTercetos()-2;
 		} else {
 			Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
 			genCodigo.getTercetosController().addTercetoLista(t);
+			condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 		}
 	else { if (cmp2 == true) {
 				Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 				genCodigo.getTercetosController().addTercetoLista(t);
+				condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 			} else {
 				Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
 				genCodigo.getTercetosController().addTercetoLista(t);
+				condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 			}
 		}
 }
@@ -447,5 +456,21 @@ public void completarTercetoFinalIF () {
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+1)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
+	}
+}
+
+public void apilarTercetoIncompletoWHILE () {
+
+	if (genCodigo.getTercetosController().isPilaEmpty()) {
+		Terceto t = new Terceto ("BF", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", "-", genCodigo.getTercetosController().getCantTercetos()+1);
+		genCodigo.getTercetosController().addTercetoLista(t);
+		genCodigo.getTercetosController().apilarTerceto(t);
+	} else {
+		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
+		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
+		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
+		genCodigo.getTercetosController().removeTercetoPila();
+		Terceto BI = new Terceto ("BI", "-", "["+condStart+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+		genCodigo.getTercetosController().addTercetoLista(BI);
 	}
 }
