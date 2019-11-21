@@ -65,6 +65,7 @@ public class prueba {
         	Fuente archivo = new Fuente(codigo);
         	Controller controlador = new Controller(archivo);
             TercetosController tc = new TercetosController();
+            ConversorAssembler conversor = new ConversorAssembler(tc, controlador);
 
         	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.
         	System.out.println("Codigo fuente:");
@@ -93,7 +94,20 @@ public class prueba {
         	controlador.getEstructuras(f);
         	controlador.mostrarWarnings(f);
         	controlador.mostrarErrores(f);
+        	System.out.println("----");
+        	System.out.println("----");
+        	System.out.println("Assembler:");
+        	System.out.println(".data");
+        	System.out.println(controlador.generarAssemblerTS());
+        	System.out.println(".code");        	
+        	System.out.println(tc.generarAssembler());
         	tc.printTercetos();
+        	try {
+				conversor.generarAssembler(ruta);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }	
 	 }
 	 

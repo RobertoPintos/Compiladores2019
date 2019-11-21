@@ -8,6 +8,7 @@ public class AS9 extends AccSemantica{
 	public int ejecutar (char c, Controller ct) {
 		
 		ct.addTokenListSimple(ct.getBuffer().charAt(0), ct.getNroLinea());
+		ct.setSimboloAnt();
 		ct.setEstadoFinal();
 		return 0;
 	}

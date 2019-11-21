@@ -36,14 +36,14 @@ public class Controller {
 	int [][] matEstados = {
 			//      l   L   d    _   .   /   *   +   -    /n    =   >    <    :    (    )    %    e    E     ;    ,  BL,Tab 
 			//      0   1   2    3   4   5   6   7   8    9   10   11   12   13   14   15   16   17   18    19   20   21
-			/*0*/ { 1,  1,  2,   F,  7,  9,  F,  F,  F,   0,  14,  12,  13,  15,   F,   F,  16,   1,   1,   F,   F,   0}, 
+			/*0*/ { 1,  1,  2,   F, 17,  9,  F,  F,  F,   0,  14,  12,  13,  15,   F,   F,  16,   1,   1,   F,   F,   0}, 
 			/*1*/ { 1,  1,  1,   1,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*2*/ { F,  F,  2,   F,  3,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   0,   0,   F,   F,   F},
-			/*3*/ { F,  F,  3,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
+			/*3*/ { F,  F,  3,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},	
 			/*4*/ { 0,  0,  5,   0,  0,  0,  0,  6,  6,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
 			/*5*/ { F,  F,  5,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*6*/ { F,  F,  6,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
-			/*7*/ { 0,  0,  8,   0,  0,  0,  0,  0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
+			/*7*/ { F,  F,  8,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*8*/ { F,  F,  8,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   4,   4,   F,   F,   F},
 			/*9*/ { F,  F,  F,   F,  F,  F,  F, 10,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*10*/{10, 10, 10,  10, 10, 10, 10, 11, 10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10},
@@ -53,6 +53,7 @@ public class Controller {
 			/*14*/{ F,  F,  F,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 			/*15*/{ 0,  0,  0,   0,  0,  0,  0,  0,  0,   0,   F,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0},
 			/*16*/{16, 16, 16,  16, 16, 16, 16, 16, 16,   0,  16,  16,  16,  16,  16,  16,   F,  16,  16,  16,  16,  16},
+			/*17*/{ F,  F,  7,   F,  F,  F,  F,  F,  F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F,   F},
 	};
 	
 	//MATRIZ DE ACCIONES SEMANTICAS
@@ -66,7 +67,7 @@ public class Controller {
 				/*4*/ { err3,err3, as3, err3,err3,err3,err3,as3, as3,  err3,  err3,err3,err3,err3,err3,err3,err3,err3,err3, err3,err3,  err3},
 				/*5*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
 				/*6*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as8, as8,  as8, as8,   as8},
-				/*7*/ { err4,err4, as3, err4,err4,err4,err4,err4,err4, err4,  err4,err4,err4,err4,err4,err4,err4,err4,err4, err4,err4,  err4},
+				/*7*/ { as2, as2,  as3, as2, as2, as2, as2, as2, as2,  as2,   as2, as2, as2, as2, as2, as2, as2, as2, as2,  as2, as2,   as2},
 				/*8*/ { as8, as8,  as3, as8, as8, as8, as8, as8, as8,  as8,   as8, as8, as8, as8, as8, as8, as8, as3, as3,  as8, as8,   as8},
 				/*9*/ { as11,as11, as11,as11,as11,as11,as11,as3, as11, as11,  as11,as11,as11,as11,as11,as11,as11,as11,as11, as11,as11,  as11},
 				/*10*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  as3,   as3, as3, as3, as3, as3, as3, as3, as3, as3,  as3, as3,   as3},
@@ -76,6 +77,7 @@ public class Controller {
 				/*14*/{ as9, as9,  as9, as9, as9, as9, as9, as9, as9,  as9,   as5, as9, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
 				/*15*/{ err2,err2,err2,err2,err2,err2,err2,err2,err2,  err2,  as5,err2,err2,err2,err2,err2,err2,err2,err2, err2,err2,  err2},
 				/*16*/{ as3, as3,  as3, as3, as3, as3, as3, as3, as3,  err1,  as3, as3, as3, as3, as3, as3, as4, as3, as3,  as3, as3,   as3},	
+				/*17*/{ as9, as9,  as3, as9, as9, as9, as9, as9, as9,  as9,   as5, as9, as9, as9, as9, as9, as9, as9, as9,  as9, as9,   as9},
 	};
 	
 	//PALABRAS RESERVADAS DEL CODIGO
@@ -439,8 +441,7 @@ public class Controller {
 				Object valor = tablaDeSimbolo.get(s).getValor();
 				String declase = tablaDeSimbolo.get(s).getDeClase();
 				String clasePadre = tablaDeSimbolo.get(s).getClasePadre();
-				int cantref = tablaDeSimbolo.get(s).getCantRef();
-				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+", cantref:"+cantref);
+				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre);
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -514,5 +515,32 @@ public class Controller {
     
     public HashMap <String,Atributo> getTS(){
     	return this.tablaDeSimbolo;
+    }
+    
+    public String generarAssemblerTS () {
+    	
+    	String asm = "";
+    	for (String s: tablaDeSimbolo.keySet()) {
+			String tipo = tablaDeSimbolo.get(s).getTipo();
+			Object valor = tablaDeSimbolo.get(s).getValor();
+			String uso = tablaDeSimbolo.get(s).getUso();
+			if (uso.equals("Variable auxiliar")) {
+				if (tipo.equals("int") || tipo.equals("CONST INT"))
+					asm = asm + "@" + s + " DD " + valor +'\n';
+				else
+					asm = asm + "@" + s + " DW " + valor +'\n';
+			} else 
+				if (tipo.equals("int") || tipo.equals("CONST INT"))
+					asm = asm + "_" + s + " DD " + valor +'\n';
+				else {
+					if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
+						asm = asm + "_" + s + " DW " + valor +'\n';
+					} else {
+						if (tipo.equals("CHARSEQ"))
+							asm = asm + s + " DB " + s + '\n';
+					}
+				}
+		}
+    	return asm;
     }
 }
