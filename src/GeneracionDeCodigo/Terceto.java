@@ -9,6 +9,10 @@ public class Terceto {
 	private String op1;
 	private String op2;
 	private int numTerceto;
+	private String auxAsoc;
+	private boolean marcaCMP;
+	private boolean marca;
+	private String tipoOp;
 	
 	public Terceto(String izq, String medio, String der, int nT) {
 		operador = izq;
@@ -19,7 +23,10 @@ public class Terceto {
 	
 	public void printTerceto() {
 		String bf = "";
-		bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")";
+		if (auxAsoc == null)
+			bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")";
+		else
+			bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")"+" @"+auxAsoc;			
 		System.out.println(bf);
 	}
 	
@@ -29,5 +36,49 @@ public class Terceto {
 	
 	public void completarTerceto (String br) {
 		this.op2 = br;
+	}
+	
+	public String getAuxAsoc () {
+		return auxAsoc;
+	}
+	
+	public void setAuxAsoc (String name) {
+		auxAsoc = name;
+	}
+	
+	public String getOperador () {
+		return operador;
+	}
+	
+	public String getOp1 () {
+		return op1;
+	}
+	
+	public String getOp2 () {
+		return op2;
+	}
+	
+	public boolean getMarcaCMP () {
+		return marcaCMP;
+	}
+	
+	public void setMarcaCMP () {
+		marcaCMP = true;
+	}
+	
+	public boolean getMarca () {
+		return marca;
+	}
+	
+	public void setMarca () {
+		marca = true;
+	}
+	
+	public String getTipoOp () {
+		return tipoOp;
+	}
+	
+	public void setTipoOp (String t) {
+		tipoOp = t;
 	}
 }
