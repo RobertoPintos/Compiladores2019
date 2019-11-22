@@ -521,7 +521,7 @@ final static String yyrule[] = {
 "cte : '-' CTEFLOAT",
 };
 
-//#line 281 "gramatica.y"
+//#line 282 "gramatica.y"
 
 
 private ArrayList <Token> listaVar = new ArrayList <Token>();
@@ -1383,90 +1383,91 @@ case 79:
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
 											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
 											addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
-										} }
+										} genCodigo.getTercetosController().setTercetoExpNull();
+										  genCodigo.getTercetosController().setTercetoTermNull(); }
 break;
 case 80:
-//#line 233 "gramatica.y"
+//#line 234 "gramatica.y"
 { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 81:
-//#line 234 "gramatica.y"
+//#line 235 "gramatica.y"
 { System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 82:
-//#line 235 "gramatica.y"
+//#line 236 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
 break;
 case 83:
-//#line 238 "gramatica.y"
+//#line 239 "gramatica.y"
 {
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 									   		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
 									}
 break;
 case 84:
-//#line 242 "gramatica.y"
+//#line 243 "gramatica.y"
 {
 	  										lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 	  								  		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
 	  								}
 break;
 case 85:
-//#line 246 "gramatica.y"
+//#line 247 "gramatica.y"
 {System.out.println("Paso de termino a expresion");
       												   cambiarTercetos();}
 break;
 case 86:
-//#line 250 "gramatica.y"
+//#line 251 "gramatica.y"
 {
 										 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
 										 addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		 
 							 }
 break;
 case 87:
-//#line 254 "gramatica.y"
+//#line 255 "gramatica.y"
 {
 								   lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
 								   addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
 							 }
 break;
 case 88:
-//#line 258 "gramatica.y"
+//#line 259 "gramatica.y"
 { System.out.println("Paso factor a termino");}
 break;
 case 89:
-//#line 261 "gramatica.y"
+//#line 262 "gramatica.y"
 {System.out.println("Cargo un identificador");}
 break;
 case 90:
-//#line 262 "gramatica.y"
+//#line 263 "gramatica.y"
 {if (estaDeclarada(((Token)val_peek(0).obj).getLexema()))
 						if (estaDeclarada(((Token)val_peek(2).obj).getLexema()))
 							System.out.println("Cargue la variable "+((Token)val_peek(0).obj).getLexema()+" de la clase "+((Token)val_peek(2).obj).getLexema());}
 break;
 case 91:
-//#line 265 "gramatica.y"
+//#line 266 "gramatica.y"
 {System.out.println("Paso de cte a factor");}
 break;
 case 92:
-//#line 269 "gramatica.y"
+//#line 270 "gramatica.y"
 {System.out.println("Leo una constante INT");}
 break;
 case 93:
-//#line 270 "gramatica.y"
+//#line 271 "gramatica.y"
 {System.out.println("Leo una constante negada");
 		  actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
 break;
 case 94:
-//#line 272 "gramatica.y"
+//#line 273 "gramatica.y"
 {System.out.println("Leo una constante FLOAT");}
 break;
 case 95:
-//#line 273 "gramatica.y"
+//#line 274 "gramatica.y"
 {System.out.println("Leo una float negada");
     		actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
 break;
-//#line 1393 "Parser.java"
+//#line 1394 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

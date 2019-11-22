@@ -229,7 +229,8 @@ asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema()))
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
 											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
 											addTercetoAsignacion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-										} }
+										} genCodigo.getTercetosController().setTercetoExpNull();
+										  genCodigo.getTercetosController().setTercetoTermNull(); }
         | ID expresion ';' { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());} 
         | error ASIGNACION expresion ';' { System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
         | ID ASIGNACION expresion  {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
