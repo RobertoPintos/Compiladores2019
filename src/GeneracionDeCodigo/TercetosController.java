@@ -215,91 +215,112 @@ public class TercetosController {
 		//CASO OP = /
 		if(t.getOperador().equals("/"))
 			estatica = "IDIV";
-		//CASO MARCA COMPARACION ENTRE DOS EXP	
-		if (t.getMarcaCMP())
-			reg = "EBX"; 
-		else reg = "EAX";		
-		if (!estatica.equals("")) {
-			//CASO MARCA LABEL
-			if (t.getMarca())
-				asm = "Label"+t.getNumTerceto()+":"+'\n';
-			//CASO ESPECIAL DIVISION
-			if (estatica.equals("IDIV")){
-				asm = asm + "MOV "+reg+", _" + t.getOp1() +'\n';
-				asm = asm + estatica + " _"+ t.getOp2() +'\n';
-				asm = asm + "CMP " + reg + ", 0"+ '\n';
-				asm = asm + "JE " + "LabelDivCero";		
+		if (t.getTipoOp() != null) {
+			//CASO MARCA COMPARACION ENTRE DOS EXP
+			if (t.getMarcaCMP()) {
+				//ELIJO TIPO DE REGISTROS
+				if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT"))
+					reg = "BX";
+				else reg = "EBX";
+			} else 
+				if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) 
+					reg = "AX";
+				else reg = "EAX"; 
+			if (!estatica.equals("")) {
+				//CASO MARCA LABEL
+				if (t.getMarca())
+					asm = "Label"+t.getNumTerceto()+":"+'\n';
+				//CASO ESPECIAL DIVISION
+				if (estatica.equals("IDIV")){
+					asm = asm + "MOV "+reg+", _" + t.getOp1() +'\n';
+					asm = asm + estatica + " _"+ t.getOp2() +'\n';
+					asm = asm + "CMP " + reg + ", 0"+ '\n';
+					asm = asm + "JE " + "LabelDivCero";		
+				} else {
+					//CASO 1: (OP, VAR, VAR)	
+					if ((!t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
+						asm = asm + "MOV "+reg+", _" + t.getOp1() +'\n';
+						asm = asm + estatica +" "+reg+", _"+ t.getOp2() + '\n';
+						asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
+					}
+					//CASO 2: (OP, TERCETO, VAR)
+					if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
+						int idTerceto = Integer.parseInt(t.getOp1().substring(1, 2))-1;
+						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+						asm = asm + "MOV "+reg+", @" + nombreVarAsoc + '\n';
+						asm = asm + estatica + " "+reg+", _"+ t.getOp2() + '\n';
+						asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
+					}
+					//CASO 3: (OP, VAR, TERCETO)
+					if ((!t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2))-1;
+						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+						asm = asm + "MOV "+reg+", _" + t.getOp1() + '\n';
+						asm = asm + estatica + " "+reg+", @"+ nombreVarAsoc + '\n';
+						asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
+					}
+					//CASO 4: (OP, TERCETO, TERCETO)
+					if ((t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
+						int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, 2))-1;
+						int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, 2))-1;
+						String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
+						String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
+						asm = asm + "MOV "+reg+", @" + nombreVarAsoc1 + '\n';
+						asm = asm + estatica + " "+reg+", @"+ nombreVarAsoc2 + '\n';
+						asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
+					}
+				}
 			} else {
-			//CASO 1: (OP, VAR, VAR)	
-			if ((!t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-				asm = asm + "MOV "+reg+", _" + t.getOp1() +'\n';
-				asm = asm + estatica +" "+reg+", _"+ t.getOp2() + '\n';
-				asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
+				//CASO OP = ":="
+				if (t.getOperador().equals(":=")) {
+					//CASO 1: (OP, VAR, VAR)
+					if ((!t.getOp2().startsWith("["))) {
+						asm = "MOV "+reg+", _" + t.getOp2() +'\n';
+						asm = asm + "MOV _" + t.getOp1() + ", "+reg;
+					}
+					//CASO 2: (OP, VAR, TERCETO)
+					if ((t.getOp2().startsWith("["))) {
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2))-1;
+						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+						asm = "MOV "+reg+", @" + nombreVarAsoc +'\n';
+						asm = asm + "MOV _" + t.getOp1() + ", "+reg;
+					}
+				} else
+				//CASO OP = "> , <, >=, <=, ==, !="
+				if 	(t.getOperador().equals("<") || t.getOperador().equals(">") || t.getOperador().equals("<=") 
+						|| t.getOperador().equals(">=") || t.getOperador().equals("==") || t.getOperador().equals("!=")) {
+					//CASO 1: DOS TERCETOS ANTERIORES
+					if (t.getOp1().startsWith("[") && t.getOp2().startsWith("["))
+						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) 
+							asm = "CMP AX, BX";
+						else asm = "CMP EAX, EBX";
+					//CASO 2: UN TERCETO Y UNA CONSTANTE
+					else if (t.getOp1().startsWith("["))
+						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT"))						
+							asm = "CMP AX, _"+t.getOp2();
+						else asm = "CMP EAX, _"+t.getOp2();
+					//CASO 3: UNA CONSTANTE Y UN TERCETO
+					else if (t.getOp2().startsWith("["))
+						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT"))
+							asm = "CMP _"+t.getOp1()+", AX";
+						else asm = "CMP _"+t.getOp1()+", EAX";
+					//CASO 4: DOS CONSTANTES
+					else {
+						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
+							asm = "MOV AX, " + t.getOp1();
+							asm = asm + "CMP AX, "+t.getOp2();	
+						} else {
+							asm = "MOV EAX, " + t.getOp1();
+							asm = asm + "CMP EAX, "+t.getOp2();	
+						}
+					}
+				} 
 			}
-			//CASO 2: (OP, TERCETO, VAR)
-			if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-				int idTerceto = Integer.parseInt(t.getOp1().substring(1, 2))-1;
-				String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-				asm = asm + "MOV "+reg+", @" + nombreVarAsoc + '\n';
-				asm = asm + estatica + " "+reg+", _"+ t.getOp2() + '\n';
-				asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
-			}
-			//CASO 3: (OP, VAR, TERCETO)
-			if ((!t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-				int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2))-1;
-				String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-				asm = asm + "MOV "+reg+", _" + t.getOp1() + '\n';
-				asm = asm + estatica + " "+reg+", @"+ nombreVarAsoc + '\n';
-				asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
-			}
-			//CASO 4: (OP, TERCETO, TERCETO)
-			if ((t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-				int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, 2))-1;
-				int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, 2))-1;
-				String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
-				String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
-				asm = asm + "MOV "+reg+", @" + nombreVarAsoc1 + '\n';
-				asm = asm + estatica + " "+reg+", @"+ nombreVarAsoc2 + '\n';
-				asm = asm + "MOV @" + t.getAuxAsoc() + ", "+reg;
-			}
-			}
-		} else {
-			//CASO OP = ":="
-			if (t.getOperador().equals(":=")) {
-				//CASO 1: (OP, VAR, VAR)
-				if ((!t.getOp2().startsWith("["))) {
-					asm = "MOV "+reg+", _" + t.getOp2() +'\n';
-					asm = asm + "MOV _" + t.getOp1() + ", "+reg;
-				}
-				//CASO 2: (OP, VAR, TERCETO)
-				if ((t.getOp2().startsWith("["))) {
-					int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2))-1;
-					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-					asm = "MOV "+reg+", @" + nombreVarAsoc +'\n';
-					asm = asm + "MOV _" + t.getOp1() + ", "+reg;
-				}
-			}
-			//CASO OP = "> , <, >=, <=, ==, !="
-			if 	(t.getOperador().equals("<") || t.getOperador().equals(">") || t.getOperador().equals("<=") 
-					|| t.getOperador().equals(">=") || t.getOperador().equals("==") || t.getOperador().equals("!=")) {
-				//CASO 1: DOS TERCETOS ANTERIORES
-				if (t.getOp1().startsWith("[") && t.getOp2().startsWith("[")) 
-					asm = "CMP EAX, EBX";
-				//CASO 2: UN TERCETO Y UNA CONSTANTE
-				else if (t.getOp1().startsWith("["))
-					asm = "CMP EAX, "+t.getOp2();
-				//CASO 3: UNA CONSTANTE Y UN TERCETO
-				else if (t.getOp2().startsWith("["))
-					asm = "CMP "+t.getOp1()+", EAX";
-				//CASO 4: DOS CONSTANTES
-				else asm = "CMP "+t.getOp1()+", "+t.getOp2();	
-			}
-			//CASO OP = BF , BI
+		} else
 			if ((t.getOperador().equals("BF")) || (t.getOperador().equals("BI"))) {
 				String valor = bifurcaciones.get(t.getNumTerceto());
 				asm = valor;
 			}
-		}
 		return asm;	
 	}
 }
