@@ -18,19 +18,19 @@ public class AS8 extends AccSemantica{
 				String aux = Float.toString(valor);
 				ct.addTokenListCompuesto(aux, ct.getNroLinea());
 				ct.addTokenTS(aux, "CONST FLOAT");
-				ct.addWarning("Warning: Float "+bf+" fuera de rango, truncado.", ct.getNroLinea());
+				ct.addError("Error: Constante float "+bf+" fuera de rango.", ct.getNroLinea());
 			} else if (valor < ct.minNegF) {
 				valor = ct.minNegF;
 				String aux = Float.toString(valor);
 				ct.addTokenListCompuesto(aux, ct.getNroLinea());
 				ct.addTokenTS(aux, "CONST FLOAT");
-				ct.addWarning("Warning: Float "+bf+" fuera de rango, truncado.", ct.getNroLinea());
+				ct.addError("Error: Constante float "+bf+" fuera de rango.", ct.getNroLinea());
 			} else {
 				valor = ct.zeroF;
 				String aux = Float.toString(valor);
 				ct.addTokenListCompuesto(aux, ct.getNroLinea());
 				ct.addTokenTS(aux, "CONST FLOAT");
-				ct.addWarning("Warning: Float "+bf+" fuera de rango, truncado.", ct.getNroLinea());
+				ct.addError("Error: Constante float "+bf+" fuera de rango.", ct.getNroLinea());
 			}
 		}
 		ct.setEstadoFinal();

@@ -13,7 +13,7 @@ public class AS7 extends AccSemantica{
 			ct.addTokenListCompuesto(bf, ct.getNroLinea());
 			ct.addTokenTS(bf, "CONST INT");
 		} else { //ESTA FUERA DEL RANGO
-			ct.addWarning("Warning: Constante "+bf+" fuera de rango, truncada.", ct.getNroLinea());
+			ct.addError("Error: Constante "+bf+" fuera de rango.", ct.getNroLinea());
 			if (i >= ct.maxE) {
 				i = ct.maxE;
 				String aux = Integer.toString(i);

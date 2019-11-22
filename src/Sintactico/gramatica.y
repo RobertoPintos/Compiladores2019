@@ -59,13 +59,13 @@ sentencia_declarativa  :  tipo lista_de_variables ';' {System.out.println("Llegu
 
 lista_de_variables : lista_de_variables ',' variable {if(existeVar((Token)$3.obj)){
 														System.out.println("Error variable ya declarada"); 
-														lexico.getLexico().addError("variable ya declarada con ese nombre: "+((Token)$3.obj).getLexema(), lexico.getLexico().getNroLinea());
+														assembler.getConversorAssembler().addErrorCI("variable ya declarada con ese nombre: "+((Token)$3.obj).getLexema(), lexico.getLexico().getNroLinea());
 													  }else{	
 														listaVar.add(((Token)$3.obj));
 														}}
 		    	   | variable  {if(existeVar((Token)$1.obj)){
 		    	   					System.out.println("Error variable ya declarada"); 
-									lexico.getLexico().addError("variable ya declarada con ese nombre: "+((Token)$1.obj).getLexema(), lexico.getLexico().getNroLinea());
+									assembler.getConversorAssembler().addErrorCI("variable ya declarada con ese nombre: "+((Token)$1.obj).getLexema(), lexico.getLexico().getNroLinea());
 		    	   				}else{
 		    	   					listaVar.add((Token)$1.obj);
 		    	   					}}
@@ -73,7 +73,7 @@ lista_de_variables : lista_de_variables ',' variable {if(existeVar((Token)$3.obj
 
 variable : ID {if(lexico.getTS().containsKey(((Token)$1.obj).getLexema())){
 			  		System.out.println("Error variable ya declarada"); 
-					lexico.getLexico().addError("variable ya declarada con ese nombre: "+((Token)$1.obj).getLexema(), lexico.getLexico().getNroLinea());
+					assembler.getConversorAssembler().addErrorCI("variable ya declarada con ese nombre: "+((Token)$1.obj).getLexema(), lexico.getLexico().getNroLinea());
 			  }else{
 				lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego el identificador: "+ ((Token)$1.obj).getLexema());
 				}}
@@ -148,7 +148,14 @@ ejecucion : iteracion
 	  	  | invocacion_metodo_clase
 	  	  ;		
 	  
-invocacion_metodo_clase : ID '.' ID '(' ')' ';'
+invocacion_metodo_clase : ID '.' ID '(' ')' ';' { if (esClase(((Token)$1.obj).getLexema()))
+														if (esMetodo(((Token)$3.obj).getLexema())){
+															
+														} else
+															assembler.getConversorAssembler().addErrorCI("Se trato de invocar a un metodo inexistente", lexico.getLexico().getNroLinea());
+												  else
+												  		assembler.getConversorAssembler().addErrorCI("No existe la clase asociada al metodo", lexico.getLexico().getNroLinea());			
+												}
 						| error_inv_metodo_clase
 						;
 			
@@ -286,10 +293,12 @@ private int condStart = 0;
 
 private Controller lexico;
 private TercetosController genCodigo;
-public Parser(Controller lexico, TercetosController tc)
+private ConversorAssembler assembler;
+public Parser(Controller lexico, TercetosController tc, ConversorAssembler assembler)
 {
   this.lexico = lexico;
   this.genCodigo = tc;
+  this.assembler = assembler;
 } 
 
 public int yylex(){
@@ -313,7 +322,6 @@ public int yyparser(){
 
 public void addVariableTS (String type) {
 	for (Token t : listaVar) {
-		System.out.println(t.getLexema());
 		if (classFlag == true) {
 			if (type.equals("int"))
 				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0, className, "-");
@@ -350,15 +358,24 @@ public void removeVars() {
 }
 
 public void addClaseTS(String lex) {
-	lexico.getLexico().addClassTS(lex);
+	if (!esClase(lex))
+		lexico.getLexico().addClassTS(lex);
+	else
+		assembler.getConversorAssembler().addErrorCI("Clase ya declarada anteriormente", lexico.getLexico().getNroLinea());
 }
 
 public void addClaseHeredadaTS(String lex, String lex2){
-	lexico.getLexico().addClassHeredadaTS(lex,lex2);
+	if (!esClase(lex))
+		lexico.getLexico().addClassHeredadaTS(lex,lex2);
+	else
+		assembler.getConversorAssembler().addErrorCI("Clase ya declarada anteriormente", lexico.getLexico().getNroLinea());
 }
 
 public void addMetodoTS(String vis, String lex) {
-	lexico.getLexico().addMethodTS(vis, lex, className);
+	if (!esMetodo(lex))
+		lexico.getLexico().addMethodTS(vis, lex, className);
+	else
+		assembler.getConversorAssembler().addErrorCI("Metodo ya declarado anteriormente", lexico.getLexico().getNroLinea());
 }
 
 private void actualizarTablaDeSimbolosCte(String lexema, String nuevoLexema, Atributo atr){
@@ -376,23 +393,32 @@ private void actualizarTablaDeSimbolosCte(String lexema, String nuevoLexema, Atr
 
 public void actualizarTablaNegativo(String lexema){
 	
-	String nuevoLexema = "-"+lexema;
-	if(lexico.getTS().containsKey(lexema)){
-		lexico.getTS().get(lexema).decrementoCantRef();
-		Atributo atr = lexico.getTS().get(lexema);
-		System.out.println(atr.getCantRef());
-		if(atr.getTipo() == "int"){
-			int i = Integer.parseInt(nuevoLexema);
-			if ((i <= lexico.maxE) && (i >= lexico.minE)) {
-				actualizarTablaDeSimbolosCte(lexema, nuevoLexema, atr);
-			} else 
-				lexico.getLexico().addError("CTE fuera de rango: "+nuevoLexema, lexico.getLexico().getNroLinea());
-		}else{
-		 	float valor = Float.parseFloat(nuevoLexema);
-			if (((valor > lexico.minPosF) && (valor < lexico.maxPosF)) || ((valor > lexico.minNegF) && (valor < lexico.maxNegF)) || (valor == lexico.zeroF)) {
-				actualizarTablaDeSimbolosCte(lexema, nuevoLexema, atr);
-			} else
-				lexico.getLexico().addError("CTE fuera de rango: "+nuevoLexema, lexico.getLexico().getNroLinea());
+	if (estaDeclarada(lexema)) {
+		Atributo a = lexico.getLexico().getTS().get(lexema);
+		a.decrementoCantRef();
+		lexico.getLexico().getTS().replace(lexema, a);
+		String nuevoLex = '-'+lexema;
+		if (estaDeclarada(nuevoLex)) {
+			Atributo b = lexico.getLexico().getTS().get(nuevoLex);
+			b.incrementoCantRef();
+			lexico.getLexico().getTS().replace(nuevoLex, b);
+		} else {
+			if (isInteger(nuevoLex)) {
+				Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
+				lexico.getLexico().getTS().put(nuevoLex, c);
+			} else if (isFloat(nuevoLex)) {
+				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+				lexico.getLexico().getTS().put(nuevoLex, c);
+			}
+		}
+	} else {
+		String nuevoLex = '-'+lexema;
+		if (isInteger(nuevoLex)) {
+			Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
+			lexico.getLexico().getTS().put(nuevoLex, c);
+		} else if (isFloat(nuevoLex)) {
+			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+			lexico.getLexico().getTS().put(nuevoLex, c);
 		}
 	}
 }
@@ -554,22 +580,58 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 	
 	if (cmp1 == true)
 		if (cmp2 == true) {
-			Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()-1)+"]", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-			genCodigo.getTercetosController().addTercetoLista(t);
-			condStart = genCodigo.getTercetosController().getCantTercetos()-2;
+			String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-2).getTipoOp();
+			String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+			if (chequeoTipo (tipo1, tipo2)) {
+				Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()-1)+"]", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+				t.setTipoOp(tipo1);
+				genCodigo.getTercetosController().addTercetoLista(t);
+				condStart = genCodigo.getTercetosController().getCantTercetos()-2;
+			} else 
+				assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 		} else {
-			Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
-			genCodigo.getTercetosController().addTercetoLista(t);
-			condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+			if (estaDeclarada(op2)) {
+				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+				if (chequeoTipo(tipo1,tipo2)) {
+					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+					t.setTipoOp(tipo1);
+					genCodigo.getTercetosController().addTercetoLista(t);
+					condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+				} else
+					assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+			} else 
+				assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 		}
 	else { if (cmp2 == true) {
-				Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-				genCodigo.getTercetosController().addTercetoLista(t);
-				condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+				if (estaDeclarada(op1)) {
+					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+					String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+					} else
+						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else
+					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());					
 			} else {
-				Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-				genCodigo.getTercetosController().addTercetoLista(t);
-				condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+				if (estaDeclarada(op1))
+					if (estaDeclarada(op2)) {
+						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							t.setTipoOp(tipo1);
+							genCodigo.getTercetosController().addTercetoLista(t);
+							condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+						} else
+							assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+					} else
+						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+				else		
+					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 			}
 		}
 }
@@ -645,9 +707,46 @@ public boolean existeVar(Token t){
 	return existe;
 }
 
-private boolean esMetodo(String lex) {
+private boolean esClase(String lex) {
+	boolean existe = false;
 	Atributo a = lexico.getLexico().getTS().get(lex);
-	if (a.getUso().equals("Metodo de clase"))
-		return true;
-	else return false;
+	if (a != null)
+		if (a.getUso().equals("Nombre de clase"))
+			existe = true;
+		else existe = false;
+	return existe;
+}
+
+private boolean esMetodo(String lex) {
+	boolean existe = false;
+	Atributo a = lexico.getLexico().getTS().get(lex);
+	if (a != null)
+		if (a.getUso().equals("Metodo de clase"))
+			existe = true;
+		else existe = false;
+	return existe;
+}
+
+private static boolean isInteger(String s) {
+    try { 
+        Integer.parseInt(s); 
+    } catch(NumberFormatException e) { 
+        return false; 
+    } catch(NullPointerException e) {
+        return false;
+    }
+    // only got here if we didn't return false
+    return true;
+}
+
+private static boolean isFloat(String s) {
+    try { 
+        Float.parseFloat(s); 
+    } catch(NumberFormatException e) { 
+        return false; 
+    } catch(NullPointerException e) {
+        return false;
+    }
+    // only got here if we didn't return false
+    return true;
 }

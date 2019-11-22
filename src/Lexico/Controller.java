@@ -122,7 +122,7 @@ public class Controller {
 	public String buffer = new String();	
 	public static Token token;
 	private int estado;
-	private char simboloAnt;
+	private boolean coment;
 	
 	//VARIABLES DE CONTROL
 	public static final int maxId = 25;
@@ -423,9 +423,23 @@ public class Controller {
 		  }  
 		}
 	
-	public void mostrarListaTokens() {
-		for (Token t: listToken)
-			System.out.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea());
+	public void mostrarListaTokens(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Lista de tokens reconocidos:");
+			for (Token t: listToken) {
+				if (esReservada(t.getLexema()))
+					writer.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea()+ " (Palabra reservada)");
+				else
+					writer.println("Token obtenido: "+t.getId()+", lexema: "+t.getLexema()+", en la linea: "+t.getNroLinea());
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
+		}
 	}
 	
 	public void mostrarTablaSimbolos(File f) {
@@ -441,7 +455,8 @@ public class Controller {
 				Object valor = tablaDeSimbolo.get(s).getValor();
 				String declase = tablaDeSimbolo.get(s).getDeClase();
 				String clasePadre = tablaDeSimbolo.get(s).getClasePadre();
-				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre);
+				int cantRef = tablaDeSimbolo.get(s).getCantRef();
+				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+" ,cantref: "+cantRef);
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -473,7 +488,7 @@ public class Controller {
 			writer.println("-----------------------------------");
 			writer.println("Lista de errores:");
 			for (Error e: errores) {
-				writer.println("-"+e.getDescripcion()+" En la linea: "+e.getNroLinea());
+				writer.println("-"+e.getDescripcion()+" en la linea: "+e.getNroLinea());
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -524,23 +539,66 @@ public class Controller {
 			String tipo = tablaDeSimbolo.get(s).getTipo();
 			Object valor = tablaDeSimbolo.get(s).getValor();
 			String uso = tablaDeSimbolo.get(s).getUso();
-			if (uso.equals("Variable auxiliar")) {
-				if (tipo.equals("int") || tipo.equals("CONST INT"))
-					asm = asm + "@" + s + " DD " + valor +'\n';
-				else
-					asm = asm + "@" + s + " DW " + valor +'\n';
-			} else 
-				if (tipo.equals("int") || tipo.equals("CONST INT"))
-					asm = asm + "_" + s + " DD " + valor +'\n';
-				else {
-					if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
-						asm = asm + "_" + s + " DW " + valor +'\n';
-					} else {
-						if (tipo.equals("CHARSEQ"))
-							asm = asm + s + " DB " + s + '\n';
+			String deClase = tablaDeSimbolo.get(s).getDeClase();
+			if (uso.equals("Objeto")) {
+				for (String s2: tablaDeSimbolo.keySet()) {
+					String uso2 = tablaDeSimbolo.get(s2).getUso();
+					String deClase2 = tablaDeSimbolo.get(s2).getDeClase();
+					String tipo2 = tablaDeSimbolo.get(s2).getTipo();	
+					if (uso2.equals("Atributo de clase") && deClase2.equals(tipo)) {
+						if (tipo2.equals("int"))
+							asm = asm + s +  "_" + s2 + " DW " + valor +'\n';
+						else 
+							if (tipo2.equals("float")) 
+								asm = asm + s + "_" + s2 + " DD " + valor +'\n';
 					}
-				}
+				}	
+			} else
+				if (!uso.equals("Atributo de clase"))
+					if (uso.equals("Variable auxiliar")) {
+						if (tipo.equals("int") || tipo.equals("CONST INT"))
+							asm = asm + "@" + s + " DW " + valor +'\n';
+						else {
+							
+							asm = asm + "@" + s + " DD " + valor +'\n';
+						}
+					} else 
+						if (tipo.equals("int") || tipo.equals("CONST INT"))
+							asm = asm + "_" + s + " DW " + valor +'\n';
+						else {
+							if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
+								String s3 = s.replace('.', '@');
+								asm = asm + "_" + s3 + " DD " + valor +'\n';
+							} else {
+								if (tipo.equals("CHARSEQ"))
+									asm = asm + s + " DB " + "\"" + s + "\"" + '\n';
+							}
+						}
 		}
     	return asm;
     }
+
+	public void setComent(boolean b) {
+		coment = b;
+	}
+	
+	public boolean getComent () {
+		return coment;
+	}
+	
+	public int getFuenteSize () {
+		return codigoFuente.getFuenteSize();
+	}
+	
+	public int getPosFuente () {
+		return codigoFuente.getPos();
+	}
+	
+	public boolean hayErrores () {
+		boolean hay = false;
+		if (errores.isEmpty())
+			hay = true;
+		else hay = false;
+		return hay;
+	}
 }

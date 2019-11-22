@@ -3,8 +3,10 @@ package GeneracionDeCodigo;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.*;
 
 import Lexico.Error;
@@ -20,12 +22,12 @@ public class ConversorAssembler {
 	static File arch;
 	static TercetosController controladorTercetos;
 	static Controller controller;
-	private ArrayList<Error> erroresCodigoIntermedio;
+	private ArrayList<Error> erroresCI;
 	
 	public ConversorAssembler( TercetosController controladorTercetos, Controller controlador ) {
 		this.controladorTercetos = controladorTercetos;
 		this.controller = controlador;
-		erroresCodigoIntermedio = new ArrayList<Error>();
+		erroresCI = new ArrayList<Error>();
 	}
 	
 	
@@ -87,21 +89,37 @@ public class ConversorAssembler {
 	
 	public void addErrorCI (String desc, int nLinea) {
 		Error e = new Error(desc, nLinea);
-		erroresCodigoIntermedio.add(e);
+		erroresCI.add(e);
 	}
 	
 	public ArrayList<Error> getErroresCI () {
-		return erroresCodigoIntermedio;
+		return erroresCI;
 	}
 	
 	public boolean hayErroresCI () {
-		if (erroresCodigoIntermedio.isEmpty())
+		if (erroresCI.isEmpty())
 			return true;
 		else return false;
 	}
 	
 	public ConversorAssembler getConversorAssembler () {
 		return this;
+	}
+	
+	public void mostrarErrores(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Lista de errores en Codigo Intermedio:");
+			for (Error e: erroresCI) {
+				writer.println("-"+e.getDescripcion()+" en la linea: "+e.getNroLinea());
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
+		}
 	}
 }
 

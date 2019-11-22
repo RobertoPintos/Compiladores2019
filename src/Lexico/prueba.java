@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import java.io.FileReader;
 
@@ -48,13 +49,16 @@ public class prueba {
 	
 	 public static void mainr () {
 		
-		JFileChooser file = new JFileChooser();
-		file.showOpenDialog(file);
-		File ruta = file.getSelectedFile();
-        if (!(ruta.isFile()))
+		JFileChooser chooser = new JFileChooser();
+		String location = AppPrefs.FileLocation.get(System.getProperty("user.home"));
+	    chooser.setCurrentDirectory(new File(location));
+		int retVal = chooser.showOpenDialog(null);
+        if (retVal != chooser.APPROVE_OPTION)
         	System.out.println("Archivo no encontrado.");
         else {
-        	String direccion = new String(ruta.getAbsolutePath());
+        	File selectedFile = chooser.getSelectedFile();
+        	AppPrefs.FileLocation.put(selectedFile.getParentFile().getAbsolutePath());
+        	String direccion = new String(selectedFile.getAbsolutePath());
         	InputStream is = new ByteArrayInputStream(direccion.getBytes());
         	BufferedReader bf = new BufferedReader(new InputStreamReader(is));
         	StringBuilder codigo = null;
@@ -73,12 +77,12 @@ public class prueba {
         	System.out.println("--------------------------------");
         	System.out.println("--------------------------------");
         	
-        	Parser parser = new Parser(controlador, tc);
+        	Parser parser = new Parser(controlador, tc, conversor);
             System.out.println(parser.yyparser());
             
 
         	
-            File f = new File (ruta.getParent()+"\\resultadoCompilacion.txt");
+            File f = new File (selectedFile.getParent()+"\\resultadoCompilacion.txt");
         	try {
 					PrintWriter writer = new PrintWriter(f, "UTF-8");
 					writer.println("Codigo:");
@@ -88,12 +92,12 @@ public class prueba {
 	        		e.printStackTrace();
 	        }
       
-            //controlador.recorrerCodFuente();
-        	//controlador.mostrarListaTokens();
         	controlador.mostrarTablaSimbolos(f);
+        	controlador.mostrarListaTokens(f);
         	controlador.getEstructuras(f);
         	controlador.mostrarWarnings(f);
         	controlador.mostrarErrores(f);
+        	conversor.mostrarErrores(f);
         	System.out.println("----");
         	System.out.println("----");
         	System.out.println("Assembler:");
@@ -102,12 +106,15 @@ public class prueba {
         	System.out.println(".code");        	
         	System.out.println(tc.generarAssembler());
         	tc.printTercetos();
-        	try {
-				conversor.generarAssembler(ruta);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	//if (controlador.hayErrores() || conversor.hayErroresCI())
+        		//JOptionPane.showMessageDialog(null, "No se genera codigo intermedio por errores en el codigo", null, JOptionPane.ERROR_MESSAGE);
+        	//else
+        		try {
+        			conversor.generarAssembler(selectedFile);
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
         }	
 	 }
 	 

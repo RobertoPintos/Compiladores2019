@@ -44,4 +44,12 @@ public class Fuente {
     	pos--;
     	actual=archivo.charAt(pos);
     }
+    
+    public int getFuenteSize () {
+    	return archivo.length();
+    }
+    
+    public int getPos () {
+    	return pos;
+    }
 }
