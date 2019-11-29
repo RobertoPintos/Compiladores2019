@@ -39,7 +39,7 @@ import GeneracionDeCodigo.*;
 
 
 
-programa :   conjunto_sentencias
+programa :   conjunto_sentencias { addTercetoFinal(); }
            ;
 
 conjunto_sentencias : conj_sentencias_declarativas sentencias_ejecutables {System.out.println("Finaliza el programa");}
@@ -750,4 +750,10 @@ private static boolean isFloat(String s) {
     }
     // only got here if we didn't return false
     return true;
+}
+
+private void addTercetoFinal () {
+	
+	Terceto BI = new Terceto ("END", "-", "-", genCodigo.getTercetosController().getCantTercetos()+1);
+	genCodigo.getTercetosController().addTercetoLista(BI);
 }

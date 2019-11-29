@@ -567,11 +567,13 @@ public class Controller {
 							asm = asm + "_" + s + " DW " + valor +'\n';
 						else {
 							if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
-								String s3 = s.replace('.', '@');
+								String s3 = s.replace('.', '_');
 								asm = asm + "_" + s3 + " DD " + valor +'\n';
 							} else {
-								if (tipo.equals("CHARSEQ"))
-									asm = asm + s + " DB " + "\"" + s + "\"" + '\n';
+								if (tipo.equals("CHARSEQ")) {
+									String s1 = s.replaceAll("\\s", "_");
+									asm = asm + s1 + " DB " + "\"" + s + "\", 0" + '\n';
+								}
 							}
 						}
 		}
