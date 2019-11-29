@@ -994,7 +994,13 @@ private static boolean isFloat(String s) {
     // only got here if we didn't return false
     return true;
 }
-//#line 926 "Parser.java"
+
+private void addTercetoFinal () {
+	
+	Terceto BI = new Terceto ("END", "-", "-", genCodigo.getTercetosController().getCantTercetos()+1);
+	genCodigo.getTercetosController().addTercetoLista(BI);
+}
+//#line 932 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1148,6 +1154,10 @@ boolean doaction;
     switch(yyn)
       {
 //########## USER-SUPPLIED ACTIONS ##########
+case 1:
+//#line 42 "gramatica.y"
+{ addTercetoFinal(); }
+break;
 case 2:
 //#line 45 "gramatica.y"
 {System.out.println("Finaliza el programa");}
@@ -1467,7 +1477,7 @@ case 95:
 {System.out.println("Leo una float negada");
     		actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
 break;
-//#line 1394 "Parser.java"
+//#line 1404 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

@@ -19,6 +19,8 @@ public class ConversorAssembler {
 	public static final String labelOverflowSuma = "LabelOverflowSuma";
 	public static final String labelDivCero = "LabelDivCero";
 	public static final String labelOverflowMul = "LabelOverflowMul";
+	public static final String labelEnd = "LabelEnd";
+
 	static File arch;
 	static TercetosController controladorTercetos;
 	static Controller controller;
@@ -67,9 +69,8 @@ public class ConversorAssembler {
 		bw.write( data );
 		
 		//Inicia el codigo
-		String code = "start:" + '\n' + (String) controladorTercetos.generarAssembler(); 
+		String code = "start:" + '\n' + (String) controladorTercetos.generarAssembler() + '\n'; 
 
-		code = code + "invoke ExitProcess, 0" + '\n';
 
 		bw.write( code );
 		String errores = labelDivCero + ":" + '\n';
@@ -80,6 +81,8 @@ public class ConversorAssembler {
 		errores = errores + "invoke ExitProcess, 0" + '\n';
 		errores = errores + labelOverflowMul + ":" + '\n';
 		errores = errores + "invoke MessageBox, NULL, addr OverflowMul, addr OverflowMul, MB_OK" + '\n';
+		errores = errores + "invoke ExitProcess, 0" + '\n';
+		errores = errores + labelEnd + ":" + '\n';
 		errores = errores + "invoke ExitProcess, 0" + '\n';
 		bw.write(errores);
 		bw.write( "end start" );
