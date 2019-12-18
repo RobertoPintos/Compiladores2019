@@ -547,10 +547,10 @@ public class Controller {
 					String tipo2 = tablaDeSimbolo.get(s2).getTipo();	
 					if (uso2.equals("Atributo de clase") && deClase2.equals(tipo)) {
 						if (tipo2.equals("int"))
-							asm = asm + s +  "_" + s2 + " DW " + valor +'\n';
+							asm = asm + "_" + s +  "_" + s2 + " DW " + valor +'\n';
 						else 
 							if (tipo2.equals("float")) 
-								asm = asm + s + "_" + s2 + " DD " + valor +'\n';
+								asm = asm + "_" + s + "_" + s2 + " DD " + valor +'\n';
 					}
 				}	
 			} else

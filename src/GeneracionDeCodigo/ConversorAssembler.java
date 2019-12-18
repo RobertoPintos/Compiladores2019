@@ -62,9 +62,14 @@ public class ConversorAssembler {
 		data = data + "DividirCero DB \"Error al dividir por cero!\", 0" + '\n';
 		data = data + "OverflowSuma DB \"Error por overflow en suma!\", 0" + '\n';
 		data = data + "OverflowMul DB \"Error por overflow en multiplicacion!\", 0" + '\n';
+		data = data + "_min_float_neg DD -32768.0" + '\n'; 				// BIEN DECLARADOS ESTOS 4??
+		data = data + "_max_float_neg DD -32768.0" + '\n';
+		data = data + "_min_float_pos DD 32767.0" + '\n';
+		data = data + "_max_float_pos DD 32767.0" + '\n';
 		
 		
 		data = data + '\n' + ".code"+ "\n";
+		data = data + controladorTercetos.generarAssemblerFunctions() + "\n";
 		
 		bw.write( data );
 		

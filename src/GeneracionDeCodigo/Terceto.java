@@ -12,6 +12,7 @@ public class Terceto {
 	private String auxAsoc;
 	private boolean marcaCMP;
 	private boolean marca;
+	private boolean marcaFunc;
 	private String tipoOp;
 	
 	public Terceto(String izq, String medio, String der, int nT) {
@@ -26,7 +27,7 @@ public class Terceto {
 		if (auxAsoc == null)
 			bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")";
 		else
-			bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")"+" @"+auxAsoc;			
+			bf = numTerceto + ". ("+operador+", "+op1+", "+op2+")"+" @"+auxAsoc;		
 		System.out.println(bf);
 	}
 	
@@ -72,6 +73,18 @@ public class Terceto {
 	
 	public void setMarca () {
 		marca = true;
+	}
+	
+	public boolean getMarcaFunc () {
+		return marcaFunc;
+	}
+	
+	public void setMarcaFunc () {
+		marcaFunc = true;
+	}
+	
+	public void setMarcaFunc (boolean b) {
+		marcaFunc = b;
 	}
 	
 	public String getTipoOp () {
