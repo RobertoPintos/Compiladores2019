@@ -93,11 +93,13 @@ public class prueba {
 	        }
       
         	controlador.mostrarTablaSimbolos(f);
+        	tc.mostrarTercetos(f);
         	controlador.mostrarListaTokens(f);
         	controlador.getEstructuras(f);
         	controlador.mostrarWarnings(f);
         	controlador.mostrarErrores(f);
         	conversor.mostrarErrores(f);
+        	tc.printTercetos();
         	System.out.println("----");
         	System.out.println("----");
         	System.out.println("Assembler:");
@@ -105,7 +107,7 @@ public class prueba {
         	System.out.println(controlador.generarAssemblerTS());
         	System.out.println(".code");        	
         	System.out.println(tc.generarAssembler());
-        	tc.printTercetos();
+        	
         	//if (controlador.hayErrores() || conversor.hayErroresCI())
         		//JOptionPane.showMessageDialog(null, "No se genera codigo intermedio por errores en el codigo", null, JOptionPane.ERROR_MESSAGE);
         	//else

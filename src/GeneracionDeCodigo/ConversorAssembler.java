@@ -35,7 +35,7 @@ public class ConversorAssembler {
 	
 	public void generarAssembler (File r) throws IOException{
 		//controladorTercetos.generarAssembler();
-		arch = new File(r.getParent()+"\\salida.asm");
+		arch = new File(r.getParent() + "\\" + r.getName() + ".asm");
 		writeFile();
 	}
 
@@ -62,11 +62,11 @@ public class ConversorAssembler {
 		data = data + "DividirCero DB \"Error al dividir por cero!\", 0" + '\n';
 		data = data + "OverflowSuma DB \"Error por overflow en suma!\", 0" + '\n';
 		data = data + "OverflowMul DB \"Error por overflow en multiplicacion!\", 0" + '\n';
-		data = data + "_min_float_neg DD -32768.0" + '\n'; 				// BIEN DECLARADOS ESTOS 4??
-		data = data + "_max_float_neg DD -32768.0" + '\n';
-		data = data + "_min_float_pos DD 32767.0" + '\n';
-		data = data + "_max_float_pos DD 32767.0" + '\n';
-		
+		data = data + "_min_float_neg DD -3.40282347E38" + '\n';
+		data = data + "_max_float_neg DD -1.17549435E-38" + '\n';
+		data = data + "_min_float_pos DD 1.17549435E-38" + '\n';
+		data = data + "_max_float_pos DD 3.40282347E38" + '\n';
+		data = data + "_zero_float DD 0.0" + '\n';
 		
 		data = data + '\n' + ".code"+ "\n";
 		data = data + controladorTercetos.generarAssemblerFunctions() + "\n";

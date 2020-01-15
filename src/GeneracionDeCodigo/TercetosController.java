@@ -1,6 +1,10 @@
 package GeneracionDeCodigo;
 
 import Lexico.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class TercetosController {
@@ -49,7 +53,7 @@ public class TercetosController {
 	}
 
 	public Terceto getTercetoPila() {
-		return pila.get(0);
+		return pila.get(pila.size()-1);
 	}
 
 	public TercetosController getTercetosController() {
@@ -92,10 +96,10 @@ public class TercetosController {
 	}
 
 	public void removeTercetoPila() {
-		pila.remove(0);
+		pila.remove(pila.size()-1);
 	}
 
-	public String generarAssembler() {
+	public String generarAssembler() {  //METODO PARA GENERAR EL ASSEMBLER FINAL DE LOS TERCETOS
 
 		// PRIMER PASADA, MARCO BIFURCACIONES Y COMPARACIONES CON DOBLES REGISTROS
 		analizarTercetos();
@@ -300,6 +304,7 @@ public class TercetosController {
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
 							asm += "JG " + label + '\n';
+							
 
 							asm += "FLD _min_float_neg \n";
 							asm += "FLD @" + t.getAuxAsoc() + '\n';
@@ -307,6 +312,7 @@ public class TercetosController {
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
 							asm += "JL " + label;
+							
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) { // DOS VARIABLES ENTERAS
@@ -672,7 +678,7 @@ public class TercetosController {
 			if (t.getOperador().equals("FUNCTION"))
 				asm += "@FUNCTION_" + t.getOp1() + ": \n";
 			else if (t.getOperador().equals("RETURN"))
-				asm += "RET";
+				asm += "RET \n";
 			else if (t.getMarcaFunc()) {
 				if (t.getOperador().equals("PRINT")) {
 					String s = t.getOp1().replaceAll("\\s", "_");
@@ -701,6 +707,27 @@ public class TercetosController {
 				t.setMarcaFunc();
 				marco = false;
 			}
+		}
+	}
+	
+	public void mostrarTercetos(File f) {
+		try {
+			FileWriter fwriter = new FileWriter(f, true);
+			PrintWriter writer = new PrintWriter(fwriter);
+			writer.println("-----------------------------------");
+			writer.println("-----------------------------------");
+			writer.println("Lista de tercetos:");
+			for (Terceto t: tercetos) {
+				String bf = "";
+				if (t.getAuxAsoc() == null)
+					bf = t.getNumTerceto() + ". ("+t.getOperador()+", "+t.getOp1()+", "+t.getOp2()+")";
+				else
+					bf = t.getNumTerceto() + ". ("+t.getOperador()+", "+t.getOp1()+", "+t.getOp2()+")"+ "@"+t.getAuxAsoc();	
+				writer.println(bf);
+			}
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
 		}
 	}
 }
