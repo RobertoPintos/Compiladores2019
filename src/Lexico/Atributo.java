@@ -7,6 +7,7 @@ public class Atributo {
 	private Object valor;
 	private String deClase;
 	private String clasePadre;
+	private String visibilidad;
 	private int cantRef;
 	
 	public Atributo (String t, String u, Object v, String dc, String cp, int cr){
@@ -16,6 +17,7 @@ public class Atributo {
 		this.deClase = dc;
 		this.clasePadre = cp;
 		this.cantRef = cr;
+		this.visibilidad = "-";
 	}
 
 	public String getTipo() {
@@ -72,5 +74,13 @@ public class Atributo {
 	
 	public void decrementoCantRef () {
 		this.cantRef--;
+	}
+	
+	public void setVisibilidad (String v) {
+		this.visibilidad = v;
+	}
+	
+	public String getVisibilidad () {
+		return visibilidad;
 	}
 }

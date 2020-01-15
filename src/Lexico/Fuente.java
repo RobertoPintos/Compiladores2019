@@ -2,7 +2,7 @@ package Lexico;
 
 public class Fuente {
 	
-    static final char saltoLinea = '\n';  //TENEMOS QUE VER COMO TOMAMOS EL SALTO DE LINEA, SI COMO CARACTER UNICO O COMO /N
+    static final char saltoLinea = '\n';
     static final char finArch = '$';
     public int linea;
     private static char actual; 

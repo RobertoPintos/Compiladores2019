@@ -125,8 +125,8 @@ tipo : FLOAT { System.out.println("Viene una variable tipo FLOAT");}
    	 								existeClase = false;}
      ;
 
-visibilidad : PUBLIC
-		 	| PRIVATE
+visibilidad : PUBLIC { visibilidad = "public"; }
+		 	| PRIVATE { visibilidad = "private"; }
 		 	;
 
 sentencias_ejecutables : BEGIN bloque_sentencias END ';'
@@ -155,7 +155,7 @@ invocacion_metodo_clase : ID '.' ID '(' ')' ';' { if (esObjeto(((Token)$1.obj).g
 														} else
 															assembler.getConversorAssembler().addErrorCI("Se trato de invocar a un metodo inexistente", lexico.getLexico().getNroLinea());
 												  else
-												  		assembler.getConversorAssembler().addErrorCI("No existe la clase asociada al metodo", lexico.getLexico().getNroLinea());			
+												  		assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());			
 												}
 						| error_inv_metodo_clase
 						;
@@ -179,13 +179,13 @@ error_print : PRINT error CADENA ')' ';' {lexico.getLexico().addError("Falta el 
 	        ;
 
 
-iteracion   : WHILE '(' condicion ')' {apilarTercetoIncompletoWHILE();} DO bloque_anidado {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");
-																																										   apilarTercetoIncompletoWHILE();
-																																								cmp1 = false; cmp2 = false; condStart = 0;}
-			| WHILE condicion ')' DO bloque_anidado {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
-			| WHILE '(' condicion DO bloque_anidado {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
-	   		| WHILE '(' condicion ')' bloque_anidado {lexico.getLexico().addError("Falta la palabra DO en la iteracion", lexico.getLexico().getNroLinea());}
-			;
+iteracion   : WHILE { guardarNumCondicion(); } '(' condicion ')' {apilarTercetoIncompletoWHILE();} DO bloque_anidado_while { lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");
+																															cmp1 = false; cmp2 = false; condStart = 0;}
+			| error_iteracion
+			;																																							   
+																																								
+error_iteracion : WHILE error condicion ')' DO bloque_anidado_while {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
+				;
 
 condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 cmp1 = true;}												comparador expresion { if (genCodigo.getTercetosController().getTercetoExp() != null)
@@ -193,6 +193,11 @@ condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() !
 																												addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());}
            	;
 
+bloque_anidado_while  : sentencia { completarTercetoFinalWHILE(); }
+				      | BEGIN bloque_sentencias END { completarTercetoFinalWHILE(); }
+				      | BEGIN bloque_sentencias error {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+				      | error bloque_sentencias END {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
+				      ;
 
 
 comparador 	: '<'
@@ -205,24 +210,24 @@ comparador 	: '<'
             ;
 
 seleccion : if_condicion END_IF {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF");
-																														   completarTercetoFinalIF();
+																														   desapilarYCompletar();
 																										   cmp1 = false; cmp2 = false; condStart = 0;}
-          | if_condicion {apilarTercetoIncompletoIF();} ELSE bloque_anidado END_IF {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF con ELSE");
-          																																											   completarTercetoFinalIF();
-          																																											  cmp1 = false; cmp2 = false;}
+          | if_condicion {completarTercetoFinalIF();} ELSE bloque_anidado_if END_IF {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF con ELSE");
+          																																											   desapilarYCompletar();
+          																																							condStart = 0; cmp1 = false; cmp2 = false;}
           ;
 
-if_condicion : IF '(' condicion ')' {apilarTercetoIncompletoIF();} bloque_anidado 
-             | IF condicion ')' bloque_anidado {lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
-             | IF '(' condicion  bloque_anidado {lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
-             | IF condicion bloque_anidado {lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
+if_condicion : IF '(' condicion ')' {apilarTercetoIncompletoIF();} bloque_anidado_if 
+             | IF condicion ')' bloque_anidado_if {lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
+             | IF '(' condicion  bloque_anidado_if {lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
+             | IF condicion bloque_anidado_if {lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
              ;
 
-bloque_anidado  : sentencia
-				| BEGIN bloque_sentencias END
-				| BEGIN bloque_sentencias error {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
-				| error bloque_sentencias END {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
-				;
+bloque_anidado_if  : sentencia
+				   | BEGIN bloque_sentencias END
+				   | BEGIN bloque_sentencias error {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+				   | error bloque_sentencias END {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
+				   ;
 
 asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
@@ -273,10 +278,24 @@ termino : termino '*' factor {
         ;
 
 factor  : ID {System.out.println("Cargo un identificador");}
-		| ID '.' ID {if (estaDeclarada(((Token)$3.obj).getLexema()))
-						if (estaDeclarada(((Token)$1.obj).getLexema()))
-							System.out.println("Cargue la variable "+((Token)$3.obj).getLexema()+" de la clase "+((Token)$1.obj).getLexema());
-							guardarAtClase(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());}
+		| ID '.' ID {if (estaDeclarada(((Token)$1.obj).getLexema()))
+						if (esObjeto(((Token)$1.obj).getLexema()))
+							if (estaDeclarada(((Token)$3.obj).getLexema())) {
+								if (esAtributoClase(((Token)$3.obj).getLexema())) {
+									if (checkVisibilidad(((Token)$3.obj).getLexema())) {
+										guardarAtClase(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+										System.out.println("Cargue la variable "+((Token)$3.obj).getLexema()+" de la clase "+((Token)$1.obj).getLexema());
+									} else
+										assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
+								} else
+									assembler.getConversorAssembler().addErrorCI("El elemento no es un atributo de clase", lexico.getLexico().getNroLinea());
+							} else
+								assembler.getConversorAssembler().addErrorCI("Atributo de clase no declarado", lexico.getLexico().getNroLinea());
+						else
+							assembler.getConversorAssembler().addErrorCI("El elemento utilizado no es un objeto", lexico.getLexico().getNroLinea());
+					 else
+						assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());					 	
+					}	
 		| cte {System.out.println("Paso de cte a factor");}
 		;
 
@@ -310,6 +329,7 @@ private String a1 = "";
 private boolean atclase2 = false;
 private String c2 = "";
 private String a2 = "";
+private String visibilidad = "-";
 
 
 private Controller lexico;
@@ -345,23 +365,24 @@ public void addVariableTS (String type) {
 	for (Token t : listaVar) {
 		if (classFlag == true) {
 			if (type.equals("int"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0, className, "-");
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0, className, "-", visibilidad);
 			else if (type.equals("float"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0.0, className, "-");	
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Atributo de clase", 0.0, className, "-", visibilidad);	
 		} else {
 			if (set)
 				if (existeClase)
-					lexico.getLexico().addVarTS(t.getLexema(), type, "Objeto", 0, type, "-");
+					lexico.getLexico().addVarTS(t.getLexema(), type, "Objeto", 0, type, "-", visibilidad);
 				else
 					lexico.getLexico().addError("La clase del objeto no esta declarada", lexico.getLexico().getNroLinea());
 			else {
 			if (type.equals("int"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, "-", "-");
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0, "-", "-", visibilidad);
 			else if (type.equals("float"))
-				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, "-", "-");	
+				lexico.getLexico().addVarTS(t.getLexema(), type, "Variable", 0.0, "-", "-", visibilidad);	
 			}
 		}
-	}	
+	}
+	visibilidad = "-";	
 	removeVars();
 	set = false;
 	existeClase = false;
@@ -387,7 +408,10 @@ public void addClaseTS(String lex) {
 
 public void addClaseHeredadaTS(String lex, String lex2){
 	if (!esClase(lex))
-		lexico.getLexico().addClassHeredadaTS(lex,lex2);
+		if (esClase (lex2))
+			lexico.getLexico().addClassHeredadaTS(lex,lex2);
+		else
+			assembler.getConversorAssembler().addErrorCI("Clase padre no declarada", lexico.getLexico().getNroLinea());
 	else
 		assembler.getConversorAssembler().addErrorCI("Clase ya declarada anteriormente", lexico.getLexico().getNroLinea());
 }
@@ -397,6 +421,7 @@ public void addMetodoTS(String vis, String lex) {
 		lexico.getLexico().addMethodTS(vis, lex, className);
 	else
 		assembler.getConversorAssembler().addErrorCI("Metodo ya declarado anteriormente", lexico.getLexico().getNroLinea());
+	visibilidad = "-";
 }
 
 private void actualizarTablaDeSimbolosCte(String lexema, String nuevoLexema, Atributo atr){
@@ -647,7 +672,7 @@ private void asociarVarAuxTerceto (Terceto t, String tipo) {
 
 	String nAux = genCodigo.getTercetosController().getNombreNextAux();
 	t.setAuxAsoc(nAux);
-	lexico.getLexico().addVarTS(nAux, tipo, "Variable auxiliar", 0, "-", "-");
+	lexico.getLexico().addVarTS(nAux, tipo, "Variable auxiliar", 0, "-", "-", visibilidad);
 }			
 
 public void cambiarTercetos () {
@@ -717,45 +742,60 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 
 public void apilarTercetoIncompletoIF () {
 	
-	if (genCodigo.getTercetosController().isPilaEmpty()) {
 		Terceto t = new Terceto ("BF", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", "-", genCodigo.getTercetosController().getCantTercetos()+1);
 		genCodigo.getTercetosController().addTercetoLista(t);
 		genCodigo.getTercetosController().apilarTerceto(t);
-	} else {
+		
+}
+
+public void completarTercetoFinalIF () {
+
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
+		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
 		Terceto BI = new Terceto ("BI", "-", "-", genCodigo.getTercetosController().getCantTercetos()+1);
 		genCodigo.getTercetosController().addTercetoLista(BI);
 		genCodigo.getTercetosController().apilarTerceto(BI);
-	}
+
 }
 
-public void completarTercetoFinalIF () {
+public void desapilarYCompletar () {
 
-	if (!genCodigo.getTercetosController().isPilaEmpty()) {
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
+		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+1)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
-	}
+		
+}
+
+public void guardarNumCondicion () {
+
+		Terceto aux = new Terceto ("-", "-", "-", genCodigo.getTercetosController().getCantTercetos()+1);
+		genCodigo.getTercetosController().apilarTerceto(aux);
 }
 
 public void apilarTercetoIncompletoWHILE () {
 
-	if (genCodigo.getTercetosController().isPilaEmpty()) {
 		Terceto t = new Terceto ("BF", "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", "-", genCodigo.getTercetosController().getCantTercetos()+1);
 		genCodigo.getTercetosController().addTercetoLista(t);
 		genCodigo.getTercetosController().apilarTerceto(t);
-	} else {
+
+}
+
+public void completarTercetoFinalWHILE () {
+		
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
+		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
-		Terceto BI = new Terceto ("BI", "-", "["+condStart+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+		Terceto aux2 = genCodigo.getTercetosController().getTercetoPila();
+		Terceto BI = new Terceto ("BI", "-", "["+aux2.getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 		genCodigo.getTercetosController().addTercetoLista(BI);
-	}
+		genCodigo.getTercetosController().removeTercetoPila();
 }
 
 private boolean chequeoTipo(String var1, String var2){
@@ -771,8 +811,9 @@ private boolean chequeoTipo(String var1, String var2){
 private boolean estaDeclarada(String lex) {
 	
 	if (lexico.getLexico().getTS().containsKey(lex))
-		return true;
-	else return false;
+			return true;
+	else 
+		return false;
 }
 
 public boolean existeVar(Token t){
@@ -816,6 +857,24 @@ private boolean esObjeto(String lex) {
 	return existe;
 }
 
+private boolean esAtributoClase(String lex) {
+	boolean existe = false;
+	Atributo a = lexico.getLexico().getTS().get(lex);
+	if (a != null)
+		if (a.getUso().equals("Atributo de clase"))
+			existe = true;
+	return existe;
+}
+
+private boolean checkVisibilidad(String lex) {
+	boolean existe = false;
+	Atributo a = lexico.getLexico().getTS().get(lex);
+	if (a != null)
+		if (a.getVisibilidad().equals("public") || a.getVisibilidad().equals("-"))
+			existe = true;
+	return existe;
+}
+
 private static boolean isInteger(String s) {
     try { 
         Integer.parseInt(s); 
@@ -847,16 +906,15 @@ private void addTercetoFinal () {
 }
 
 private void guardarAtClase (String clase, String at) {
-
-	if (!this.atclase1) {
-		this.c1 = clase;
-		this.a1 = at;
-		this.atclase1 = true;
-	} else {
-		this.c2 = clase;
-		this.a2 = at;
-		this.atclase2 = true;	
-	}
+		if (!this.atclase1) {
+			this.c1 = clase;
+			this.a1 = at;
+			this.atclase1 = true;
+		} else {
+			this.c2 = clase;
+			this.a2 = at;
+			this.atclase2 = true;	
+		}
 }
 
 private void resetAtClase () {

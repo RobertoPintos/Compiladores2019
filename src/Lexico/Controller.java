@@ -349,11 +349,12 @@ public class Controller {
 			 	}
 	}
 	
-	public void addVarTS (String lex, String t, String u, Object v, String dc, String cp) {
+	public void addVarTS (String lex, String t, String u, Object v, String dc, String cp, String visibilidad) {
 		if (tablaDeSimbolo.containsKey(lex)) 
 			System.out.println("La variable "+lex+" ya existe.");
 		else {
 			Atributo a = new Atributo(t, u, v, dc, cp, 1);
+			a.setVisibilidad(visibilidad);
 			tablaDeSimbolo.put(lex, a);
 		}
 	}
@@ -380,7 +381,8 @@ public class Controller {
 		if (tablaDeSimbolo.containsKey(lex)) 
 			System.out.println("El metodo "+lex+" ya existe.");
 		else {
-			Atributo a = new Atributo(visibilidad+" void", "Metodo de clase", "-", cn, "-", 1);
+			Atributo a = new Atributo("void", "Metodo de clase", "-", cn, "-", 1);
+			a.setVisibilidad(visibilidad);
 			tablaDeSimbolo.put(lex, a);
 		}
 	}
@@ -455,8 +457,9 @@ public class Controller {
 				Object valor = tablaDeSimbolo.get(s).getValor();
 				String declase = tablaDeSimbolo.get(s).getDeClase();
 				String clasePadre = tablaDeSimbolo.get(s).getClasePadre();
+				String visibilidad = tablaDeSimbolo.get(s).getVisibilidad();
 				int cantRef = tablaDeSimbolo.get(s).getCantRef();
-				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+" ,cantref: "+cantRef);
+				writer.println("Lexema: "+s+", tipo: "+tipo+", uso: "+uso+", valor: "+valor+", de Clase: "+declase+", Clase Padre: "+clasePadre+ ", visibilidad: " + visibilidad + ", cantref: "+cantRef);
 			}
 			writer.close();
 		} catch (Exception e) {
@@ -576,7 +579,12 @@ public class Controller {
 								}
 							}
 						}
-		}
+				else
+					if (tipo.equals("int"))
+						asm = asm + "_" + s + " DW " + valor +'\n';
+					else 
+						if (tipo.equals("float")) 
+							asm = asm + "_" + s + " DD " + valor +'\n';		}
     	return asm;
     }
 
