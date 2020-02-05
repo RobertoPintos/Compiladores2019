@@ -68,7 +68,7 @@ public class prueba {
        
         	Fuente archivo = new Fuente(codigo);
         	Controller controlador = new Controller(archivo);
-            TercetosController tc = new TercetosController();
+            TercetosController tc = new TercetosController(controlador);
             ConversorAssembler conversor = new ConversorAssembler(tc, controlador);
 
         	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.

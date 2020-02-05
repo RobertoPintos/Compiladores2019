@@ -751,7 +751,6 @@ public void apilarTercetoIncompletoIF () {
 public void completarTercetoFinalIF () {
 
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
@@ -764,7 +763,6 @@ public void completarTercetoFinalIF () {
 public void desapilarYCompletar () {
 
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+1)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
@@ -788,7 +786,6 @@ public void apilarTercetoIncompletoWHILE () {
 public void completarTercetoFinalWHILE () {
 		
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
