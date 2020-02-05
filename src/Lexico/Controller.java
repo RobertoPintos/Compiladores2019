@@ -571,6 +571,7 @@ public class Controller {
 						else {
 							if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
 								String s3 = s.replace('.', '_');
+								s3 = s3.replace('-', '_');
 								asm = asm + "_" + s3 + " DD " + valor +'\n';
 							} else {
 								if (tipo.equals("CHARSEQ")) {
@@ -584,7 +585,8 @@ public class Controller {
 						asm = asm + "_" + s + " DW " + valor +'\n';
 					else 
 						if (tipo.equals("float")) 
-							asm = asm + "_" + s + " DD " + valor +'\n';		}
+							asm = asm + "_" + s + " DD " + valor +'\n'; 
+			}
     	return asm;
     }
 

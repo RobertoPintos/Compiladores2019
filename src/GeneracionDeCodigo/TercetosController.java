@@ -17,8 +17,9 @@ public class TercetosController {
 	private ArrayList<Terceto> pila;
 	private ArrayList<String> auxiliares;
 	private HashMap<Integer, String> bifurcaciones;
+	static Controller controller;
 
-	public TercetosController() {
+	public TercetosController(Controller c) {
 		tercetos = new ArrayList<Terceto>();
 		tercetoTerm = null;
 		tercetoExp = null;
@@ -26,6 +27,7 @@ public class TercetosController {
 		cantTercetos = 0;
 		auxiliares = new ArrayList<String>();
 		bifurcaciones = new HashMap<>();
+		this.controller = c; 
 	}
 
 	public void printTercetos() {
@@ -248,7 +250,7 @@ public class TercetosController {
 			if (!estatica.equals("")) { // SI ES ALGUNA OPERACION ARITMETICA, ENTRO ACA
 				// CASO 1: (OP, VAR, VAR)
 				if ((!t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-					if (estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
+					if (estatica.equals("DIV") || estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", _" + t.getOp2() + '\n';
@@ -256,11 +258,14 @@ public class TercetosController {
 							asm += "JE LabelDivCero \n";
 
 							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+							asm += "CWD \n";
 							asm += estatica + " _" + t.getOp2() + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // CASO DOS VARIABLES FLOTANTES
 							String s1 = t.getOp1().replace(".", "_");
 							String s2 = t.getOp2().replace(".", "_");
+							s1 = s1.replace('-', '_');
+							s2 = s2.replace('-', '_');
 							asm += "FLD _" + s2 + '\n';
 							asm += "FTST \n";
 							asm += "FSTSW AX \n";
@@ -287,13 +292,15 @@ public class TercetosController {
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
-							asm += estatica + " _" + t.getOp2() + '\n';
+							asm += estatica + " " + reg + ", _" + t.getOp2() + '\n';
 							asm += "JO " + label + "\n";
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 
 						} else { // CASO DOS VARIABLES FLOTANTES
 							String s1 = t.getOp1().replace(".", "_");
 							String s2 = t.getOp2().replace(".", "_");
+							s1 = s1.replace('-', '_');
+							s2 = s2.replace('-', '_');
 							asm += "FLD _" + s1 + '\n';
 							asm += "F" + estatica + " _" + s2 + '\n';
 							asm += "FSTP @" + t.getAuxAsoc() + '\n';
@@ -303,7 +310,7 @@ public class TercetosController {
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JG " + label + '\n';
+							asm += "JA " + label + '\n';
 							
 
 							asm += "FLD _min_float_neg \n";
@@ -311,7 +318,7 @@ public class TercetosController {
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JL " + label;
+							asm += "JB " + label;
 							
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
@@ -322,6 +329,8 @@ public class TercetosController {
 					} else { // CASO DOS VARIABLES FLOTANTES
 						String s1 = t.getOp1().replace(".", "_");
 						String s2 = t.getOp2().replace(".", "_");
+						s1 = s1.replace('-', '_');
+						s2 = s2.replace('-', '_');
 						asm += "FLD _" + s1 + '\n';
 						asm += "F" + estatica + " _" + s2 + '\n';
 						asm += "FSTP @" + t.getAuxAsoc();
@@ -329,7 +338,7 @@ public class TercetosController {
 				}
 				// CASO 2: (OP, TERCETO, VAR)
 				if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-					int idTerceto = Integer.parseInt(t.getOp1().substring(1, 2)) - 1;
+					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
 					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 					if (estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
@@ -339,10 +348,12 @@ public class TercetosController {
 							asm += "JE LabelDivCero \n";
 
 							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
+							asm += "CWD \n";
 							asm += estatica + " _" + t.getOp2() + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // CASO DOS VARIABLES FLOTANTES
 							String s2 = t.getOp2().replace(".", "_");
+							s2 = s2.replace('-', '_');
 							asm += "FLD _" + s2 + '\n';
 							asm += "FTST \n";
 							asm += "FSTSW AX \n";
@@ -375,6 +386,7 @@ public class TercetosController {
 
 						} else { // CASO VARIABLES FLOTANTES
 							String s2 = t.getOp2().replace(".", "_");
+							s2 = s2.replace('-', '_');
 							asm += "FLD @" + nombreVarAsoc + '\n';
 							asm += "F" + estatica + " _" + s2 + '\n';
 							asm += "FSTP @" + t.getAuxAsoc() + '\n';
@@ -384,14 +396,14 @@ public class TercetosController {
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JG " + label + '\n';
+							asm += "JA " + label + '\n';
 
 							asm += "FLD _min_float_neg \n";
 							asm += "FLD @" + t.getAuxAsoc() + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JL " + label;
+							asm += "JB " + label;
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					// CASO VAR ENTERA
@@ -401,6 +413,7 @@ public class TercetosController {
 						asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 					} else { // CASO VAR FLOAT
 						String s2 = t.getOp2().replace(".", "_");
+						s2 = s2.replace('-', '_');
 						asm += "FLD @" + nombreVarAsoc + '\n';
 						asm += "F" + estatica + " _" + s2 + '\n';
 						asm += "FSTP @" + t.getAuxAsoc();
@@ -408,7 +421,7 @@ public class TercetosController {
 				}
 				// CASO 3: (OP, VAR, TERCETO)
 				if ((!t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-					int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2)) - 1;
+					int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 					if (estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// VAR ENTERA
@@ -418,10 +431,12 @@ public class TercetosController {
 							asm += "JE LabelDivCero \n";
 
 							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+							asm += "CWD \n";
 							asm += estatica + " @" + nombreVarAsoc + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // VAR FLOAT
 							String s1 = t.getOp1().replace(".", "_");
+							s1 = s1.replace('-', '_');
 							asm += "FLD @" + nombreVarAsoc + '\n';
 							asm += "FTST \n";
 							asm += "FSTSW AX \n";
@@ -454,6 +469,7 @@ public class TercetosController {
 
 						} else { // CASO VARIABLES FLOTANTES
 							String s1 = t.getOp1().replace(".", "_");
+							s1 = s1.replace('-', '_');
 							asm += "FLD _" + s1 + '\n';
 							asm += "F" + estatica + " _" + nombreVarAsoc + '\n';
 							asm += "FSTP @" + t.getAuxAsoc() + '\n';
@@ -463,14 +479,14 @@ public class TercetosController {
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JG " + label + '\n';
+							asm += "JA " + label + '\n';
 
 							asm += "FLD _min_float_neg \n";
 							asm += "FLD @" + t.getAuxAsoc() + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JL " + label;
+							asm += "JB " + label;
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					// CASO VAR ENTERA
@@ -480,6 +496,7 @@ public class TercetosController {
 						asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 					} else {// CASO VAR FLOAT
 						String s1 = t.getOp1().replace(".", "_");
+						s1 = s1.replace('-', '_');
 						asm += "FLD _" + s1 + '\n';
 						asm += "F" + estatica + " @" + nombreVarAsoc + '\n';
 						asm += "FSTP @" + t.getAuxAsoc();
@@ -487,8 +504,8 @@ public class TercetosController {
 				}
 				// CASO 4: (OP, TERCETO, TERCETO)
 				if ((t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-					int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, 2)) - 1;
-					int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, 2)) - 1;
+					int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
+					int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 					String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
 					String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
 					if (estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
@@ -499,6 +516,7 @@ public class TercetosController {
 							asm += "JE LabelDivCero \n";
 
 							asm += "MOV " + reg + ", @" + nombreVarAsoc1 + '\n';
+							asm += "CWD \n";
 							asm += estatica + " @" + nombreVarAsoc2 + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // VAR FLOAT
@@ -542,14 +560,14 @@ public class TercetosController {
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JG " + label + '\n';
+							asm += "JA " + label + '\n';
 
 							asm += "FLD _min_float_neg \n";
 							asm += "FLD @" + t.getAuxAsoc() + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF \n";
-							asm += "JL " + label;
+							asm += "JB " + label;
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					// CASO TERCETOS ENTEROS
@@ -569,6 +587,8 @@ public class TercetosController {
 				if (t.getOperador().equals(":=")) {
 					String aux1 = t.getOp1().replace(".", "_");
 					String aux2 = t.getOp2().replace(".", "_");
+					aux1 = aux1.replace('-', '_');
+					aux2 = aux2.replace('-', '_');
 					// CASO 1: (OP, VAR, VAR)
 					if ((!t.getOp2().startsWith("["))) {
 						// CASO VARIABLES ENTERAS
@@ -577,13 +597,14 @@ public class TercetosController {
 							asm += "MOV _" + aux1 + ", " + reg;
 						} else { // CASO VARIABLES FLOTANTES
 							String f = t.getOp2().replace(".", "_");
+							f = f.replace('-', '_');
 							asm += "FLD _" + f + '\n';
 							asm += "FSTP _" + aux1;
 						}
 					}
 					// CASO 2: (OP, VAR, TERCETO)
 					if ((t.getOp2().startsWith("["))) {
-						int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2)) - 1;
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 						// CASO VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
@@ -604,9 +625,9 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm = "CMP AX, BX";
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, 2)) - 1;
+							int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
-							int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, 2)) - 1;
+							int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
 							asm += "FLD @" + nombreVarAsoc1 + '\n';
 							asm += "FLD @" + nombreVarAsoc2 + '\n';
@@ -619,10 +640,12 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm = "CMP AX, _" + t.getOp2();
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto = Integer.parseInt(t.getOp1().substring(1, 2)) - 1;
+							int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-							asm += "FLD _" + nombreVarAsoc + '\n';
-							asm += "FLD @" + t.getOp2() + '\n';
+							String s2 = t.getOp1().replace('.', '_');
+							s2 = s2.replace('-', '_');
+							asm += "FLD _" + s2 + '\n';
+							asm += "FLD @" + nombreVarAsoc + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF";
@@ -632,9 +655,11 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm = "CMP _" + t.getOp1() + ", AX";
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto = Integer.parseInt(t.getOp2().substring(1, 2)) - 1;
+							int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-							asm += "FLD _" + t.getOp1() + '\n';
+							String s1 = t.getOp1().replace('.', '_');
+							s1 = s1.replace('-', '_');
+							asm += "FLD _" + s1 + '\n';
 							asm += "FLD @" + nombreVarAsoc + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
@@ -646,8 +671,12 @@ public class TercetosController {
 							asm = "MOV AX, _" + t.getOp1() + '\n';
 							asm = asm + "CMP AX, _" + t.getOp2();
 						} else { // VAR/CONST FLOAT
-							asm += "FLD _" + t.getOp1() + '\n';
-							asm += "FLD _" + t.getOp2() + '\n';
+							String s1 = t.getOp1().replace('.', '_');
+							String s2 = t.getOp2().replace('.', '_');
+							s1 = s1.replace('-', '_');
+							s2 = s2.replace('-', '_');
+							asm += "FLD _" + s1 + '\n';
+							asm += "FLD _" + s2 + '\n';
 							asm += "FCOMPP \n";
 							asm += "FSTSW AX \n";
 							asm += "SAHF";
@@ -663,12 +692,66 @@ public class TercetosController {
 			asm += "JMP LabelEnd";
 		else if (t.getOperador().equals("CALL")) {
 			int aux = t.getOp1().indexOf('@');
+			String instancia = t.getOp1().substring(aux+1, t.getOp1().length());
+			boolean intercambio = false;
+			if (hasAtributosAsociados(instancia)) {
+				asm += intercambioAtributos(instancia, intercambio);
+				intercambio = true;
+			}
 			String aux2 = t.getOp1().substring(0, aux);
 			asm += "CALL @FUNCTION_" + aux2;
+			if (intercambio)
+				asm += '\n' + intercambioAtributos(instancia, intercambio);
 		}
 		return asm;
 	}
 
+	
+	private boolean hasAtributosAsociados (String inst) {
+		
+		boolean result = false;
+		HashMap <String,Atributo> tablaSimb = controller.getTS();
+		String type = tablaSimb.get(inst).getTipo();
+		for (String s: tablaSimb.keySet()) {
+			String uso2 = tablaSimb.get(s).getUso();
+			String deClase2 = tablaSimb.get(s).getDeClase();
+			if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+	
+	private String intercambioAtributos (String inst, boolean interc) {
+		
+		String asm = "";
+		if (!interc) {
+			HashMap <String,Atributo> tablaSimb = controller.getTS();
+			String type = tablaSimb.get(inst).getTipo();
+			for (String s: tablaSimb.keySet()) {
+				String uso2 = tablaSimb.get(s).getUso();
+				String deClase2 = tablaSimb.get(s).getDeClase();
+				if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+					asm += "MOV AX, _" + inst + "_" + s + '\n';
+					asm += "MOV _" + s + ", AX \n"; 
+				}	
+			}
+		} else {
+			HashMap <String,Atributo> tablaSimb = controller.getTS();
+			String type = tablaSimb.get(inst).getTipo();
+			for (String s: tablaSimb.keySet()) {
+				String uso2 = tablaSimb.get(s).getUso();
+				String deClase2 = tablaSimb.get(s).getDeClase();
+				if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+					asm += "MOV AX, _" + s + '\n';
+					asm += "MOV _" + inst + "_" + s + ", AX \n"; 
+				}	
+			}
+			asm = asm.substring(0, asm.length()-2);
+		}
+		return asm;
+	}
+	
 	public String generarAssemblerFunctions() {
 
 		analizarTercetosFunctions();
