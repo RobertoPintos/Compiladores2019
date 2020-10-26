@@ -94,4 +94,12 @@ public class Terceto {
 	public void setTipoOp (String t) {
 		tipoOp = t;
 	}
+	
+	public void setOp1 (String o) {
+		op1 = o;
+	}
+	
+	public void setOp2 (String o) {
+		op2 = o;
+	}
 }

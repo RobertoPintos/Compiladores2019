@@ -177,13 +177,20 @@ public class Controller {
 		while (!codigoFuente.hasFinished() && !(estado == 500)) {
 			char leido = codigoFuente.getChar();
 			int col = getColumna(leido);
-			AccSemantica as = matAS[estado][col];
-			as.ejecutar(leido, this);
-			if (estado != 500) {
-				estado = matEstados[estado][col];
-				codigoFuente.siguiente();
-			} else {
-				codigoFuente.siguiente();
+			if (col == -1) {
+				addWarning("Token no válido.", codigoFuente.getLinea());
+				codigoFuente.siguiente();		
+			}
+			else
+			{
+				AccSemantica as = matAS[estado][col];
+				as.ejecutar(leido, this);
+				if (estado != 500) {
+					estado = matEstados[estado][col];
+					codigoFuente.siguiente();
+				} else {
+					codigoFuente.siguiente();
+				}
 			}
 		}
 		if (!codigoFuente.hasFinished()) {
@@ -467,6 +474,10 @@ public class Controller {
 		}
 	}
 	
+	public void elimVarTS (String lex) {
+		tablaDeSimbolo.remove(lex);
+	}
+	
 	public void mostrarWarnings(File f) {
 		try {
 			FileWriter fwriter = new FileWriter(f, true);
@@ -607,10 +618,8 @@ public class Controller {
 	}
 	
 	public boolean hayErrores () {
-		boolean hay = false;
 		if (errores.isEmpty())
-			hay = true;
-		else hay = false;
-		return hay;
+			return false;
+		else return true;
 	}
 }

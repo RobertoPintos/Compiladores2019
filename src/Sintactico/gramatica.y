@@ -191,7 +191,11 @@ condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() !
 							 cmp1 = true;}												comparador expresion { if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 																						cmp2 = true;
 																												addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());}
+           	| error_condicion
            	;
+           	
+error_condicion : error {lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());} expresion
+				;
 
 bloque_anidado_while  : sentencia { completarTercetoFinalWHILE(); }
 				      | BEGIN bloque_sentencias END { completarTercetoFinalWHILE(); }
@@ -202,7 +206,6 @@ bloque_anidado_while  : sentencia { completarTercetoFinalWHILE(); }
 
 comparador 	: '<'
 	   		| '>'
-	   		| '=' 
        		| C_MAYORIGUAL
 	   		| C_MENORIGUAL
 	   		| C_DISTINTO
@@ -257,10 +260,12 @@ asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema()))
 expresion 	:  expresion '+' termino {
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 									   		addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+									   		resetAtClase();
 									}
 	  		| expresion '-' termino {
 	  										lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 	  								  		addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+	  								  		resetAtClase();
 	  								}
       		| termino {System.out.println("Paso de termino a expresion");
       												   cambiarTercetos();}   
@@ -268,11 +273,13 @@ expresion 	:  expresion '+' termino {
 
 termino : termino '*' factor {
 										 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
-										 addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());		 
+										 addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());		
+										 resetAtClase(); 
 							 }
 		| termino '/' factor {
-								   lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
-								   addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+								  		 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+									     addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+									     resetAtClase();
 							 } 
 		| factor { System.out.println("Paso factor a termino");}
         ;
@@ -569,50 +576,191 @@ public void addTercetoAsignacionVarClase (String op1, String op2, String clase) 
 }
 
 public void addTercetoTermino (String operando, String op1, String op2) {
-		System.out.println(op2);
+		//SI NO HAY OPERACION PREVIA
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op1))
-				if(estaDeclarada(op2)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+			//SI ES OPERACION ENTRE DOS ATRIBUTOS DE CLASE
+			if (atclase1 && atclase2) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoTerm(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-				} else
-					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
-			else 
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+			} else {
+				if (atclase1) {
+					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
+					if (esObjeto(op1)) {
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					} else {
+						if(estaDeclarada(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+					}
+				//SI NO ES UNA OPERACION NORMAL ENTRE DOS VARIABLES/CONSTANTES
+				} else {
+					if (estaDeclarada(op1))
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					else 
+						lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			}
+		//SI NO, ES UNA OPERACION ENTRE UN TERCETO ANTERIOR Y UNA VARIABLE/CONST/AT DE CLASE
 		} else {
-			if(estaDeclarada(op2)) {
+			if (atclase1) {
 				String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 					asociarVarAuxTerceto(t, tipo2);
 					t.setTipoOp(tipo2);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					genCodigo.getTercetosController().setTercetoTerm(t);
 				} else
 					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-			} else
-				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+			} else {
+				if(estaDeclarada(op2)) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo2);
+						t.setTipoOp(tipo2);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoTerm(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else
+					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+			}
 		}
 }
 
 public void addTercetoExpresion (String operando, String op1, String op2) {
+	//SI NO HAY OPERACION PREVIA
 	if (genCodigo.getTercetosController().getTercetoExp() == null) {
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op1))
-				if(estaDeclarada(op2)) {
+			//OPERACION ENTRE DOS AT DE CLASE
+			if (atclase1 && atclase2) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoTerm(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+			} else {
+				//OPERACION ENTRE AT DE CLASE Y VARIABLE
+				if (atclase1) {
+					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
+					if (esObjeto(op1)) {
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					} else {
+						if(estaDeclarada(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+					}
+				} else {
+					//OPERACION ENTRE DOS VARIABLES
+					if (estaDeclarada(op1))
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					else 
+						lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			}
+		} else {
+			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO TERMINO ANTERIOR
+			if (atclase1) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+				if (chequeoTipo(tipo1, tipo2)) {
+					Terceto t = new Terceto (operando, c1 + "." + a1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+					asociarVarAuxTerceto(t, tipo1);
+					t.setTipoOp(tipo1);
+					genCodigo.getTercetosController().addTercetoLista(t);
+					genCodigo.getTercetosController().setTercetoExp(t);
+				} else
+					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+			} else {
+				if (estaDeclarada(op1)) {
 					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
@@ -620,40 +768,40 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
 				} else
-					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
-			else 
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
-		} else {
-			if (estaDeclarada(op1)) {
-				String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-					asociarVarAuxTerceto(t, tipo1);
-					t.setTipoOp(tipo1);
-					genCodigo.getTercetosController().addTercetoLista(t);
-					genCodigo.getTercetosController().setTercetoExp(t);
-				} else
-					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-			} else
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+					lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+			}		
 		}
 	} else {
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op2)) {
+			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO EXPRESION ANTERIOR
+			if (atclase1) {
 				String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 					asociarVarAuxTerceto(t, tipo2);
 					t.setTipoOp(tipo2);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					genCodigo.getTercetosController().setTercetoExp(t);
 				} else
 					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-			} else 
-				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+			} else {
+				if (estaDeclarada(op2)) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo2);
+						t.setTipoOp(tipo2);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoExp(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else 
+					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+			}
 		} else {
+			//OPERACION ENTRE TERCETO TERMINO Y TERCETO EXPRESION
 			String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
 			String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 			if (chequeoTipo(tipo1, tipo2)) {	
@@ -681,7 +829,6 @@ public void cambiarTercetos () {
 } 
 
 public void addTercetoCondicion (String op1, String lex, String op2) {
-	
 	if (cmp1 == true)
 		if (cmp2 == true) {
 			String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-2).getTipoOp();
@@ -907,7 +1054,7 @@ private void guardarAtClase (String clase, String at) {
 			this.c1 = clase;
 			this.a1 = at;
 			this.atclase1 = true;
-		} else {
+		} else if (!this.atclase2) {
 			this.c2 = clase;
 			this.a2 = at;
 			this.atclase2 = true;	

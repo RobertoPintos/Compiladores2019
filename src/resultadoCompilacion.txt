@@ -1,0 +1,138 @@
+Codigo:
+float f;
+float ab_23;
+int var3;
+
+begin
+if ( x == 33)
+	begin
+	var2 := 9283;
+	var3 := -12;
+	end
+end_if
+f := .2e23;
+print(%cadena de caracteres%);
+
+while ( i < 10 ) do
+	begin
+	var2 := 123;
+	print(%chupateeta%);
+	end
+
+end;
+$
+-----------------------------------
+-----------------------------------
+Contenido de la tabla de simbolos:
+Lexema: 33, tipo: CONST INT, uso: CONST INT, valor: 33, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: 12, tipo: CONST INT, uso: CONST INT, valor: 12, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 0
+Lexema: 23, tipo: CONST INT, uso: CONST INT, valor: 23, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: 123, tipo: CONST INT, uso: CONST INT, valor: 123, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: f, tipo: float, uso: Variable, valor: 0.0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: ab_23, tipo: float, uso: Variable, valor: 0.0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: var3, tipo: int, uso: Variable, valor: 0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: 9283, tipo: CONST INT, uso: CONST INT, valor: 9283, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: -12, tipo: CONST INT, uso: CONST INT, valor: 0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: cadena de caracteres, tipo: CHARSEQ, uso: CHARSEQ, valor: 0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: 10, tipo: CONST INT, uso: CONST INT, valor: 10, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+Lexema: chupateeta, tipo: CHARSEQ, uso: CHARSEQ, valor: 0, de Clase: -, Clase Padre: -, visibilidad: -, cantref: 1
+-----------------------------------
+-----------------------------------
+Lista de tercetos:
+1. (BF, [0], [2])
+2. (END, -, -)
+3. (PRINT, cadena de caracteres, -)
+4. (BF, [3], [7])
+5. (PRINT, chupateeta, -)
+6. (BI, -, [4])
+7. (END, -, -)
+-----------------------------------
+-----------------------------------
+Lista de tokens reconocidos:
+Token obtenido: 279, lexema: float, en la linea: 1 (Palabra reservada)
+Token obtenido: 257, lexema: f, en la linea: 1
+Token obtenido: 59, lexema: ;, en la linea: 1
+Token obtenido: 279, lexema: float, en la linea: 2 (Palabra reservada)
+Token obtenido: 257, lexema: ab_23, en la linea: 2
+Token obtenido: 59, lexema: ;, en la linea: 2
+Token obtenido: 268, lexema: int, en la linea: 3 (Palabra reservada)
+Token obtenido: 257, lexema: var3, en la linea: 3
+Token obtenido: 59, lexema: ;, en la linea: 3
+Token obtenido: 269, lexema: begin, en la linea: 5 (Palabra reservada)
+Token obtenido: 265, lexema: if, en la linea: 6 (Palabra reservada)
+Token obtenido: 40, lexema: (, en la linea: 6
+Token obtenido: 257, lexema: x, en la linea: 6
+Token obtenido: 277, lexema: ==, en la linea: 6
+Token obtenido: 258, lexema: 33, en la linea: 6
+Token obtenido: 41, lexema: ), en la linea: 6
+Token obtenido: 269, lexema: begin, en la linea: 7 (Palabra reservada)
+Token obtenido: 257, lexema: var2, en la linea: 8
+Token obtenido: 261, lexema: :=, en la linea: 8
+Token obtenido: 258, lexema: 9283, en la linea: 8
+Token obtenido: 59, lexema: ;, en la linea: 8
+Token obtenido: 257, lexema: var3, en la linea: 9
+Token obtenido: 261, lexema: :=, en la linea: 9
+Token obtenido: 45, lexema: -, en la linea: 9
+Token obtenido: 258, lexema: 12, en la linea: 9
+Token obtenido: 59, lexema: ;, en la linea: 9
+Token obtenido: 270, lexema: end, en la linea: 10 (Palabra reservada)
+Token obtenido: 267, lexema: end_if, en la linea: 11 (Palabra reservada)
+Token obtenido: 257, lexema: f, en la linea: 12
+Token obtenido: 261, lexema: :=, en la linea: 12
+Token obtenido: 257, lexema: e, en la linea: 12
+Token obtenido: 258, lexema: 23, en la linea: 12
+Token obtenido: 59, lexema: ;, en la linea: 12
+Token obtenido: 271, lexema: print, en la linea: 13 (Palabra reservada)
+Token obtenido: 40, lexema: (, en la linea: 13
+Token obtenido: 259, lexema: %cadena de caracteres, en la linea: 13
+Token obtenido: 41, lexema: ), en la linea: 13
+Token obtenido: 59, lexema: ;, en la linea: 13
+Token obtenido: 272, lexema: while, en la linea: 15 (Palabra reservada)
+Token obtenido: 40, lexema: (, en la linea: 15
+Token obtenido: 257, lexema: i, en la linea: 15
+Token obtenido: 60, lexema: <, en la linea: 15
+Token obtenido: 258, lexema: 10, en la linea: 15
+Token obtenido: 41, lexema: ), en la linea: 15
+Token obtenido: 273, lexema: do, en la linea: 15 (Palabra reservada)
+Token obtenido: 269, lexema: begin, en la linea: 16 (Palabra reservada)
+Token obtenido: 257, lexema: var2, en la linea: 17
+Token obtenido: 261, lexema: :=, en la linea: 17
+Token obtenido: 258, lexema: 123, en la linea: 17
+Token obtenido: 59, lexema: ;, en la linea: 17
+Token obtenido: 271, lexema: print, en la linea: 18 (Palabra reservada)
+Token obtenido: 40, lexema: (, en la linea: 18
+Token obtenido: 259, lexema: %chupateeta, en la linea: 18
+Token obtenido: 41, lexema: ), en la linea: 18
+Token obtenido: 59, lexema: ;, en la linea: 18
+Token obtenido: 270, lexema: end, en la linea: 19 (Palabra reservada)
+Token obtenido: 270, lexema: end, en la linea: 21 (Palabra reservada)
+Token obtenido: 59, lexema: ;, en la linea: 21
+-----------------------------------
+-----------------------------------
+Se encontraron 10 estructuras gramaticales
+En la linea 1 se agrego el identificador: f
+En la linea 2 se agrego el identificador: ab_23
+En la linea 3 se agrego el identificador: var3
+En la linea 8 se agrego una asignacion
+En la linea 9 se agrego una asignacion
+En la linea 11 se agrego una condicion IF
+En la linea 13 se hizo un print
+En la linea 17 se agrego una asignacion
+En la linea 18 se hizo un print
+En la linea 19 se creo una iteracion
+-----------------------------------
+-----------------------------------
+Lista de warnings:
+-----------------------------------
+-----------------------------------
+Lista de errores:
+-La variable var2 no esta declarada. en la linea: 8
+-La variable - no esta declarada. en la linea: 9
+-Falta el END para el bloque de sentencias ejecutables. en la linea: 12
+-La variable var2 no esta declarada. en la linea: 17
+-Falta el BEGIN para el bloque de sentencias ejecutables. en la linea: 21
+-----------------------------------
+-----------------------------------
+Lista de errores en Codigo Intermedio:
+-Variable no declarada en la comparacion en la linea: 6
+-Variable no declarada en la comparacion en la linea: 15

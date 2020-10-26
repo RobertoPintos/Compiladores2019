@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,6 +26,105 @@ import GeneracionDeCodigo.*;
 public class prueba {
 	
 	private static BufferedReader codigo;
+	private static JFileChooser chooser;
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		mainr();
+	}
+	
+	 public static void mainr () {
+		 
+		Fuente archivo;
+		Controller controlador;
+		TercetosController tercetosController;
+		ConversorAssembler conversorAssembler;
+		
+		try {
+		
+			chooser = new JFileChooser();
+			String location = AppPrefs.FileLocation.get(System.getProperty("user.home"));
+		    chooser.setCurrentDirectory(new File(location));
+			int retVal = chooser.showOpenDialog(null);
+		    if (retVal != chooser.APPROVE_OPTION)
+		    	System.out.println("Archivo no encontrado.");
+		    else {
+		    	File selectedFile = chooser.getSelectedFile();
+		    	StringBuilder codigo = cargarCodigo(selectedFile);
+		    	
+				archivo = new Fuente(codigo);
+		    	controlador = new Controller(archivo);
+		    	tercetosController = new TercetosController(controlador);
+		    	conversorAssembler = new ConversorAssembler(tercetosController, controlador);
+		    
+		    	//--------------------------------------------------------------------------------
+		    	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.
+		    	System.out.println("Codigo fuente:");
+		    	System.out.println(codigo);
+		    	System.out.println("--------------------------------");
+		    	System.out.println("--------------------------------");
+		    	
+		    	Parser parser = new Parser(controlador, tercetosController, conversorAssembler);
+		        System.out.println(parser.yyparser());
+		        	    	
+		        File f = new File (selectedFile.getParent()+"\\resultadoCompilacion.txt");
+		        imprimirEnArchivo(f, codigo);
+		    	
+		  
+		    	controlador.mostrarTablaSimbolos(f);
+		    	tercetosController.mostrarTercetos(f);
+		    	controlador.mostrarListaTokens(f);
+		    	controlador.getEstructuras(f);
+		    	controlador.mostrarWarnings(f);
+		    	controlador.mostrarErrores(f);
+		    	conversorAssembler.mostrarErrores(f);
+		    	
+		    	System.out.println("----");
+		    	System.out.println("----");
+		    	System.out.println("Assembler:");
+		    	System.out.println(".data");
+		    	System.out.println(controlador.generarAssemblerTS());
+		    	System.out.println(".code");        	
+		    	System.out.println(tercetosController.generarAssembler());
+		    	
+		    	tercetosController.printTercetos();
+	
+		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
+		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código.", null, JOptionPane.ERROR_MESSAGE);
+		    	}
+		    	else
+		    	{
+	    			conversorAssembler.generarAssembler(selectedFile);
+	    			JOptionPane.showMessageDialog(null, "Archivo de salida generado exitosamente.", null, JOptionPane.INFORMATION_MESSAGE);
+		    	}
+		    }
+		} catch (Exception e) {
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+    		JOptionPane.showMessageDialog(null, "Ha habido un error. Código de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
+		}
+	 }
+	 
+	private static void imprimirEnArchivo(File f, StringBuilder codigo) {
+		try {
+			PrintWriter writer = new PrintWriter(f, "UTF-8");
+			writer.println("Codigo:");
+			writer.println(codigo);
+			writer.close();
+		} catch (Exception e) {
+    		e.printStackTrace();
+		}
+	}
+	
+	//Metodo que carga el codigo desde el archivo seleccionado en un StringBuilder
+	private static StringBuilder cargarCodigo (File inputFile) {
+    	AppPrefs.FileLocation.put(inputFile.getParentFile().getAbsolutePath());
+    	String direccion = new String(inputFile.getAbsolutePath());
+    	InputStream is = new ByteArrayInputStream(direccion.getBytes());
+    	BufferedReader bf = new BufferedReader(new InputStreamReader(is));
+    	return new StringBuilder(getCodigo(bf));
+	}
 	
 	//ESTE METODO GUARDA EL CODIGO EN UN STRINGBUILDER, AGREGANDO SALTOS DE LINEA Y EL SIMBOLO $ AL FINAL
 	private static StringBuilder getCodigo(BufferedReader ubicacion){
@@ -46,85 +146,5 @@ public class prueba {
         }
         return buffer;
     }
-	
-	 public static void mainr () {
-		
-		JFileChooser chooser = new JFileChooser();
-		String location = AppPrefs.FileLocation.get(System.getProperty("user.home"));
-	    chooser.setCurrentDirectory(new File(location));
-		int retVal = chooser.showOpenDialog(null);
-        if (retVal != chooser.APPROVE_OPTION)
-        	System.out.println("Archivo no encontrado.");
-        else {
-        	File selectedFile = chooser.getSelectedFile();
-        	AppPrefs.FileLocation.put(selectedFile.getParentFile().getAbsolutePath());
-        	String direccion = new String(selectedFile.getAbsolutePath());
-        	InputStream is = new ByteArrayInputStream(direccion.getBytes());
-        	BufferedReader bf = new BufferedReader(new InputStreamReader(is));
-        	StringBuilder codigo = null;
-        	codigo = new StringBuilder(getCodigo(bf));
-        
-      //--------------------------------------------------------------------------------
-       
-        	Fuente archivo = new Fuente(codigo);
-        	Controller controlador = new Controller(archivo);
-            TercetosController tc = new TercetosController(controlador);
-            ConversorAssembler conversor = new ConversorAssembler(tc, controlador);
-
-        	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.
-        	System.out.println("Codigo fuente:");
-        	System.out.println(codigo);
-        	System.out.println("--------------------------------");
-        	System.out.println("--------------------------------");
-        	
-        	Parser parser = new Parser(controlador, tc, conversor);
-            System.out.println(parser.yyparser());
-            
-
-        	
-            File f = new File (selectedFile.getParent()+"\\resultadoCompilacion.txt");
-        	try {
-					PrintWriter writer = new PrintWriter(f, "UTF-8");
-					writer.println("Codigo:");
-					writer.println(codigo);
-					writer.close();
-	        } catch (Exception e) {
-	        		e.printStackTrace();
-	        }
-      
-        	controlador.mostrarTablaSimbolos(f);
-        	tc.mostrarTercetos(f);
-        	controlador.mostrarListaTokens(f);
-        	controlador.getEstructuras(f);
-        	controlador.mostrarWarnings(f);
-        	controlador.mostrarErrores(f);
-        	conversor.mostrarErrores(f);
-        	tc.printTercetos();
-        	System.out.println("----");
-        	System.out.println("----");
-        	System.out.println("Assembler:");
-        	System.out.println(".data");
-        	System.out.println(controlador.generarAssemblerTS());
-        	System.out.println(".code");        	
-        	System.out.println(tc.generarAssembler());
-        	
-        	//if (controlador.hayErrores() || conversor.hayErroresCI())
-        		//JOptionPane.showMessageDialog(null, "No se genera codigo intermedio por errores en el codigo", null, JOptionPane.ERROR_MESSAGE);
-        	//else
-        		try {
-        			conversor.generarAssembler(selectedFile);
-        		} catch (IOException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-        }	
-	 }
-	 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		mainr();
-	}
-
 }
 
