@@ -122,7 +122,7 @@ public class TercetosController {
 		tercetoActual = 0;
 		for (Terceto t : tercetos) {
 			if (!t.getOperador().equals("PRINT")) {
-				if (!t.getMarcaFunc()) {
+				if (!t.getMarcaFunc() && t != null) {
 					asmFinal += writeAssembler(t) + '\n';
 					tercetoActual++;
 				}
@@ -140,6 +140,57 @@ public class TercetosController {
 		return asmFinal;
 	}
 
+	
+	private String calculador(String operacion, String op1, String op2, String tipo) {
+		String calculo = "";
+		if(tipo.equals("CONST INT")) {
+			int result = 0;
+			if(operacion.equals("*")){
+				result = Integer.parseInt(op1) * Integer.parseInt(op2);
+			}else if(operacion.equals("/")){
+					  result = Integer.parseInt(op1) / Integer.parseInt(op2);
+				  }else if (operacion.equals("+")) {
+					  		result = Integer.parseInt(op1) + Integer.parseInt(op2);
+				  		}else {
+							result = Integer.parseInt(op1) - Integer.parseInt(op2);
+						}
+			calculo = String.valueOf(result);	
+		}else {	
+				float result = 0;
+				if(operacion.equals("*")){
+					result = Integer.parseInt(op1) * Integer.parseInt(op2);
+				}else if(operacion.equals("/")){
+						result = Integer.parseInt(op1) / Integer.parseInt(op2);
+					}else if (operacion.equals("+")) {
+				  			result = Integer.parseInt(op1) + Integer.parseInt(op2);
+			  			}else {
+			  				result = Integer.parseInt(op1) - Integer.parseInt(op2);
+			  				}
+				calculo = String.valueOf(result);
+		}
+		return calculo;
+	}
+	
+	private void reemplazarReferencia(int numTerceto, String calculo, int i) {
+		boolean referencia = false;
+		while(i < tercetos.size() && !referencia) {
+			if (tercetos.get(i).getOp1().startsWith("[")) {
+				if(numTerceto == Integer.parseInt(tercetos.get(i).getOp1().substring(1, tercetos.get(i).getOp1().length() - 1))) {
+					tercetos.get(i).setOp1(calculo);
+					referencia = true;
+				}
+			}
+			if (tercetos.get(i).getOp2().startsWith("[")) {
+				if(numTerceto ==  Integer.parseInt(tercetos.get(i).getOp2().substring(1, tercetos.get(i).getOp2().length() - 1))) {
+					tercetos.get(i).setOp2(calculo);
+					referencia = true;
+				}	
+			}
+			i++;
+		}
+		
+	}
+	
 	private void reduccionSimple() {
 		String op1 = "";
 		String op2 = "";
@@ -147,11 +198,9 @@ public class TercetosController {
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
-				if (tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT")) {
-					int calculo = Integer.parseInt(op1) * Integer.parseInt(op2);
+				if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
+					|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
+					String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
 					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
 					int j = i - 1;
 					controller.getLexico().eliminarVarTS(tercetos.get(j).getAuxAsoc());
@@ -162,27 +211,8 @@ public class TercetosController {
 				}
 		}
 	}
-
-	private void reemplazarReferencia(int numTerceto, int calculo, int i) {
-		boolean referencia = false;
-		while(i < tercetos.size() && !referencia) {
-			if (tercetos.get(i).getOp1().startsWith("[")) {
-				if(numTerceto == Integer.parseInt(tercetos.get(i).getOp1().substring(1, tercetos.get(i).getOp1().length() - 1))) {
-					tercetos.get(i).setOp1(String.valueOf(calculo));
-					referencia = true;
-				}
-			}
-			if (tercetos.get(i).getOp2().startsWith("[")) {
-				if(numTerceto ==  Integer.parseInt(tercetos.get(i).getOp2().substring(1, tercetos.get(i).getOp2().length() - 1))) {
-					tercetos.get(i).setOp2(String.valueOf(calculo));
-					referencia = true;
-				}	
-			}
-			i++;
-		}
-		
-	}
-
+	
+	
 	private void analizarTercetos() {
 
 		String op2 = "";
@@ -392,8 +422,7 @@ public class TercetosController {
 				}
 				// CASO 2: (OP, TERCETO, VAR)
 				if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-					System.out.println("TERCETO "+t.getOp1().substring(1, t.getOp2().length()));
-					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length() -1)) - 1;
+					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length() -1)) - 2;
 					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 					if (estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
@@ -651,7 +680,7 @@ public class TercetosController {
 					}
 					// CASO 2: (OP, VAR, TERCETO)
 					if ((t.getOp2().startsWith("["))) {
-						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) -1;
 						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 						// CASO VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
