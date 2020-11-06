@@ -190,7 +190,8 @@ error_iteracion : WHILE error condicion ')' DO bloque_anidado_while {lexico.getL
 condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 cmp1 = true;}												comparador expresion { if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 																						cmp2 = true;
-																												addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());}
+																												addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																												resetAtClase();}
            	| error_condicion
            	;
            	
@@ -855,48 +856,108 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 			} else 
 				assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 		} else {
-			if (estaDeclarada(op2)) {
+			if (atclase1) {
 				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 				if (chequeoTipo(tipo1,tipo2)) {
-					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 					t.setTipoOp(tipo1);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 				} else
 					assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
-			} else 
-				assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
-		}
-	else { if (cmp2 == true) {
-				if (estaDeclarada(op1)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+			} else {
+				if (estaDeclarada(op2)) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					if (chequeoTipo(tipo1,tipo2)) {
+						Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 					} else
 						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
-				} else
-					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());					
-			} else {
-				if (estaDeclarada(op1))
-					if (estaDeclarada(op2)) {
+				} else 
+					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+			}
+		}
+	else { if (cmp2 == true) {
+				if (atclase1) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+					if (chequeoTipo(tipo1,tipo2)) {
+						Terceto t = new Terceto (lex, c1 + "." + a1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+					} else
+						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (estaDeclarada(op1)) {
 						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
 						if (chequeoTipo(tipo1, tipo2)) {
-							Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 							t.setTipoOp(tipo1);
 							genCodigo.getTercetosController().addTercetoLista(t);
 							condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 						} else
 							assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 					} else
-						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
-				else		
-					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());	
+				}				
+			} else {
+				if (atclase1 && atclase2) {
+					String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+					String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (lex, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+					} else
+						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (atclase1) {
+						if (esObjeto(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (lex, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						} else {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (lex, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						}
+					} else {
+						if (estaDeclarada(op1))
+							if (estaDeclarada(op2)) {
+								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+								} else
+									assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+							} else
+								assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+						else		
+							assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+					}
+				}
 			}
 		}
 }

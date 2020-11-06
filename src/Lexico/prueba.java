@@ -91,7 +91,7 @@ public class prueba {
 		    	tercetosController.printTercetos();
 	
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
-		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código.", null, JOptionPane.ERROR_MESSAGE);
+		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código fuente.", null, JOptionPane.ERROR_MESSAGE);
 		    	}
 		    	else
 		    	{
