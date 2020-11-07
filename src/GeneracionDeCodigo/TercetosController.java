@@ -199,7 +199,7 @@ public class TercetosController {
 					String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
 					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
 					int j = i - 1;
-					controller.getLexico().eliminarVarTS(tercetos.get(j).getAuxAsoc());
+					controller.getLexico().elimVarTS(tercetos.get(j).getAuxAsoc());
 					tercetos.remove(j);	
 					i++;
 				}else {
