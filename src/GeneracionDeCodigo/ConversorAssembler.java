@@ -35,7 +35,8 @@ public class ConversorAssembler {
 	
 	public void generarAssembler (File r) throws IOException{
 		//controladorTercetos.generarAssembler();
-		arch = new File(r.getParent() + "\\" + r.getName() + ".asm");
+		String name = r.getName().substring(0, r.getName().length()-4);
+		arch = new File(r.getParent() + "\\" + name + ".asm");
 		writeFile();
 	}
 
@@ -106,8 +107,8 @@ public class ConversorAssembler {
 	
 	public boolean hayErroresCI () {
 		if (erroresCI.isEmpty())
-			return true;
-		else return false;
+			return false;
+		else return true;
 	}
 	
 	public ConversorAssembler getConversorAssembler () {
@@ -118,9 +119,6 @@ public class ConversorAssembler {
 		try {
 			FileWriter fwriter = new FileWriter(f, true);
 			PrintWriter writer = new PrintWriter(fwriter);
-			writer.println("-----------------------------------");
-			writer.println("-----------------------------------");
-			writer.println("Lista de errores en Codigo Intermedio:");
 			for (Error e: erroresCI) {
 				writer.println("-"+e.getDescripcion()+" en la linea: "+e.getNroLinea());
 			}

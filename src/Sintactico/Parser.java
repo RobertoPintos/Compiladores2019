@@ -194,11 +194,11 @@ final static short yylhs[] = {                           -1,
     3,    3,    3,   19,   19,   20,   21,   21,   21,   21,
    21,   26,   26,   27,   27,   27,   27,   27,   24,   24,
    28,   28,   28,   29,   31,   22,   22,   33,   36,   30,
-   32,   32,   32,   32,   35,   35,   35,   35,   35,   35,
-   35,   23,   38,   23,   40,   37,   37,   37,   37,   39,
-   39,   39,   39,   25,   25,   25,   25,   25,   34,   34,
-   34,   41,   41,   41,   42,   42,   42,   43,   43,   43,
-   43,
+   30,   38,   37,   32,   32,   32,   32,   35,   35,   35,
+   35,   35,   35,   23,   40,   23,   42,   39,   39,   39,
+   39,   41,   41,   41,   41,   25,   25,   25,   25,   25,
+   34,   34,   34,   43,   43,   43,   44,   44,   44,   45,
+   45,   45,   45,
 };
 final static short yylen[] = {                            2,
     1,    2,    1,    1,    1,    2,    3,    1,    3,    1,
@@ -207,144 +207,145 @@ final static short yylen[] = {                            2,
     4,    4,    4,    2,    1,    1,    1,    1,    1,    1,
     1,    6,    1,    6,    6,    5,    6,    6,    5,    1,
     5,    5,    5,    0,    0,    8,    1,    6,    0,    4,
-    1,    3,    3,    3,    1,    1,    1,    1,    1,    1,
-    1,    2,    0,    5,    0,    6,    4,    4,    3,    1,
-    3,    3,    3,    4,    6,    3,    4,    3,    3,    3,
-    1,    3,    3,    1,    1,    3,    1,    1,    2,    1,
-    2,
+    1,    0,    3,    1,    3,    3,    3,    1,    1,    1,
+    1,    1,    1,    2,    0,    5,    0,    6,    4,    4,
+    3,    1,    3,    3,    3,    4,    6,    3,    4,    3,
+    3,    3,    1,    3,    3,    1,    1,    3,    1,    1,
+    2,    1,    2,
 };
 final static short yydefred[] = {                         0,
     0,   27,   26,    0,    0,   25,    0,    1,    0,    4,
     0,    0,    8,    0,    0,    0,    0,    0,    0,   35,
    36,   37,   38,   39,   40,   41,   43,   50,   57,    0,
     0,    0,    2,    6,   11,    0,   10,    0,    0,    0,
-   98,    0,  100,    0,    0,    0,    0,   94,   97,    0,
-    0,    0,    0,    0,    0,    0,    0,   34,   72,    0,
-    0,    0,    0,    0,    7,    0,    0,    0,    0,    0,
-    0,    0,   99,  101,   86,    0,    0,    0,    0,    0,
-    0,    0,    0,   80,   79,    0,    0,    0,    0,    0,
-   31,    0,   32,   33,   30,    0,   13,    0,    9,   87,
-    0,   96,   84,    0,    0,    0,    0,    0,    0,   92,
-   93,   75,   78,    0,    0,   77,   68,   69,   70,   71,
-   65,   66,   67,    0,    0,    0,    0,    0,    0,    0,
-   28,   29,    0,   18,   19,   20,    0,    0,    0,    0,
-   46,    0,    0,    0,    0,   83,    0,   81,    0,   51,
-   52,   53,   49,    0,   55,   74,   16,   17,    0,   21,
-   15,   44,   45,   85,   47,   48,   42,   76,    0,    0,
-   61,   58,    0,    0,    0,    0,    0,    0,   64,    0,
-   62,   56,   22,    0,    0,   23,    0,   24,
+  100,    0,  102,    0,    0,    0,    0,   96,   99,   62,
+    0,    0,    0,   61,    0,    0,    0,    0,    0,   34,
+   74,    0,    0,    0,    0,    0,    7,    0,    0,    0,
+    0,    0,    0,    0,  101,  103,   88,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,   82,   81,    0,    0,
+    0,    0,    0,   31,    0,   32,   33,   30,    0,   13,
+    0,    9,   89,    0,   98,   86,    0,    0,    0,    0,
+    0,    0,   94,   95,    0,   77,   80,    0,    0,   79,
+   70,   71,   72,   73,   68,   69,    0,    0,    0,    0,
+    0,    0,    0,   28,   29,    0,   18,   19,   20,    0,
+    0,    0,    0,   46,    0,    0,    0,    0,   85,    0,
+   83,    0,   51,   52,   53,   49,    0,   55,   76,   16,
+   17,    0,   21,   15,   44,   45,   87,   47,   48,   42,
+   78,    0,    0,   64,   58,    0,    0,    0,    0,    0,
+    0,   67,    0,   65,   56,   22,    0,    0,   23,    0,
+   24,
 };
 final static short yydgoto[] = {                          7,
-    8,    9,   10,   11,   12,   36,   13,   37,   97,   63,
-   64,  133,  134,  135,  136,  137,  186,  184,   19,   20,
-   21,   22,   23,   24,   25,   26,   27,   28,   56,   51,
-  173,  172,   29,   52,  124,   86,   30,   60,   85,  145,
-   47,   48,   49,
+    8,    9,   10,   11,   12,   36,   13,   37,  100,   65,
+   66,  136,  137,  138,  139,  140,  189,  187,   19,   20,
+   21,   22,   23,   24,   25,   26,   27,   28,   58,   52,
+  176,  175,   29,   53,  127,   89,   54,   82,   30,   62,
+   88,  148,   47,   48,   49,
 };
-final static short yysindex[] = {                      -189,
-  101,    0,    0,  101, -238,    0,    0,    0, -216,    0,
- -235, -215,    0,  -18,   51,  -40,  -37, -241, -146,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0, -205,
- -124,    0,    0,    0,    0,  -21,    0,  -34, -191,   23,
-    0,  -34,    0, -198, -242,   18,   62,    0,    0,  -34,
-   50,   58, -175, -151,  -34,   78,   72,    0,    0, -115,
-  -28,  -57, -113, -139,    0, -215,  112,  114,  -83,  132,
-   73,  -36,    0,    0,    0,  -34,  -34,  -34,  -34,   61,
-   88,  101, -107,    0,    0,  -15,  122,   -6,  135,  -34,
-    0, -107,    0,    0,    0, -148,    0,  -64,    0,    0,
-  155,    0,    0,  156,  148,  -34,   16,   62,   62,    0,
-    0,    0,    0, -104,  -87,    0,    0,    0,    0,    0,
-    0,    0,    0,  -34,  149,  152,  -50,  -61,  172,  -47,
-    0,    0, -187,    0,    0,    0, -193, -113,  167,  180,
-    0,  220,  181,  -46, -107,    0,  -18,    0,   58,    0,
-    0,    0,    0,  -77,    0,    0,    0,    0,  -16,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   88,  101,
-    0,    0,   -9,  229,  -67,  -56,  -77,  230,    0,  -18,
-    0,    0,    0,   15,  101,    0,   91,    0,
+final static short yysindex[] = {                      -211,
+  134,    0,    0,  134, -242,    0,    0,    0, -179,    0,
+ -213, -217,    0,  -20,   51,  -40,  -37, -196, -129,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0, -195,
+ -108,    0,    0,    0,    0,    3,    0,  -34, -177,   48,
+    0,  -34,    0, -150, -235,   24,   37,    0,    0,    0,
+   -9,   50,   43,    0, -170, -161,   -9,   63,   62,    0,
+    0, -156,  -28,  -57, -138, -141,    0, -217,   42,  106,
+ -122,   66,   76,  -36,    0,    0,    0,  -34,  -34,  -34,
+  -34,  -34,   61,   98,  134, -104,    0,    0,   85,  114,
+  -13,  118,   -9,    0, -104,    0,    0,    0, -146,    0,
+  -91,    0,    0,  136,    0,    0,  138,  123,  -34,   -6,
+   37,   37,    0,    0,   43,    0,    0,  -87,  -76,    0,
+    0,    0,    0,    0,    0,    0,  -34,  127,  131,  -50,
+ -100,  150,  -70,    0,    0, -254,    0,    0,    0, -215,
+ -138,  139,  141,    0,  115,  143,  -46, -104,    0,  -20,
+    0,   43,    0,    0,    0,    0,  -64,    0,    0,    0,
+    0,  -53,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   98,  134,    0,    0,  -62,  169,  110,  122,  -64,
+  171,    0,  -20,    0,    0,    0,  -56,  134,    0,  132,
+    0,
 };
 final static short yyrindex[] = {                         0,
-    0,    0,    0,    0,    0,    0,    0,    0,  285,    0,
-    1,    0,    0,    0,    0,    0,    0,  246,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   21,
-    0, -226,    0,    0,    0,    0,    0,    0,    0,  -35,
+    0,    0,    0,    0,    0,    0,    0,    0,  214,    0,
+    1,    0,    0,    0,    0,    0,    0,  175,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,  -27,
+    0, -231,    0,    0,    0,    0,    0,    0,    0,  -35,
     0,    0,    0,    0,    0,    0,  -11,    0,    0,    0,
-    0,   75,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0, -150,
+    0,    0,   94,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0, -152,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,   11,   33,    0,
+   11,   33,    0,    0,   71,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0, -116,
+    0,   81,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,  -94,    0,   71,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0, -127,
-    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0, -133,    0,    0,    0,    0,    0,    0,    0,
+    0,
 };
 final static short yygindex[] = {                         0,
-    0,  280,  283,  157,    0,    0,    0,  227,  163,    0,
-    0,    0,  178,    0,    0,    0,    0,    0,   17,  304,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   10,
-    0,  136,    0,   -1,    0,    0,    0,    0,  -63,    0,
-   83,  103,    0,
+    0,  209,  217,  100,    0,    0,    0,  194,  124,    0,
+    0,    0,  128,    0,    0,    0,    0,    0,   15,  282,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,  -18,
+    0,   83,    0,   -1,    0,    0,    0,    0,    0,    0,
+  -66,    0,   93,   95,    0,
 };
-final static int YYTABLESIZE=491;
+final static int YYTABLESIZE=472;
 static short yytable[];
 static { yytable();}
 static void yytable(){
-yytable = new short[]{                         50,
-    5,   95,   54,  107,   45,   95,   95,   95,  153,   95,
-   45,   95,  167,   46,   55,   73,  113,   39,   32,  116,
-   31,    2,   66,   95,   95,   95,   95,   39,  130,   91,
-   93,   91,    3,   91,  127,   74,   67,   65,    5,    1,
-   70,   35,   12,    6,  121,  123,  122,   91,   91,   91,
-   91,   89,    4,   89,   14,   89,  144,   71,   72,   80,
-   76,   59,   77,    2,   89,   68,    1,    2,   69,   89,
-   89,   89,   89,   90,    3,   90,   75,   90,    3,    4,
-    5,  168,  157,   87,    5,    6,  159,  131,  132,    6,
-   83,   90,   90,   90,   90,   45,   44,  114,  115,  129,
-   76,  112,   77,   78,  142,   88,   88,   88,   79,   14,
-   15,   60,  104,  105,   88,   88,   88,   90,   16,   88,
-   88,   88,  149,   57,   17,   18,  131,  132,   63,   63,
-   91,   61,   15,   39,   59,   59,   59,   63,   63,   63,
-   16,   98,   63,   63,   63,   62,   17,   18,   81,   15,
-   92,   14,   15,  101,   76,   96,   77,   16,  108,  109,
-   16,   82,  125,   17,   18,  146,   17,   18,  147,   15,
-  100,   82,   82,  102,   76,  128,   77,   16,  169,   15,
-  110,  111,  148,   17,   18,  175,  176,   16,   14,   15,
-  103,  170,  138,   17,   18,  139,  140,   16,   94,  180,
-   15,  187,  179,   17,   18,  152,  141,  150,   16,  166,
-  151,  154,  155,  181,   17,   18,   40,   41,   53,  156,
-   95,   95,   40,   41,  106,  162,   95,   95,   95,   95,
-   95,   95,   38,   95,   95,   95,   95,   43,  163,  165,
-  174,   95,   38,   43,   91,   91,  117,  118,  119,  126,
-   91,   91,   91,   91,   91,   91,    5,   91,   91,   91,
-   91,  120,   76,  177,   77,   91,   89,   89,  178,    5,
-  183,  143,   89,   89,   89,   89,   89,   89,  164,   89,
-   89,   89,   89,  185,    3,   54,   73,   89,   90,   90,
-   34,   33,   99,  160,   90,   90,   90,   90,   90,   90,
-  161,   90,   90,   90,   90,   81,   15,   40,   41,   90,
-  158,   42,  182,    0,   16,    0,   81,   15,   82,    0,
-   17,   18,   58,    0,    0,   16,   60,   60,   43,   82,
-    0,   17,   18,    0,   58,   60,   59,   59,   59,   60,
-    0,   60,   60,   14,   15,    0,   14,   15,   38,    0,
-    0,   59,   16,    0,   84,   16,   14,   15,   17,   18,
-  188,   17,   18,    0,    0,   16,    0,    0,    0,    0,
-    0,   17,   18,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,   84,    0,    0,   84,    0,    0,    0,
-    0,    0,    0,    0,    0,   84,    0,    0,    0,    0,
+yytable = new short[]{                         51,
+    5,   98,   56,  110,   45,   97,   97,   97,  156,   97,
+   45,   97,  170,   46,   32,  160,  117,   39,   31,  120,
+  134,  135,   75,   97,   97,   39,   97,  130,  133,   93,
+   96,   93,   83,   93,  147,   45,   69,   12,   92,   35,
+   72,    2,   76,    2,    1,    2,   68,   93,   93,   14,
+   93,   91,    3,   91,    3,   91,    3,    4,    5,   57,
+    5,   67,    5,    6,  162,    6,   78,    6,   79,   91,
+   91,   61,   91,   92,  132,   92,    1,   92,   80,   70,
+  115,  171,   77,   81,   78,   78,   79,   79,   90,    4,
+   86,   92,   92,   71,   92,   45,   44,   91,  118,  119,
+  103,  116,   93,   90,   90,   73,   74,  145,   78,   95,
+   79,   63,   90,   90,   90,  107,  108,   90,   90,   90,
+   94,   60,   66,   66,  106,  152,   14,   15,  134,  135,
+   99,   66,   66,   66,  105,   16,   66,   66,   66,  101,
+   59,   17,   18,   39,  125,  104,  126,   63,   15,   84,
+   84,   84,   15,   59,  128,   59,   16,   78,  131,   79,
+   16,   64,   17,   18,   85,  141,   17,   18,   14,   15,
+  111,  112,  157,  167,  113,  114,  142,   16,  143,  150,
+   15,  144,  149,   17,   18,  153,  178,  179,   16,  154,
+  158,  172,   15,  151,   17,   18,  159,  165,   97,  166,
+   16,  168,  190,  177,  173,  155,   17,   18,  181,  169,
+  180,  186,  188,    3,   54,   50,   40,   41,   55,   34,
+   97,   97,   40,   41,  109,   33,   97,   97,   97,   97,
+   97,   97,   38,   97,   97,   97,   97,   43,   75,  163,
+   38,   97,  129,   43,   93,   93,   50,   40,   41,  146,
+   93,   93,   93,   93,   93,   93,    5,   93,   93,   93,
+   93,  102,  185,  161,  164,   93,   91,   91,   43,    5,
+    0,    0,   91,   91,   91,   91,   91,   91,    0,   91,
+   91,   91,   91,    0,    0,    0,    0,   91,   92,   92,
+    0,    0,    0,    0,   92,   92,   92,   92,   92,   92,
+   60,   92,   92,   92,   92,   84,   15,   40,   41,   92,
+    0,   42,   60,    0,   16,    0,   84,   15,   85,    0,
+   17,   18,    0,    0,    0,   16,   63,   63,   43,   85,
+    0,   17,   18,   87,    0,   63,   60,   60,    0,   63,
+    0,   63,   63,    0,    0,   60,  121,  122,  123,   60,
+    0,   60,   60,   14,   15,   59,   59,   59,   38,    0,
+    0,  124,   16,    0,   87,   14,   15,   87,   17,   18,
+   59,    0,    0,    0,   16,    0,   87,  183,   15,  182,
+   17,   18,    0,    0,    0,    0,   16,   14,   15,   14,
+   15,  184,   17,   18,    0,    0,   16,    0,   16,   60,
+   60,  191,   17,   18,   17,   18,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,   58,   58,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   87,
+    0,    0,    0,    0,    0,    0,    0,    0,  174,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   84,    0,
-    0,    0,    0,    0,    0,    0,    0,  171,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   58,   58,
-  171,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-   58,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   60,
+   60,  174,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   60,
 };
 }
 static short yycheck[];
@@ -352,55 +353,53 @@ static { yycheck(); }
 static void yycheck() {
 yycheck = new short[] {                         40,
     0,   59,   40,   40,   45,   41,   42,   43,   59,   45,
-   45,   47,   59,   15,  256,  258,   80,   46,  257,   83,
-    4,  257,   44,   59,   60,   61,   62,   46,   92,   41,
-   59,   43,  268,   45,   41,  278,   38,   59,  274,  256,
-   42,  257,  269,  279,   60,   61,   62,   59,   60,   61,
-   62,   41,  269,   43,  281,   45,   41,  256,  257,   50,
-   43,  267,   45,  257,   55,  257,  256,  257,   46,   59,
-   60,   61,   62,   41,  268,   43,   59,   45,  268,  269,
-  274,  145,  270,  259,  274,  279,  280,  275,  276,  279,
-   41,   59,   60,   61,   62,   45,   46,   81,   82,   90,
-   43,   41,   45,   42,  106,  256,  257,  259,   47,  256,
-  257,   41,   40,   41,  265,  266,  267,   40,  265,  270,
-  271,  272,  124,  270,  271,  272,  275,  276,  256,  257,
-   59,  256,  257,   46,   60,   61,   62,  265,  266,  267,
-  265,  281,  270,  271,  272,  270,  271,  272,  256,  257,
-  266,  256,  257,   40,   43,  269,   45,  265,   76,   77,
-  265,  269,   41,  271,  272,  270,  271,  272,  256,  257,
-   59,  266,  267,  257,   43,   41,   45,  265,  256,  257,
-   78,   79,  270,  271,  272,  169,  170,  265,  256,  257,
-   59,  269,  257,  271,  272,   41,   41,  265,  256,  256,
-  257,  185,  270,  271,  272,  256,   59,   59,  265,  256,
-   59,  273,   41,  270,  271,  272,  257,  258,  256,  267,
-  256,  257,  257,  258,  261,   59,  262,  263,  264,  265,
-  266,  267,  261,  269,  270,  271,  272,  278,   59,   59,
-  257,  277,  261,  278,  256,  257,  262,  263,  264,  256,
+   45,   47,   59,   15,  257,  270,   83,   46,    4,   86,
+  275,  276,  258,   59,   60,   46,   62,   41,   95,   41,
+   59,   43,   51,   45,   41,   45,   38,  269,   57,  257,
+   42,  257,  278,  257,  256,  257,   44,   59,   60,  281,
+   62,   41,  268,   43,  268,   45,  268,  269,  274,  256,
+  274,   59,  274,  279,  280,  279,   43,  279,   45,   59,
+   60,  267,   62,   41,   93,   43,  256,   45,   42,  257,
+   82,  148,   59,   47,   43,   43,   45,   45,  259,  269,
+   41,   59,   60,   46,   62,   45,   46,  259,   84,   85,
+   59,   41,   40,  256,  257,  256,  257,  109,   43,  266,
+   45,   41,  265,  266,  267,   40,   41,  270,  271,  272,
+   59,   41,  256,  257,   59,  127,  256,  257,  275,  276,
+  269,  265,  266,  267,  257,  265,  270,  271,  272,  281,
+  270,  271,  272,   46,   60,   40,   62,  256,  257,  266,
+  267,  256,  257,   60,   41,   62,  265,   43,   41,   45,
+  265,  270,  271,  272,  269,  257,  271,  272,  256,  257,
+   78,   79,  273,   59,   80,   81,   41,  265,   41,  256,
+  257,   59,  270,  271,  272,   59,  172,  173,  265,   59,
+   41,  256,  257,  270,  271,  272,  267,   59,  256,   59,
+  265,   59,  188,  257,  269,  256,  271,  272,   40,  256,
+  273,   41,  269,    0,   40,  256,  257,  258,  256,   11,
+  256,  257,  257,  258,  261,    9,  262,  263,  264,  265,
+  266,  267,  261,  269,  270,  271,  272,  278,  266,  140,
+  261,  277,  256,  278,  256,  257,  256,  257,  258,  256,
   262,  263,  264,  265,  266,  267,  256,  269,  270,  271,
-  272,  277,   43,  273,   45,  277,  256,  257,   40,  269,
-   41,  256,  262,  263,  264,  265,  266,  267,   59,  269,
-  270,  271,  272,  269,    0,   40,  266,  277,  256,  257,
-   11,    9,   66,  137,  262,  263,  264,  265,  266,  267,
-  138,  269,  270,  271,  272,  256,  257,  257,  258,  277,
-  133,  261,  177,   -1,  265,   -1,  256,  257,  269,   -1,
-  271,  272,   19,   -1,   -1,  265,  256,  257,  278,  269,
-   -1,  271,  272,   -1,   31,  265,  262,  263,  264,  269,
-   -1,  271,  272,  256,  257,   -1,  256,  257,  261,   -1,
-   -1,  277,  265,   -1,   51,  265,  256,  257,  271,  272,
-  270,  271,  272,   -1,   -1,  265,   -1,   -1,   -1,   -1,
-   -1,  271,  272,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   80,   -1,   -1,   83,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   92,   -1,   -1,   -1,   -1,
+  272,   68,  180,  136,  141,  277,  256,  257,  278,  269,
+   -1,   -1,  262,  263,  264,  265,  266,  267,   -1,  269,
+  270,  271,  272,   -1,   -1,   -1,   -1,  277,  256,  257,
+   -1,   -1,   -1,   -1,  262,  263,  264,  265,  266,  267,
+   19,  269,  270,  271,  272,  256,  257,  257,  258,  277,
+   -1,  261,   31,   -1,  265,   -1,  256,  257,  269,   -1,
+  271,  272,   -1,   -1,   -1,  265,  256,  257,  278,  269,
+   -1,  271,  272,   52,   -1,  265,  256,  257,   -1,  269,
+   -1,  271,  272,   -1,   -1,  265,  262,  263,  264,  269,
+   -1,  271,  272,  256,  257,  262,  263,  264,  261,   -1,
+   -1,  277,  265,   -1,   83,  256,  257,   86,  271,  272,
+  277,   -1,   -1,   -1,  265,   -1,   95,  256,  257,  270,
+  271,  272,   -1,   -1,   -1,   -1,  265,  256,  257,  256,
+  257,  270,  271,  272,   -1,   -1,  265,   -1,  265,  118,
+  119,  270,  271,  272,  271,  272,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,  114,  115,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  148,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  157,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  145,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,  154,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  175,  176,
-  177,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-  187,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  178,
+  179,  180,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,  190,
 };
 }
 final static short YYFINAL=7;
@@ -410,7 +409,7 @@ final static String yyname[] = {
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,"'('","')'","'*'","'+'","','",
 "'-'","'.'","'/'",null,null,null,null,null,null,null,null,null,null,null,"';'",
-"'<'","'='","'>'",null,null,null,null,null,null,null,null,null,null,null,null,
+"'<'",null,"'>'",null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
@@ -489,22 +488,24 @@ final static String yyrule[] = {
 "error_iteracion : WHILE error condicion ')' DO bloque_anidado_while",
 "$$6 :",
 "condicion : expresion $$6 comparador expresion",
+"condicion : error_condicion",
+"$$7 :",
+"error_condicion : error $$7 expresion",
 "bloque_anidado_while : sentencia",
 "bloque_anidado_while : BEGIN bloque_sentencias END",
 "bloque_anidado_while : BEGIN bloque_sentencias error",
 "bloque_anidado_while : error bloque_sentencias END",
 "comparador : '<'",
 "comparador : '>'",
-"comparador : '='",
 "comparador : C_MAYORIGUAL",
 "comparador : C_MENORIGUAL",
 "comparador : C_DISTINTO",
 "comparador : C_IGUAL",
 "seleccion : if_condicion END_IF",
-"$$7 :",
-"seleccion : if_condicion $$7 ELSE bloque_anidado_if END_IF",
 "$$8 :",
-"if_condicion : IF '(' condicion ')' $$8 bloque_anidado_if",
+"seleccion : if_condicion $$8 ELSE bloque_anidado_if END_IF",
+"$$9 :",
+"if_condicion : IF '(' condicion ')' $$9 bloque_anidado_if",
 "if_condicion : IF condicion ')' bloque_anidado_if",
 "if_condicion : IF '(' condicion bloque_anidado_if",
 "if_condicion : IF condicion bloque_anidado_if",
@@ -532,7 +533,11 @@ final static String yyrule[] = {
 "cte : '-' CTEFLOAT",
 };
 
-//#line 315 "gramatica.y"
+<<<<<<< HEAD
+//#line 323 "gramatica.y"
+=======
+//#line 407 "gramatica.y"
+>>>>>>> RobertoPintos-patch-1
 
 
 private ArrayList <Token> listaVar = new ArrayList <Token>();
@@ -551,6 +556,14 @@ private boolean atclase2 = false;
 private String c2 = "";
 private String a2 = "";
 private String visibilidad = "-";
+<<<<<<< HEAD
+=======
+private boolean errorCmp = false;
+private String cteNegativa = "";
+private String cteNegativaFactor = "";
+private String cteNegativaTermino = "";
+private String cteNegativaExpresion = "";
+>>>>>>> RobertoPintos-patch-1
 
 
 private Controller lexico;
@@ -671,25 +684,44 @@ public void actualizarTablaNegativo(String lexema){
 			lexico.getLexico().getTS().replace(nuevoLex, b);
 		} else {
 			if (isInteger(nuevoLex)) {
+<<<<<<< HEAD
 				Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			} else if (isFloat(nuevoLex)) {
 				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+=======
+				Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
+				lexico.getLexico().getTS().put(nuevoLex, c);
+			} else if (isFloat(nuevoLex)) {
+				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
+>>>>>>> RobertoPintos-patch-1
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			}
 		}
 	} else {
 		String nuevoLex = '-'+lexema;
 		if (isInteger(nuevoLex)) {
+<<<<<<< HEAD
 			Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		} else if (isFloat(nuevoLex)) {
 			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+=======
+			Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
+			lexico.getLexico().getTS().put(nuevoLex, c);
+		} else if (isFloat(nuevoLex)) {
+			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
+>>>>>>> RobertoPintos-patch-1
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> RobertoPintos-patch-1
 public void addTercetoPrint (String lex, String cad) {
 
 	String aux = cad.substring(1, cad.length()-1);
@@ -711,6 +743,11 @@ public void addTercetoAsignacion (String op1, String op2) {
 		} else
 			lexico.getLexico().addError("La variable "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 	} else {
+<<<<<<< HEAD
+=======
+		System.out.println("OPERANDO 1: "+op1);
+		System.out.println("OPERANDO 2: "+op2);
+>>>>>>> RobertoPintos-patch-1
 		if (estaDeclarada(op1))
 			if (estaDeclarada(op2)) {
 				if (!atclase1) {
@@ -790,7 +827,18 @@ public void addTercetoAsignacionVarClase (String op1, String op2, String clase) 
 }
 
 public void addTercetoTermino (String operando, String op1, String op2) {
-		System.out.println(op2);
+<<<<<<< HEAD
+		//SI NO HAY OPERACION PREVIA
+		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
+			//SI ES OPERACION ENTRE DOS ATRIBUTOS DE CLASE
+			if (atclase1 && atclase2) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+=======
+	System.out.println("ADD TERCETO TERMINO OP1: "+op1);
+	System.out.println("ADD TERCETO TERMINO OP2: "+op2);
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
 			if (estaDeclarada(op1))
 				if(estaDeclarada(op2)) {
@@ -798,12 +846,74 @@ public void addTercetoTermino (String operando, String op1, String op2) {
 					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 					if (chequeoTipo(tipo1, tipo2)) {
 						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoTerm(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+			} else {
+				if (atclase1) {
+					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
+					if (esObjeto(op1)) {
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					} else {
+						if(estaDeclarada(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+					}
+				//SI NO ES UNA OPERACION NORMAL ENTRE DOS VARIABLES/CONSTANTES
+				} else {
+					if (estaDeclarada(op1))
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					else 
+						lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			}
+		//SI NO, ES UNA OPERACION ENTRE UN TERCETO ANTERIOR Y UNA VARIABLE/CONST/AT DE CLASE
+		} else {
+			if (atclase1) {
+				String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 				} else
 					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 			else 
@@ -814,18 +924,48 @@ public void addTercetoTermino (String operando, String op1, String op2) {
 				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 				if (chequeoTipo(tipo1, tipo2)) {
 					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 					asociarVarAuxTerceto(t, tipo2);
 					t.setTipoOp(tipo2);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					genCodigo.getTercetosController().setTercetoTerm(t);
 				} else
 					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+			} else {
+				if(estaDeclarada(op2)) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo2);
+						t.setTipoOp(tipo2);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoTerm(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else
+					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+			}
+=======
 			} else
 				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+>>>>>>> RobertoPintos-patch-1
 		}
 }
 
 public void addTercetoExpresion (String operando, String op1, String op2) {
+<<<<<<< HEAD
+	//SI NO HAY OPERACION PREVIA
+	if (genCodigo.getTercetosController().getTercetoExp() == null) {
+		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
+			//OPERACION ENTRE DOS AT DE CLASE
+			if (atclase1 && atclase2) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 	if (genCodigo.getTercetosController().getTercetoExp() == null) {
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
 			if (estaDeclarada(op1))
@@ -834,12 +974,75 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 					if (chequeoTipo(tipo1, tipo2)) {
 						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoExp(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+			} else {
+				//OPERACION ENTRE AT DE CLASE Y VARIABLE
+				if (atclase1) {
+					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
+					if (esObjeto(op1)) {
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					} else {
+						if(estaDeclarada(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+					}
+				} else {
+					//OPERACION ENTRE DOS VARIABLES
+					if (estaDeclarada(op1))
+						if(estaDeclarada(op2)) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					else 
+						lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			}
+		} else {
+			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO TERMINO ANTERIOR
+			if (atclase1) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+				if (chequeoTipo(tipo1, tipo2)) {
+					Terceto t = new Terceto (operando, c1 + "." + a1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 				} else
 					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 			else 
@@ -850,12 +1053,76 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 				if (chequeoTipo(tipo1, tipo2)) {
 					Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 					asociarVarAuxTerceto(t, tipo1);
 					t.setTipoOp(tipo1);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					genCodigo.getTercetosController().setTercetoExp(t);
 				} else
 					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+			} else {
+				if (estaDeclarada(op1)) {
+					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+					String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoExp(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else
+					lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+			}		
+		}
+	} else {
+		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
+			//OPERACION ENTRE DOS AT DE CLASE
+			if (atclase1 && atclase2) {
+				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+				if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoExp(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+			} else {
+			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO EXPRESION ANTERIOR
+				if (atclase1) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+						asociarVarAuxTerceto(t, tipo2);
+						t.setTipoOp(tipo2);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						genCodigo.getTercetosController().setTercetoExp(t);
+					} else
+						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (estaDeclarada(op2)) {
+						String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							asociarVarAuxTerceto(t, tipo2);
+							t.setTipoOp(tipo2);
+							genCodigo.getTercetosController().addTercetoLista(t);
+							genCodigo.getTercetosController().setTercetoExp(t);
+						} else
+							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+					} else 
+						lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			}
+		} else {
+			//OPERACION ENTRE TERCETO TERMINO Y TERCETO EXPRESION
+=======
 			} else
 				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 		}
@@ -875,6 +1142,7 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 			} else 
 				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 		} else {
+>>>>>>> RobertoPintos-patch-1
 			String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
 			String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 			if (chequeoTipo(tipo1, tipo2)) {	
@@ -902,7 +1170,10 @@ public void cambiarTercetos () {
 } 
 
 public void addTercetoCondicion (String op1, String lex, String op2) {
+<<<<<<< HEAD
+=======
 	
+>>>>>>> RobertoPintos-patch-1
 	if (cmp1 == true)
 		if (cmp2 == true) {
 			String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-2).getTipoOp();
@@ -915,16 +1186,47 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 			} else 
 				assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 		} else {
+<<<<<<< HEAD
+			if (atclase1) {
+				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+				if (chequeoTipo(tipo1,tipo2)) {
+					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 			if (estaDeclarada(op2)) {
 				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
 				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 				if (chequeoTipo(tipo1,tipo2)) {
 					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 					t.setTipoOp(tipo1);
 					genCodigo.getTercetosController().addTercetoLista(t);
 					condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 				} else
 					assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+			} else {
+				if (estaDeclarada(op2)) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					if (chequeoTipo(tipo1,tipo2)) {
+						Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+					} else
+						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else 
+					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+			}
+		}
+	else { if (cmp2 == true) {
+				if (atclase1) {
+					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+					if (chequeoTipo(tipo1,tipo2)) {
+						Terceto t = new Terceto (lex, c1 + "." + a1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 			} else 
 				assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 		}
@@ -934,11 +1236,20 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 					String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
 					if (chequeoTipo(tipo1, tipo2)) {
 						Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 					} else
 						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+<<<<<<< HEAD
+				} else {
+					if (estaDeclarada(op1)) {
+						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+						String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+=======
 				} else
 					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());					
 			} else {
@@ -948,15 +1259,73 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 						if (chequeoTipo(tipo1, tipo2)) {
 							Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+>>>>>>> RobertoPintos-patch-1
 							t.setTipoOp(tipo1);
 							genCodigo.getTercetosController().addTercetoLista(t);
 							condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 						} else
 							assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 					} else
+<<<<<<< HEAD
+						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());	
+				}				
+			} else {
+				if (atclase1 && atclase2) {
+					String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+					String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
+					if (chequeoTipo(tipo1, tipo2)) {
+						Terceto t = new Terceto (lex, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
+						t.setTipoOp(tipo1);
+						genCodigo.getTercetosController().addTercetoLista(t);
+						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+					} else
+						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (atclase1) {
+						if (esObjeto(op1)) {
+							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (lex, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						} else {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (lex, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						}
+					} else {
+						if (estaDeclarada(op1))
+							if (estaDeclarada(op2)) {
+								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+								} else
+									assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+							} else
+								assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+						else		
+							assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+					}
+				}
+=======
 						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 				else		
 					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+>>>>>>> RobertoPintos-patch-1
 			}
 		}
 }
@@ -972,7 +1341,6 @@ public void apilarTercetoIncompletoIF () {
 public void completarTercetoFinalIF () {
 
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
@@ -985,7 +1353,6 @@ public void completarTercetoFinalIF () {
 public void desapilarYCompletar () {
 
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+1)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
@@ -1009,7 +1376,6 @@ public void apilarTercetoIncompletoWHILE () {
 public void completarTercetoFinalWHILE () {
 		
 		Terceto aux = genCodigo.getTercetosController().getTercetoPila();
-		System.out.println("DESAPILO Y COMPLETO EL TERCETO: " + aux.getNumTerceto());
 		aux.completarTerceto ("["+Integer.toString(genCodigo.getTercetosController().getCantTercetos()+2)+"]");
 		genCodigo.getTercetosController().modificarTercetoLista(aux.getNumTerceto()-1, aux);
 		genCodigo.getTercetosController().removeTercetoPila();
@@ -1131,7 +1497,11 @@ private void guardarAtClase (String clase, String at) {
 			this.c1 = clase;
 			this.a1 = at;
 			this.atclase1 = true;
+<<<<<<< HEAD
+		} else if (!this.atclase2) {
+=======
 		} else {
+>>>>>>> RobertoPintos-patch-1
 			this.c2 = clase;
 			this.a2 = at;
 			this.atclase2 = true;	
@@ -1163,7 +1533,11 @@ private void callFunction (String o, String fn) {
 	Terceto t = new Terceto ("CALL", fn + "@" + o, "-", genCodigo.getTercetosController().getCantTercetos()+1);
 	genCodigo.getTercetosController().addTercetoLista(t);
 }
-//#line 1095 "Parser.java"
+<<<<<<< HEAD
+//#line 1307 "Parser.java"
+=======
+//#line 1103 "Parser.java"
+>>>>>>> RobertoPintos-patch-1
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1512,68 +1886,126 @@ case 59:
 break;
 case 60:
 //#line 191 "gramatica.y"
+<<<<<<< HEAD
 { if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 																						cmp2 = true;
-																												addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());}
-break;
-case 61:
-//#line 196 "gramatica.y"
-{ completarTercetoFinalWHILE(); }
+																												addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																												resetAtClase();}
 break;
 case 62:
-//#line 197 "gramatica.y"
-{ completarTercetoFinalWHILE(); }
-break;
-case 63:
 //#line 198 "gramatica.y"
-{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+{lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());}
 break;
 case 64:
-//#line 199 "gramatica.y"
+//#line 201 "gramatica.y"
+{ completarTercetoFinalWHILE(); }
+break;
+case 65:
+//#line 202 "gramatica.y"
+{ completarTercetoFinalWHILE(); }
+break;
+case 66:
+//#line 203 "gramatica.y"
+{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 67:
+//#line 204 "gramatica.y"
 {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
-case 72:
-//#line 212 "gramatica.y"
+case 74:
+//#line 216 "gramatica.y"
+=======
+{ if(((Token)val_peek(3).obj).getLexema().equals("-")){
+																													if (genCodigo.getTercetosController().getTercetoExp() != null){
+							 																						cmp2 = true;
+																													addTercetoCondicion(cteNegativaExpresion, ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																													}
+																												}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
+																															if (genCodigo.getTercetosController().getTercetoExp() != null){
+							 																								cmp2 = true;
+																															addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion);
+																															}
+																													}else{
+								 																							if (genCodigo.getTercetosController().getTercetoExp() != null){
+							 																								cmp2 = true;
+																															addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																															}
+								 																						 }
+								 																				}
+break;
+case 62:
+//#line 211 "gramatica.y"
+{lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());
+						 errorCmp = true;}
+break;
+case 64:
+//#line 215 "gramatica.y"
+{ completarTercetoFinalWHILE(); }
+break;
+case 65:
+//#line 216 "gramatica.y"
+{ completarTercetoFinalWHILE(); }
+break;
+case 66:
+//#line 217 "gramatica.y"
+{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 67:
+//#line 218 "gramatica.y"
+{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 74:
+//#line 230 "gramatica.y"
+>>>>>>> RobertoPintos-patch-1
 {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF");
 																														   desapilarYCompletar();
 																										   cmp1 = false; cmp2 = false; condStart = 0;}
 break;
-case 73:
-//#line 215 "gramatica.y"
+case 75:
+<<<<<<< HEAD
+//#line 219 "gramatica.y"
 {completarTercetoFinalIF();}
 break;
-case 74:
-//#line 215 "gramatica.y"
+case 76:
+//#line 219 "gramatica.y"
+=======
+//#line 233 "gramatica.y"
+{completarTercetoFinalIF();}
+break;
+case 76:
+//#line 233 "gramatica.y"
+>>>>>>> RobertoPintos-patch-1
 {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF con ELSE");
           																																											   desapilarYCompletar();
           																																							condStart = 0; cmp1 = false; cmp2 = false;}
 break;
-case 75:
-//#line 220 "gramatica.y"
+case 77:
+<<<<<<< HEAD
+//#line 224 "gramatica.y"
 {apilarTercetoIncompletoIF();}
 break;
-case 77:
-//#line 221 "gramatica.y"
+case 79:
+//#line 225 "gramatica.y"
 {lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
 break;
-case 78:
-//#line 222 "gramatica.y"
+case 80:
+//#line 226 "gramatica.y"
 {lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
 break;
-case 79:
-//#line 223 "gramatica.y"
+case 81:
+//#line 227 "gramatica.y"
 {lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
-break;
-case 82:
-//#line 228 "gramatica.y"
-{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
-break;
-case 83:
-//#line 229 "gramatica.y"
-{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
 case 84:
 //#line 232 "gramatica.y"
+{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 85:
+//#line 233 "gramatica.y"
+{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 86:
+//#line 236 "gramatica.y"
 { if (esMetodo(((Token)val_peek(3).obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
@@ -1581,78 +2013,245 @@ case 84:
 											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
 											addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
 										} 
+=======
+//#line 238 "gramatica.y"
+{apilarTercetoIncompletoIF();}
+break;
+case 79:
+//#line 239 "gramatica.y"
+{lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
+break;
+case 80:
+//#line 240 "gramatica.y"
+{lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
+break;
+case 81:
+//#line 241 "gramatica.y"
+{lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
+break;
+case 84:
+//#line 246 "gramatica.y"
+{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 85:
+//#line 247 "gramatica.y"
+{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
+break;
+case 86:
+//#line 250 "gramatica.y"
+{ if (esMetodo(((Token)val_peek(3).obj).getLexema())) {
+											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
+									} else {
+											if(((Token)val_peek(1).obj).getLexema().equals("-")){
+												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+												addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion);
+											} else {
+												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+												addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
+											}
+									}
+>>>>>>> RobertoPintos-patch-1
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 break;
-case 85:
-//#line 242 "gramatica.y"
+case 87:
+<<<<<<< HEAD
+//#line 246 "gramatica.y"
 { if (esMetodo(((Token)val_peek(5).obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
 											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
 											addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
+=======
+//#line 266 "gramatica.y"
+{ if (esMetodo(((Token)val_peek(5).obj).getLexema())) {
+											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
+										} else {
+												if(((Token)val_peek(1).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(5).obj).getLexema());
+												} else {
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
+												}	
+>>>>>>> RobertoPintos-patch-1
 										} 
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 break;
-case 86:
-//#line 252 "gramatica.y"
-{ System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
-break;
-case 87:
-//#line 253 "gramatica.y"
-{ System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
-break;
 case 88:
-//#line 254 "gramatica.y"
-{lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
+<<<<<<< HEAD
+//#line 256 "gramatica.y"
+{ System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 89:
 //#line 257 "gramatica.y"
+{ System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
+break;
+case 90:
+//#line 258 "gramatica.y"
+{lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
+break;
+case 91:
+//#line 261 "gramatica.y"
 {
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 									   		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+									   		resetAtClase();
 									}
 break;
-case 90:
-//#line 261 "gramatica.y"
+case 92:
+//#line 266 "gramatica.y"
 {
 	  										lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 	  								  		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+	  								  		resetAtClase();
 	  								}
 break;
-case 91:
-//#line 265 "gramatica.y"
+case 93:
+//#line 271 "gramatica.y"
 {System.out.println("Paso de termino a expresion");
       												   cambiarTercetos();}
 break;
-case 92:
-//#line 269 "gramatica.y"
+case 94:
+//#line 275 "gramatica.y"
 {
 										 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
-										 addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		 
+										 addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
+										 resetAtClase(); 
 							 }
-break;
-case 93:
-//#line 273 "gramatica.y"
-{
-								   lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
-								   addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-							 }
-break;
-case 94:
-//#line 277 "gramatica.y"
-{ System.out.println("Paso factor a termino");}
 break;
 case 95:
 //#line 280 "gramatica.y"
-{System.out.println("Cargo un identificador");}
+{
+								  		 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+									     addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+									     resetAtClase();
+							 }
 break;
 case 96:
-//#line 281 "gramatica.y"
+//#line 285 "gramatica.y"
+{ System.out.println("Paso factor a termino");}
+break;
+case 97:
+//#line 288 "gramatica.y"
+{System.out.println("Cargo un identificador");}
+break;
+case 98:
+//#line 289 "gramatica.y"
+=======
+//#line 282 "gramatica.y"
+{ System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
+break;
+case 89:
+//#line 283 "gramatica.y"
+{ System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
+break;
+case 90:
+//#line 284 "gramatica.y"
+{lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
+break;
+case 91:
+//#line 287 "gramatica.y"
+{if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+										}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  				addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(0).obj).getLexema());
+											}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
+														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);	
+												}else{	
+								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
+							 						}  	 
+							 }
+break;
+case 92:
+//#line 301 "gramatica.y"
+{if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+										}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  				addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(0).obj).getLexema());
+											}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
+														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);	
+												}else{	
+								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
+							 						}		
+	  								}
+break;
+case 93:
+//#line 315 "gramatica.y"
+{System.out.println("Paso de termino a expresion");
+      				   cambiarTercetos();
+      				   if(((Token)val_peek(0).obj).getLexema().equals("-")){
+			   				cteNegativaExpresion = cteNegativaTermino;
+			   				System.out.println("CTE NEGATIVA EXPRESION: "+cteNegativaExpresion);
+			   			}
+      				}
+break;
+case 94:
+//#line 324 "gramatica.y"
+{if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
+									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+								}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 			addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, ((Token)val_peek(0).obj).getLexema());
+										}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaFactor);
+											}else{	
+								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());	
+							 					}  	 
+							 }
+break;
+case 95:
+//#line 339 "gramatica.y"
+{if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
+									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+								}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 			addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, ((Token)val_peek(0).obj).getLexema());
+										}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaFactor);
+											}else{	
+								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());	
+							 					}
+							 }
+break;
+case 96:
+//#line 353 "gramatica.y"
+{ System.out.println("Paso factor a termino");
+					if(((Token)val_peek(0).obj).getLexema().equals("-")){
+			   			cteNegativaTermino = cteNegativaFactor;
+			   			System.out.println("CTE NEGATIVA TERMINO: "+cteNegativaTermino);
+			   		}
+				}
+break;
+case 97:
+//#line 361 "gramatica.y"
+{System.out.println("Cargo un identificador");}
+break;
+case 98:
+//#line 362 "gramatica.y"
+>>>>>>> RobertoPintos-patch-1
 {if (estaDeclarada(((Token)val_peek(2).obj).getLexema()))
 						if (esObjeto(((Token)val_peek(2).obj).getLexema()))
 							if (estaDeclarada(((Token)val_peek(0).obj).getLexema())) {
@@ -1672,29 +2271,65 @@ case 96:
 						assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());					 	
 					}
 break;
-case 97:
-//#line 299 "gramatica.y"
+case 99:
+<<<<<<< HEAD
+//#line 307 "gramatica.y"
 {System.out.println("Paso de cte a factor");}
 break;
-case 98:
-//#line 303 "gramatica.y"
+case 100:
+//#line 311 "gramatica.y"
 {System.out.println("Leo una constante INT");}
 break;
-case 99:
-//#line 304 "gramatica.y"
+case 101:
+//#line 312 "gramatica.y"
 {System.out.println("Leo una constante negada");
 		  actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
 break;
-case 100:
-//#line 306 "gramatica.y"
+case 102:
+//#line 314 "gramatica.y"
 {System.out.println("Leo una constante FLOAT");}
 break;
-case 101:
-//#line 307 "gramatica.y"
+case 103:
+//#line 315 "gramatica.y"
 {System.out.println("Leo una float negada");
     		actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
 break;
-//#line 1621 "Parser.java"
+//#line 1842 "Parser.java"
+=======
+//#line 380 "gramatica.y"
+{System.out.println("Paso de cte a factor");
+			   if(((Token)val_peek(0).obj).getLexema().equals("-")){
+			   		cteNegativaFactor = cteNegativa;
+			   		System.out.println("CTE NEGATIVA FACTOR: "+cteNegativaFactor);
+			   }
+			  }
+break;
+case 100:
+//#line 389 "gramatica.y"
+{System.out.println("Leo una constante INT");}
+break;
+case 101:
+//#line 390 "gramatica.y"
+{System.out.println("Leo una constante negada");
+		  cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
+		  System.out.println("CTE NEGATIVA INT: "+cteNegativa);
+		  actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());
+		  }
+break;
+case 102:
+//#line 395 "gramatica.y"
+{System.out.println("Leo una constante FLOAT");}
+break;
+case 103:
+//#line 396 "gramatica.y"
+{System.out.println("Leo una float negada");
+    		cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
+		  	System.out.println("CTE NEGATIVA FLOAT: "+cteNegativa);
+		  	actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());
+		  	}
+break;
+//#line 1721 "Parser.java"
+>>>>>>> RobertoPintos-patch-1
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
