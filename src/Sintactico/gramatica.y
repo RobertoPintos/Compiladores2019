@@ -80,11 +80,11 @@ variable : ID {if(lexico.getTS().containsKey(((Token)$1.obj).getLexema())){
 		 ; 
 
   
-sentencia_de_clase  : CLASS ID {setClass(((Token)$2.obj).getLexema());} definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)$2.obj).getLexema());
+sentencia_de_clase  : CLASS ID {setClass(((Token)$2.obj).getLexema());} definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un componente de clase con el nombre: "+((Token)$2.obj).getLexema());
 																																											 										  addClaseTS(((Token)$2.obj).getLexema());
 																																											 										  						classFlag = false;
 																																											 										  						   className = "";}
-					| CLASS ID {setClass(((Token)$2.obj).getLexema());} EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$5.obj).getLexema());
+					| CLASS ID {setClass(((Token)$2.obj).getLexema());} EXTENDS ID definicion_clase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un componente de clase extendida con el nombre: "+((Token)$2.obj).getLexema()+", que extiende de: "+((Token)$5.obj).getLexema());
 																																																														 addClaseHeredadaTS(((Token)$2.obj).getLexema(),((Token)$5.obj).getLexema());
 																																																														 														   classFlag = false;
 																																											 										  						   																		  className = "";}
@@ -101,10 +101,10 @@ cuerpo_clase : lista_atributos
 			 | metodo_clase
 			 ;				
 					  
-lista_atributos : visibilidad sentencia_declarativa {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un atributo de clase");}
+lista_atributos : visibilidad sentencia_declarativa {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un atributo de clase");}
 				;
 									 
-metodo_clase : visibilidad VOID ID '(' ')' {setFunctionLabel(((Token)$3.obj).getLexema());} bloque_anidado_metclase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un metodo de clase"); 
+metodo_clase : visibilidad VOID ID '(' ')' {setFunctionLabel(((Token)$3.obj).getLexema());} bloque_anidado_metclase {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un metodo de clase"); 
 																																				  System.out.println("Viene un metodo");
 																												  addMetodoTS(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
 																												  													   setReturnLabel();}
@@ -188,14 +188,31 @@ error_iteracion : WHILE error condicion ')' DO bloque_anidado_while {lexico.getL
 				;
 
 condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() != null)
-							 cmp1 = true;}												comparador expresion { if (genCodigo.getTercetosController().getTercetoExp() != null)
+							 cmp1 = true;}												comparador expresion { if(((Token)$1.obj).getLexema().equals("-")){
+																													if (genCodigo.getTercetosController().getTercetoExp() != null){
 							 																						cmp2 = true;
-																												addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
-																												resetAtClase();}
+																													addTercetoCondicion(cteNegativaExpresion, ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																													resetAtClase();
+																													}
+																												}else if(((Token)$4.obj).getLexema().equals("-")){
+																															if (genCodigo.getTercetosController().getTercetoExp() != null){
+							 																								cmp2 = true;
+																															addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), cteNegativaExpresion);
+																															resetAtClase();
+																															}
+																													}else{
+								 																							if (genCodigo.getTercetosController().getTercetoExp() != null){
+							 																								cmp2 = true;
+																															addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																															resetAtClase();
+																															}
+								 																						 }
+								 																				}
            	| error_condicion
            	;
-           	
-error_condicion : error {lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());} expresion
+
+error_condicion : error {lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());
+						 errorCmp = true;} expresion
 				;
 
 bloque_anidado_while  : sentencia { completarTercetoFinalWHILE(); }
@@ -235,20 +252,32 @@ bloque_anidado_if  : sentencia
 
 asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
-										} else {
-											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-											addTercetoAsignacion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-										} 
+									} else {
+											if(((Token)$3.obj).getLexema().equals("-")){
+												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+												addTercetoAsignacion(((Token)$1.obj).getLexema(), cteNegativaExpresion);
+											} else {
+												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+												addTercetoAsignacion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+											}
+									}
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 		| ID '.' ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
-											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-											addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), ((Token)$5.obj).getLexema(), ((Token)$1.obj).getLexema());
+												if(((Token)$5.obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), cteNegativaExpresion, ((Token)$1.obj).getLexema());
+												} else {
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), ((Token)$5.obj).getLexema(), ((Token)$1.obj).getLexema());
+												}	
 										} 
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
@@ -258,31 +287,94 @@ asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema()))
         | ID ASIGNACION expresion  {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
         ;
 
-expresion 	:  expresion '+' termino {
+expresion 	:  expresion '+' termino {if(((Token)$1.obj).getLexema().equals("-") && ((Token)$3.obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
-									   		addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-									   		resetAtClase();
-									}
-	  		| expresion '-' termino {
-	  										lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
-	  								  		addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-	  								  		resetAtClase();
+								 			addTercetoExpresion(((Token)$2.obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+											resetAtClase();
+										}else if(((Token)$1.obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  				addTercetoExpresion(((Token)$2.obj).getLexema(), cteNegativaExpresion, ((Token)$3.obj).getLexema());
+													resetAtClase();
+											}else if(((Token)$3.obj).getLexema().equals("-")){
+														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  					addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), cteNegativaTermino);
+														resetAtClase();	
+												}else{	
+								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
+	  								  					addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+														resetAtClase();		
+							 						}  	 
+							 }
+	  		| expresion '-' termino {if(((Token)$1.obj).getLexema().equals("-") && ((Token)$3.obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+								 			addTercetoExpresion(((Token)$2.obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+											resetAtClase();
+										}else if(((Token)$1.obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  				addTercetoExpresion(((Token)$2.obj).getLexema(), cteNegativaExpresion, ((Token)$3.obj).getLexema());
+													resetAtClase();
+											}else if(((Token)$3.obj).getLexema().equals("-")){
+														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  					addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), cteNegativaTermino);
+														resetAtClase();	
+												}else{	
+								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
+	  								  					addTercetoExpresion(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+														resetAtClase();		
+							 						}		
 	  								}
       		| termino {System.out.println("Paso de termino a expresion");
-      												   cambiarTercetos();}   
+      				   cambiarTercetos();
+      				   if(((Token)$1.obj).getLexema().equals("-")){
+			   				cteNegativaExpresion = cteNegativaTermino;
+			   				System.out.println("CTE NEGATIVA EXPRESION: "+cteNegativaExpresion);
+			   			}
+      				}
           	;
 
-termino : termino '*' factor {
-										 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
-										 addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());		
-										 resetAtClase(); 
+termino : termino '*' factor {if(((Token)$1.obj).getLexema().equals("-") && ((Token)$3.obj).getLexema().equals("-")){
+									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 	addTercetoTermino(((Token)$2.obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+									resetAtClase(); 
+								}else if(((Token)$1.obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 			addTercetoTermino(((Token)$2.obj).getLexema(), cteNegativaTermino, ((Token)$3.obj).getLexema());
+											resetAtClase(); 
+										}else if(((Token)$3.obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 					addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), cteNegativaFactor);
+													resetAtClase(); 
+											}else{	
+								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
+								 					addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+													resetAtClase(); 	
+							 					}  	 
 							 }
-		| termino '/' factor {
-								  		 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
-									     addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-									     resetAtClase();
+							 
+		| termino '/' factor {if(((Token)$1.obj).getLexema().equals("-") && ((Token)$3.obj).getLexema().equals("-")){
+									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 	addTercetoTermino(((Token)$2.obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+									resetAtClase(); 
+								}else if(((Token)$1.obj).getLexema().equals("-")){
+											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 			addTercetoTermino(((Token)$2.obj).getLexema(), cteNegativaTermino, ((Token)$3.obj).getLexema());
+											resetAtClase(); 
+										}else if(((Token)$3.obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 					addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), cteNegativaFactor);
+													resetAtClase(); 
+											}else{	
+								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
+								 					addTercetoTermino(((Token)$2.obj).getLexema(), ((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+													resetAtClase(); 	
+							 					}
 							 } 
-		| factor { System.out.println("Paso factor a termino");}
+		| factor { System.out.println("Paso factor a termino");
+					if(((Token)$1.obj).getLexema().equals("-")){
+			   			cteNegativaTermino = cteNegativaFactor;
+			   			System.out.println("CTE NEGATIVA TERMINO: "+cteNegativaTermino);
+			   		}
+				}
         ;
 
 factor  : ID {System.out.println("Cargo un identificador");}
@@ -304,16 +396,27 @@ factor  : ID {System.out.println("Cargo un identificador");}
 					 else
 						assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());					 	
 					}	
-		| cte {System.out.println("Paso de cte a factor");}
+		| cte {System.out.println("Paso de cte a factor");
+			   if(((Token)$1.obj).getLexema().equals("-")){
+			   		cteNegativaFactor = cteNegativa;
+			   		System.out.println("CTE NEGATIVA FACTOR: "+cteNegativaFactor);
+			   }
+			  }
 		;
 
 
 cte : CTE {System.out.println("Leo una constante INT");}
 	| '-' CTE {System.out.println("Leo una constante negada");
-		  actualizarTablaNegativo(((Token)$2.obj).getLexema());}
+		  cteNegativa = "-"+((Token)$2.obj).getLexema();
+		  System.out.println("CTE NEGATIVA INT: "+cteNegativa);
+		  actualizarTablaNegativo(((Token)$2.obj).getLexema());
+		  }
     | CTEFLOAT {System.out.println("Leo una constante FLOAT");}
     | '-' CTEFLOAT {System.out.println("Leo una float negada");
-    		actualizarTablaNegativo(((Token)$2.obj).getLexema());}
+    		cteNegativa = "-"+((Token)$2.obj).getLexema();
+		  	System.out.println("CTE NEGATIVA FLOAT: "+cteNegativa);
+		  	actualizarTablaNegativo(((Token)$2.obj).getLexema());
+		  	}
 	;
 
 
@@ -338,6 +441,11 @@ private boolean atclase2 = false;
 private String c2 = "";
 private String a2 = "";
 private String visibilidad = "-";
+private boolean errorCmp = false;
+private String cteNegativa = "";
+private String cteNegativaFactor = "";
+private String cteNegativaTermino = "";
+private String cteNegativaExpresion = "";
 
 
 private Controller lexico;
@@ -458,20 +566,20 @@ public void actualizarTablaNegativo(String lexema){
 			lexico.getLexico().getTS().replace(nuevoLex, b);
 		} else {
 			if (isInteger(nuevoLex)) {
-				Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
+				Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			} else if (isFloat(nuevoLex)) {
-				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			}
 		}
 	} else {
 		String nuevoLex = '-'+lexema;
 		if (isInteger(nuevoLex)) {
-			Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
+			Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		} else if (isFloat(nuevoLex)) {
-			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
+			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		}
 	}

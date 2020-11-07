@@ -27,7 +27,7 @@ public class prueba {
 	
 	private static BufferedReader codigo;
 	private static JFileChooser chooser;
-	
+	 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -91,7 +91,7 @@ public class prueba {
 		    	tercetosController.printTercetos();
 	
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
-		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código fuente.", null, JOptionPane.ERROR_MESSAGE);
+		    		JOptionPane.showMessageDialog(null, "No se genera cï¿½digo assembler por errores en el cï¿½digo fuente.", null, JOptionPane.ERROR_MESSAGE);
 		    	}
 		    	else
 		    	{
@@ -102,7 +102,7 @@ public class prueba {
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-    		JOptionPane.showMessageDialog(null, "Ha habido un error. Código de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null, "Ha habido un error. Cï¿½digo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
 		}
 	 }
 	 

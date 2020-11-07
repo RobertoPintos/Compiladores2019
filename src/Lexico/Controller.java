@@ -178,7 +178,7 @@ public class Controller {
 			char leido = codigoFuente.getChar();
 			int col = getColumna(leido);
 			if (col == -1) {
-				addWarning("Token no válido.", codigoFuente.getLinea());
+				addWarning("Token no vï¿½lido.", codigoFuente.getLinea());
 				codigoFuente.siguiente();		
 			}
 			else
@@ -577,10 +577,11 @@ public class Controller {
 							asm = asm + "@" + s + " DD " + valor +'\n';
 						}
 					} else 
-						if (tipo.equals("int") || tipo.equals("CONST INT"))
-							asm = asm + "_" + s + " DW " + valor +'\n';
-						else {
-							if (tipo.equals("float") || tipo.equals("CONST FLOAT")) {
+						if (tipo.equals("int") || tipo.equals("CONST INT") && tablaDeSimbolo.get(s).getCantRef() >= 1) {
+							String s3 = s.replace('-', '_');
+							asm = asm + "_" + s3 + " DW " + valor +'\n';
+    					} else {
+							if (tipo.equals("float") || tipo.equals("CONST FLOAT") && tablaDeSimbolo.get(s).getCantRef() >= 1) {
 								String s3 = s.replace('.', '_');
 								s3 = s3.replace('-', '_');
 								asm = asm + "_" + s3 + " DD " + valor +'\n';

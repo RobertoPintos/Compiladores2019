@@ -9,7 +9,7 @@ public class AS8 extends AccSemantica{
 		
 		String bf = ct.getBuffer();
 		float valor = Float.parseFloat(bf);
-		if (((valor > ct.minPosF) && (valor < ct.maxPosF)) || ((valor > ct.minNegF) && (valor < ct.maxNegF)) || (valor == ct.zeroF)) {
+		if (((valor >= ct.minPosF) && (valor <= ct.maxPosF)) || ((valor >= ct.minNegF) && (valor <= ct.maxNegF)) || (valor == ct.zeroF)) {
 			ct.addTokenListCompuesto(bf, ct.getNroLinea());
 			ct.addTokenTS(bf, "CONST FLOAT");
 		} else {

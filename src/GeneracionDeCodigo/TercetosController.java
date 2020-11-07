@@ -109,17 +109,16 @@ public class TercetosController {
 		// SEGUNDA PASADA PARA OPTIMIZACION POR REDUCCION SIMPLE
 		try {
 			reduccionSimple();
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		catch (Exception e) {
-			
-		}
-
-		// TERCER PASADA, GENERO EL ASSEMBLER FINAL
+		
+		// SEGUNDA PASADA, GENERO EL ASSEMBLER FINAL
 		String asmFinal = "";
 		tercetoActual = 0;
 		for (Terceto t : tercetos) {
 			if (!t.getOperador().equals("PRINT")) {
-				if (!t.getMarcaFunc()) {
+				if (!t.getMarcaFunc() && t != null) {
 					asmFinal += writeAssembler(t) + '\n';
 					tercetoActual++;
 				}
@@ -136,6 +135,57 @@ public class TercetosController {
 		}
 		return asmFinal;
 	}
+
+	
+	private String calculador(String operacion, String op1, String op2, String tipo) {
+		String calculo = "";
+		if(tipo.equals("CONST INT")) {
+			int result = 0;
+			if(operacion.equals("*")){
+				result = Integer.parseInt(op1) * Integer.parseInt(op2);
+			}else if(operacion.equals("/")){
+					  result = Integer.parseInt(op1) / Integer.parseInt(op2);
+				  }else if (operacion.equals("+")) {
+					  		result = Integer.parseInt(op1) + Integer.parseInt(op2);
+				  		}else {
+							result = Integer.parseInt(op1) - Integer.parseInt(op2);
+						}
+			calculo = String.valueOf(result);	
+		}else {	
+				float result = 0;
+				if(operacion.equals("*")){
+					result = Integer.parseInt(op1) * Integer.parseInt(op2);
+				}else if(operacion.equals("/")){
+						result = Integer.parseInt(op1) / Integer.parseInt(op2);
+					}else if (operacion.equals("+")) {
+				  			result = Integer.parseInt(op1) + Integer.parseInt(op2);
+			  			}else {
+			  				result = Integer.parseInt(op1) - Integer.parseInt(op2);
+			  				}
+				calculo = String.valueOf(result);
+		}
+		return calculo;
+	}
+	
+	private void reemplazarReferencia(int numTerceto, String calculo, int i) {
+		boolean referencia = false;
+		while(i < tercetos.size() && !referencia) {
+			if (tercetos.get(i).getOp1().startsWith("[")) {
+				if(numTerceto == Integer.parseInt(tercetos.get(i).getOp1().substring(1, tercetos.get(i).getOp1().length() - 1))) {
+					tercetos.get(i).setOp1(calculo);
+					referencia = true;
+				}
+			}
+			if (tercetos.get(i).getOp2().startsWith("[")) {
+				if(numTerceto ==  Integer.parseInt(tercetos.get(i).getOp2().substring(1, tercetos.get(i).getOp2().length() - 1))) {
+					tercetos.get(i).setOp2(calculo);
+					referencia = true;
+				}	
+			}
+			i++;
+		}
+		
+	}
 	
 	private void reduccionSimple() {
 		String op1 = "";
@@ -144,14 +194,12 @@ public class TercetosController {
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
-				if (tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")
-					|| tercetos.get(i).getOperador().equals("*") && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT")) {
-					int calculo = Integer.parseInt(op1) * Integer.parseInt(op2);
+				if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
+					|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
+					String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
 					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
 					int j = i - 1;
-					controller.getLexico().elimVarTS(tercetos.get(j).getAuxAsoc());
+					controller.getLexico().eliminarVarTS(tercetos.get(j).getAuxAsoc());
 					tercetos.remove(j);	
 					i++;
 				}else {
@@ -159,33 +207,13 @@ public class TercetosController {
 				}
 		}
 	}
-
-	private void reemplazarReferencia(int numTerceto, int calculo, int i) {
-		boolean referencia = false;
-		while(i < tercetos.size() && !referencia) {
-			if (tercetos.get(i).getOp1().startsWith("[")) {
-				if(numTerceto == Integer.parseInt(tercetos.get(i).getOp1().substring(1, tercetos.get(i).getOp1().length() - 1))) {
-					tercetos.get(i).setOp1(String.valueOf(calculo));
-					referencia = true;
-				}
-			}
-			if (tercetos.get(i).getOp2().startsWith("[")) {
-				if(numTerceto ==  Integer.parseInt(tercetos.get(i).getOp2().substring(1, tercetos.get(i).getOp2().length() - 1))) {
-					tercetos.get(i).setOp2(String.valueOf(calculo));
-					referencia = true;
-				}	
-			}
-			i++;
-		}
-		
-	}
-
+	
+	
 	private void analizarTercetos() {
 
 		String op2 = "";
 		int l;
 		for (Terceto t : tercetos) {
-			t.printTerceto();
 			if (t.getOperador().equals("<") || t.getOperador().equals(">") || t.getOperador().equals("<=")
 					|| t.getOperador().equals(">=") || t.getOperador().equals("==") || t.getOperador().equals("!="))
 				if (t.getOp1().startsWith("[") && t.getOp2().startsWith("[")) {
@@ -196,7 +224,7 @@ public class TercetosController {
 			if (t.getOperador().equals("BF")) {
 				l = t.getOp2().length() - 1;
 				op2 = t.getOp2().substring(1, l);
-				Terceto tercAnt = tercetos.get(t.getNumTerceto() - 2);
+				Terceto tercAnt = tercetos.get(t.getNumTerceto() - 1);
 				if (tercAnt.getOperador().equals("<")) {
 					bifurcaciones.put(t.getNumTerceto(), "JGE Label" + op2);
 					if (Integer.parseInt(op2) <= tercetos.size()) {
@@ -415,15 +443,7 @@ public class TercetosController {
 							asm += "FDIVR" + " @" + nombreVarAsoc + '\n';
 							asm += "FSTP @" + t.getAuxAsoc();
 						}
-					} else if (estatica.equals("ADD") || estatica.equals("IMUL") || estatica.equals("MUL")) { // SI
-																												// ES
-																												// SUMA
-																												// O
-																												// MUL,
-																												// CHEQUEO
-																												// OVERFLOW
-																												// AL
-																												// FINAL
+					} else if (estatica.equals("ADD") || estatica.equals("IMUL") || estatica.equals("MUL")) { // SI ES SUMA O MUL, CHEQUEO OVERFLOW AL FINAL
 						String label = "";
 						if (estatica.contentEquals("ADD"))
 							label = "LabelOverflowSuma";
@@ -656,7 +676,7 @@ public class TercetosController {
 					}
 					// CASO 2: (OP, VAR, TERCETO)
 					if ((t.getOp2().startsWith("["))) {
-						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) -1;
 						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 						// CASO VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
