@@ -92,13 +92,8 @@ public class prueba {
 	        		e.printStackTrace();
 	        }
       
-        	controlador.mostrarTablaSimbolos(f);
+        	
         	tc.mostrarTercetos(f);
-        	controlador.mostrarListaTokens(f);
-        	controlador.getEstructuras(f);
-        	controlador.mostrarWarnings(f);
-        	controlador.mostrarErrores(f);
-        	conversor.mostrarErrores(f);
         	tc.printTercetos();
         	
         	
@@ -106,25 +101,33 @@ public class prueba {
         		JOptionPane.showMessageDialog(null, "No se genera codigo assembler por errores en el codigo", null, JOptionPane.ERROR_MESSAGE);
         	}else {
         		try {
-        			System.out.println("----");
+        			/*System.out.println("----");
                 	System.out.println("----");
                 	System.out.println("Assembler:");
                 	System.out.println(".data");
-                	System.out.println(controlador.generarAssemblerTS());
+                	//System.out.println(controlador.generarAssemblerTS());
                 	System.out.println(".code");        	
-                	System.out.println(tc.generarAssembler());
+                	//System.out.println(tc.generarAssembler());*/
         			conversor.generarAssembler(selectedFile);
-        			System.out.println("reduccion simple");
+        			tc.mostrarTercetos(f);
+        			/*System.out.println("reduccion simple");
         			tc.printTercetos();
         			System.out.println("----");
                 	System.out.println("----");
                 	System.out.println("Assembler:");
-        			System.out.println(controlador.generarAssemblerTS());
+        			//System.out.println(controlador.generarAssemblerTS());*/
         		} catch (IOException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
         		}
           	}
+        	controlador.mostrarTablaSimbolos(f);
+        	controlador.mostrarListaTokens(f);
+        	controlador.getEstructuras(f);
+        	controlador.mostrarWarnings(f);
+        	controlador.mostrarErrores(f);
+        	conversor.mostrarErrores(f);
+        	tc.printTercetos();
         }	
 	 }
 	 
