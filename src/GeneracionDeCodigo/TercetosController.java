@@ -158,13 +158,13 @@ public class TercetosController {
 		}else {	
 				float result = 0;
 				if(operacion.equals("*")){
-					result = Integer.parseInt(op1) * Integer.parseInt(op2);
+					result = Float.parseFloat(op1) * Float.parseFloat(op2);
 				}else if(operacion.equals("/")){
-						result = Integer.parseInt(op1) / Integer.parseInt(op2);
+						result = Float.parseFloat(op1) / Float.parseFloat(op2);
 					}else if (operacion.equals("+")) {
-				  			result = Integer.parseInt(op1) + Integer.parseInt(op2);
+				  			result = Float.parseFloat(op1) + Float.parseFloat(op2);
 			  			}else {
-			  				result = Integer.parseInt(op1) - Integer.parseInt(op2);
+			  				result = Float.parseFloat(op1) - Float.parseFloat(op2);
 			  				}
 				calculo = String.valueOf(result);
 		}
@@ -195,16 +195,16 @@ public class TercetosController {
 		String op1 = "";
 		String op2 = "";
 		int i = 0;
+		int j = tercetos.size();
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
 				if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
 					|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
 					String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
-					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
-					int j = i - 1;
-					controller.getLexico().eliminarVarTS(tercetos.get(j).getAuxAsoc());
-					tercetos.remove(j);	
+					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i+1);// le mando i+1 por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
+					controller.getLexico().eliminarVarTS(tercetos.get(i).getAuxAsoc());
+					tercetos.remove(i);	
 					i++;
 				}else {
 					i++;
@@ -678,17 +678,19 @@ public class TercetosController {
 							asm += "FSTP _" + aux1;
 						}
 					}
-					// CASO 2: (OP, VAR, TERCETO)
+					// CASO 2: (OP, VAR, TERCETO) 
 					if ((t.getOp2().startsWith("["))) {
 						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) -1;
-						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 						// CASO VAR ENTERA
-						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
-							asm += "MOV _" + aux1 + ", " + reg;
-						} else { // CASO VAR FLOAT
-							asm += "FLD @" + nombreVarAsoc + '\n';
-							asm += "FSTP _" + aux1;
+						if(tercetos.size() > idTerceto) { // Fue necesario incorporar esta condicion sino el get(idTerceto).getAuxAsoc() me tiraba un indexout debido a que se habian eliminado otros tercetos
+							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+							if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
+								asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
+								asm += "MOV _" + aux1 + ", " + reg;
+							} else { // CASO VAR FLOAT
+								asm += "FLD @" + nombreVarAsoc + '\n';
+								asm += "FSTP _" + aux1;
+							}
 						}
 					}
 				} else
