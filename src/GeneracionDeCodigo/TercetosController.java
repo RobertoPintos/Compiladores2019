@@ -156,13 +156,13 @@ public class TercetosController {
 		}else {	
 				float result = 0;
 				if(operacion.equals("*")){
-					result = Integer.parseInt(op1) * Integer.parseInt(op2);
+					result = Float.parseFloat(op1) * Float.parseFloat(op2);
 				}else if(operacion.equals("/")){
-						result = Integer.parseInt(op1) / Integer.parseInt(op2);
+						result = Float.parseFloat(op1) / Float.parseFloat(op2);
 					}else if (operacion.equals("+")) {
-				  			result = Integer.parseInt(op1) + Integer.parseInt(op2);
+				  			result = Float.parseFloat(op1) + Float.parseFloat(op2);
 			  			}else {
-			  				result = Integer.parseInt(op1) - Integer.parseInt(op2);
+			  				result = Float.parseFloat(op1) - Float.parseFloat(op2);
 			  				}
 				calculo = String.valueOf(result);
 		}
@@ -193,6 +193,7 @@ public class TercetosController {
 		String op1 = "";
 		String op2 = "";
 		int i = 0;
+		int j = tercetos.size();
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
@@ -676,17 +677,19 @@ public class TercetosController {
 							asm += "FSTP _" + aux1;
 						}
 					}
-					// CASO 2: (OP, VAR, TERCETO)
+					// CASO 2: (OP, VAR, TERCETO) 
 					if ((t.getOp2().startsWith("["))) {
 						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) -1;
-						String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
 						// CASO VAR ENTERA
-						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
-							asm += "MOV _" + aux1 + ", " + reg;
-						} else { // CASO VAR FLOAT
-							asm += "FLD @" + nombreVarAsoc + '\n';
-							asm += "FSTP _" + aux1;
+						if(tercetos.size() > idTerceto) { // Fue necesario incorporar esta condicion sino el get(idTerceto).getAuxAsoc() me tiraba un indexout debido a que se habian eliminado otros tercetos
+							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+							if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
+								asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
+								asm += "MOV _" + aux1 + ", " + reg;
+							} else { // CASO VAR FLOAT
+								asm += "FLD @" + nombreVarAsoc + '\n';
+								asm += "FSTP _" + aux1;
+							}
 						}
 					}
 				} else
