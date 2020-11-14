@@ -71,15 +71,6 @@ public class prueba {
 		        File f = new File (selectedFile.getParent()+"\\resultadoCompilacion.txt");
 		        imprimirEnArchivo(f, codigo);
 		    	
-		  
-		    	controlador.mostrarTablaSimbolos(f);
-		    	tercetosController.mostrarTercetos(f);
-		    	controlador.mostrarListaTokens(f);
-		    	controlador.getEstructuras(f);
-		    	controlador.mostrarWarnings(f);
-		    	controlador.mostrarErrores(f);
-		    	conversorAssembler.mostrarErrores(f);
-		    	
 		    	System.out.println("----");
 		    	System.out.println("----");
 		    	System.out.println("Assembler:");
@@ -87,11 +78,25 @@ public class prueba {
 		    	System.out.println(controlador.generarAssemblerTS());
 		    	System.out.println(".code");        	
 		    	System.out.println(tercetosController.generarAssembler());
-		    	
+		        
+		    	controlador.mostrarTablaSimbolos(f);
+		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
+		    		controlador.mostrarListaTokens(f);
+		    		controlador.mostrarWarnings(f);
+			    	controlador.mostrarErrores(f);
+			    	conversorAssembler.mostrarErrores(f);
+		    	} else {
+			    	tercetosController.mostrarTercetos(f);
+			    	controlador.mostrarListaTokens(f);
+			    	controlador.getEstructuras(f);
+			    	controlador.mostrarWarnings(f);
+			    	controlador.mostrarErrores(f);
+			    	conversorAssembler.mostrarErrores(f);
+		    	}
 		    	tercetosController.printTercetos();
 	
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
-		    		JOptionPane.showMessageDialog(null, "No se genera cï¿½digo assembler por errores en el cï¿½digo fuente.", null, JOptionPane.ERROR_MESSAGE);
+		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código fuente.", null, JOptionPane.ERROR_MESSAGE);
 		    	}
 		    	else
 		    	{
@@ -102,7 +107,7 @@ public class prueba {
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-    		JOptionPane.showMessageDialog(null, "Ha habido un error. Cï¿½digo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null, "Ha habido un error. Código de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
 		}
 	 }
 	 

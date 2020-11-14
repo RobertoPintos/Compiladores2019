@@ -190,21 +190,30 @@ error_iteracion : WHILE error condicion ')' DO bloque_anidado_while {lexico.getL
 condicion 	:  expresion {if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 cmp1 = true;}												comparador expresion { if(((Token)$1.obj).getLexema().equals("-")){
 																													if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																						cmp2 = true;
-																													addTercetoCondicion(cteNegativaExpresion, ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
-																													resetAtClase();
+								 																						cmp2 = true;
+																														addTercetoCondicion(cteNegativaExpresion, ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																														resetAtClase();
+																													} else {
+																														addTercetoCondicion(cteNegativaExpresion, ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																														resetAtClase();
 																													}
 																												}else if(((Token)$4.obj).getLexema().equals("-")){
 																															if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																								cmp2 = true;
-																															addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), cteNegativaExpresion);
-																															resetAtClase();
+								 																								cmp2 = true;
+																																addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), cteNegativaExpresion);
+																																resetAtClase();
+																															} else {
+																																addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), cteNegativaExpresion);
+																																resetAtClase();
 																															}
 																													}else{
 								 																							if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																								cmp2 = true;
-																															addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
-																															resetAtClase();
+								 																								cmp2 = true;
+																																addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																																resetAtClase();
+																															} else {
+																																addTercetoCondicion(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema(), ((Token)$4.obj).getLexema());
+																																resetAtClase();
 																															}
 								 																						 }
 								 																				}

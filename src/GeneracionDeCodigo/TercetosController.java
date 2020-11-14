@@ -103,37 +103,39 @@ public class TercetosController {
 
 	public String generarAssembler() {  //METODO PARA GENERAR EL ASSEMBLER FINAL DE LOS TERCETOS
 
-		// PRIMER PASADA, MARCO BIFURCACIONES Y COMPARACIONES CON DOBLES REGISTROS
-		analizarTercetos();
-		
-		// SEGUNDA PASADA PARA OPTIMIZACION POR REDUCCION SIMPLE
-		try {
-			reduccionSimple();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		// SEGUNDA PASADA, GENERO EL ASSEMBLER FINAL
-		String asmFinal = "";
-		tercetoActual = 0;
-		for (Terceto t : tercetos) {
-			if (!t.getOperador().equals("PRINT")) {
-				if (!t.getMarcaFunc() && t != null) {
-					asmFinal += writeAssembler(t) + '\n';
-					tercetoActual++;
-				}
-			} else {
-				if (!t.getMarcaFunc()) {
-					// CASO MARCA LABEL
-					if (t.getMarca())
-						asmFinal += "Label" + t.getNumTerceto() + ":" + '\n';
-					String s = t.getOp1().replaceAll("\\s", "_");
-					asmFinal += "invoke MessageBox, NULL, addr " + s + ", addr " + s + ", MB_OK" + '\n';
-					tercetoActual++;
+		try {			
+			// PRIMER PASADA PARA OPTIMIZACION POR REDUCCION SIMPLE
+			reduccionSimple();	
+			
+			// SEGUNDA PASADA, MARCO BIFURCACIONES Y COMPARACIONES CON DOBLES REGISTROS
+			analizarTercetos();
+			
+			// TERCER PASADA, GENERO EL ASSEMBLER FINAL
+			String asmFinal = "";
+			tercetoActual = 0;
+			for (Terceto t : tercetos) {
+				if (!t.getOperador().equals("PRINT")) {
+					if (!t.getMarcaFunc() && t != null) {
+						asmFinal += writeAssembler(t) + '\n';
+						tercetoActual++;
+					}
+				} else {
+					if (!t.getMarcaFunc()) {
+						// CASO MARCA LABEL
+						if (t.getMarca())
+							asmFinal += "Label" + t.getNumTerceto() + ":" + '\n';
+						String s = t.getOp1().replaceAll("\\s", "_");
+						asmFinal += "invoke MessageBox, NULL, addr " + s + ", addr " + s + ", MB_OK" + '\n';
+						tercetoActual++;
+					}
 				}
 			}
+			
+			return asmFinal;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
 		}
-		return asmFinal;
 	}
 
 	
@@ -194,17 +196,17 @@ public class TercetosController {
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
-				if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
-					|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
-					String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
-					reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
-					int j = i - 1;
-					controller.getLexico().elimVarTS(tercetos.get(j).getAuxAsoc());
-					tercetos.remove(j);	
-					i++;
-				}else {
-					i++;
+				if (controller.getTS().containsKey(op1) && controller.getTS().containsKey(op2)) {
+					if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
+						|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
+						String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
+						reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
+						int j = i - 1;
+						controller.getLexico().elimVarTS(tercetos.get(j).getAuxAsoc());
+						tercetos.remove(j);
+					}
 				}
+				i++;
 		}
 	}
 	
@@ -224,7 +226,7 @@ public class TercetosController {
 			if (t.getOperador().equals("BF")) {
 				l = t.getOp2().length() - 1;
 				op2 = t.getOp2().substring(1, l);
-				Terceto tercAnt = tercetos.get(t.getNumTerceto() - 1);
+				Terceto tercAnt = tercetos.get(t.getNumTerceto() - 2);
 				if (tercAnt.getOperador().equals("<")) {
 					bifurcaciones.put(t.getNumTerceto(), "JGE Label" + op2);
 					if (Integer.parseInt(op2) <= tercetos.size()) {
@@ -333,13 +335,13 @@ public class TercetosController {
 					if (estatica.equals("DIV") || estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", _" + t.getOp2() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "CMP " + reg + ", 0" + '\n';
 							asm += "JE LabelDivCero \n";
 
-							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
 							asm += "CWD \n";
-							asm += estatica + " _" + t.getOp2() + '\n';
+							asm += estatica + " _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // CASO DOS VARIABLES FLOTANTES
 							String s1 = t.getOp1().replace(".", "_");
@@ -371,8 +373,8 @@ public class TercetosController {
 							label = "LabelOverflowMul";
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
-							asm += estatica + " " + reg + ", _" + t.getOp2() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
+							asm += estatica + " " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "JO " + label + "\n";
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 
@@ -403,8 +405,8 @@ public class TercetosController {
 						}
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) { // DOS VARIABLES ENTERAS
-						asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
-						asm += estatica + " " + reg + ", _" + t.getOp2() + '\n';
+						asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
+						asm += estatica + " " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 						asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 					} else { // CASO DOS VARIABLES FLOTANTES
 						String s1 = t.getOp1().replace(".", "_");
@@ -423,13 +425,13 @@ public class TercetosController {
 					if (estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", _" + t.getOp2() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "CMP " + reg + ", 0" + '\n';
 							asm += "JE LabelDivCero \n";
 
 							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
 							asm += "CWD \n";
-							asm += estatica + " _" + t.getOp2() + '\n';
+							asm += estatica + " _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 						} else { // CASO DOS VARIABLES FLOTANTES
 							String s2 = t.getOp2().replace(".", "_");
@@ -452,7 +454,7 @@ public class TercetosController {
 						// VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
-							asm += estatica + " " + reg + ", _" + t.getOp2() + '\n';
+							asm += estatica + " " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 							asm += "JO " + label + "\n";
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 
@@ -481,7 +483,7 @@ public class TercetosController {
 					// CASO VAR ENTERA
 					if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 						asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
-						asm += estatica + " " + reg + ", _" + t.getOp2() + '\n';
+						asm += estatica + " " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
 						asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 					} else { // CASO VAR FLOAT
 						String s2 = t.getOp2().replace(".", "_");
@@ -502,7 +504,7 @@ public class TercetosController {
 							asm += "CMP " + reg + ", 0" + '\n';
 							asm += "JE LabelDivCero \n";
 
-							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
 							asm += "CWD \n";
 							asm += estatica + " @" + nombreVarAsoc + '\n';
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
@@ -534,7 +536,7 @@ public class TercetosController {
 							label = "LabelOverflowMul";
 						// VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-							asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+							asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
 							asm += estatica + " " + reg + ", @" + nombreVarAsoc + '\n';
 							asm += "JO " + label + "\n";
 							asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
@@ -563,7 +565,7 @@ public class TercetosController {
 					} else // PARA EL RESTO DE LAS OPERACIONES (RESTA)
 					// CASO VAR ENTERA
 					if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
-						asm += "MOV " + reg + ", _" + t.getOp1() + '\n';
+						asm += "MOV " + reg + ", _" + t.getOp1().replace(".", "_") + '\n';
 						asm += estatica + " " + reg + ", @" + nombreVarAsoc + '\n';
 						asm += "MOV @" + t.getAuxAsoc() + ", " + reg;
 					} else {// CASO VAR FLOAT
@@ -710,7 +712,7 @@ public class TercetosController {
 					// CASO 2: UN TERCETO Y UNA CONSTANTE/VARIBLE
 					else if (t.getOp1().startsWith("["))
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
-							asm += "CMP AX, _" + t.getOp2();
+							asm += "CMP AX, _" + t.getOp2().replace(".", "_");
 						else { // COMPARACION ENTRE DOS FLOAT
 							int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
@@ -725,7 +727,7 @@ public class TercetosController {
 					// CASO 3: UNA CONSTANTE/VARIABLE Y UN TERCETO
 					else if (t.getOp2().startsWith("["))
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
-							asm += "CMP _" + t.getOp1() + ", AX";
+							asm += "CMP _" + t.getOp1().replace(".", "_") + ", AX";
 						else { // COMPARACION ENTRE DOS FLOAT
 							int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
@@ -740,8 +742,8 @@ public class TercetosController {
 					// CASO 4: DOS CONSTANTES/VARIABLES
 					else {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) { // VAR/CONST ENTERAS
-							asm += "MOV AX, _" + t.getOp1() + '\n';
-							asm += "CMP AX, _" + t.getOp2();
+							asm += "MOV AX, _" + t.getOp1().replace(".", "_") + '\n';
+							asm += "CMP AX, _" + t.getOp2().replace(".", "_");
 						} else { // VAR/CONST FLOAT
 							String s1 = t.getOp1().replace('.', '_');
 							String s2 = t.getOp2().replace('.', '_');
@@ -759,8 +761,6 @@ public class TercetosController {
 			// ULTIMO CASO, OPERACIONES DE SALTO, FUNCIONES Y FINALIZACION DE PROGRAMA
 		} else if ((t.getOperador().equals("BF")) || (t.getOperador().equals("BI"))) {
 			String valor = bifurcaciones.get(t.getNumTerceto());
-			for (Integer s: bifurcaciones.keySet())
-				System.out.println();
 			asm += valor;
 		} else if (t.getOperador().equals("END"))
 			asm += "JMP LabelEnd";
