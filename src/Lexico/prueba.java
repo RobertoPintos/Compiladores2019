@@ -86,7 +86,6 @@ public class prueba {
 					//MUESTRO LOS TERCETOS DESPUES DE LA REDUCCION SIMPLE
 					tercetosController.mostrarTercetos(f);
 					controlador.mostrarTablaSimbolos(f);
-			    	tercetosController.mostrarTercetos(f);
 			    	controlador.mostrarListaTokens(f);
 			    	controlador.getEstructuras(f);
 			    	controlador.mostrarWarnings(f);
@@ -96,7 +95,7 @@ public class prueba {
 		    	tercetosController.printTercetos();
 	
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
-		    		JOptionPane.showMessageDialog(null, "No se genera código assembler por errores en el código fuente.", null, JOptionPane.ERROR_MESSAGE);
+		    		JOptionPane.showMessageDialog(null, "No se genera codigo assembler por errores en el codigo fuente.", null, JOptionPane.ERROR_MESSAGE);
 		    	}
 		    	else
 		    	{
@@ -107,7 +106,7 @@ public class prueba {
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-    		JOptionPane.showMessageDialog(null, "Ha habido un error. C�digo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null, "Ha habido un error. Codigo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
 		}
 	 }
 	 

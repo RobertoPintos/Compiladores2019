@@ -193,7 +193,6 @@ public class TercetosController {
 		String op1 = "";
 		String op2 = "";
 		int i = 0;
-		int j = tercetos.size();
 		while ( i < tercetos.size() ) {
 				op1 = tercetos.get(i).getOp1();
 				op2 = tercetos.get(i).getOp2();
@@ -201,13 +200,13 @@ public class TercetosController {
 					if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
 						|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
 						String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
-						reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i++);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
-						int j = i - 1;
-						controller.getLexico().elimVarTS(tercetos.get(j).getAuxAsoc());
-						tercetos.remove(j);
+						reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i + 1);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
+						controller.getLexico().elimVarTS(tercetos.get(i).getAuxAsoc());
+						tercetos.remove(i);
 					}
 				}
 				i++;
+				
 		}
 	}
 	
