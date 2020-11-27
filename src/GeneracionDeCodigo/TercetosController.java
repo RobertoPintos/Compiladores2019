@@ -215,18 +215,18 @@ public class TercetosController {
 
 		String op2 = "";
 		int l;
+		Terceto tercAnt = null;
 		for (Terceto t : tercetos) {
 			if (t.getOperador().equals("<") || t.getOperador().equals(">") || t.getOperador().equals("<=")
 					|| t.getOperador().equals(">=") || t.getOperador().equals("==") || t.getOperador().equals("!="))
-				if (t.getOp1().startsWith("[") && t.getOp2().startsWith("[")) {
-					Terceto tercAnt = tercetos.get(t.getNumTerceto() - 2);
+				{
+					tercAnt = tercetos.get(t.getNumTerceto() - 1);
 					tercAnt.setMarcaCMP();
-					tercetos.set(t.getNumTerceto() - 2, tercAnt);
-				}
+					tercetos.set(t.getNumTerceto() - 1, tercAnt);
+				}	
 			if (t.getOperador().equals("BF")) {
 				l = t.getOp2().length() - 1;
 				op2 = t.getOp2().substring(1, l);
-				Terceto tercAnt = tercetos.get(t.getNumTerceto() - 2);
 				if (tercAnt.getOperador().equals("<")) {
 					bifurcaciones.put(t.getNumTerceto(), "JGE Label" + op2);
 					if (Integer.parseInt(op2) <= tercetos.size()) {
@@ -801,24 +801,23 @@ public class TercetosController {
 	private String intercambioAtributos (String inst, boolean interc) {
 		
 		String asm = "";
+		HashMap <String,Atributo> tablaSimb = controller.getTS();
+		String type = tablaSimb.get(inst).getTipo();
+		String clasePadre = tablaSimb.get(type).getClasePadre();
 		if (!interc) {
-			HashMap <String,Atributo> tablaSimb = controller.getTS();
-			String type = tablaSimb.get(inst).getTipo();
 			for (String s: tablaSimb.keySet()) {
-				String uso2 = tablaSimb.get(s).getUso();
-				String deClase2 = tablaSimb.get(s).getDeClase();
-				if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+				String uso = tablaSimb.get(s).getUso();
+				String deClase = tablaSimb.get(s).getDeClase();
+				if (uso.equals("Atributo de clase") && (deClase.equals(type) || deClase.equals(clasePadre))) {
 					asm += "MOV AX, _" + inst + "_" + s + '\n';
 					asm += "MOV _" + s + ", AX \n"; 
 				}	
 			}
 		} else {
-			HashMap <String,Atributo> tablaSimb = controller.getTS();
-			String type = tablaSimb.get(inst).getTipo();
 			for (String s: tablaSimb.keySet()) {
-				String uso2 = tablaSimb.get(s).getUso();
-				String deClase2 = tablaSimb.get(s).getDeClase();
-				if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+				String uso = tablaSimb.get(s).getUso();
+				String deClase = tablaSimb.get(s).getDeClase();
+				if (uso.equals("Atributo de clase") && (deClase.equals(type) || deClase.equals(clasePadre))) {
 					asm += "MOV AX, _" + s + '\n';
 					asm += "MOV _" + inst + "_" + s + ", AX \n"; 
 				}	

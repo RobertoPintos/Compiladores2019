@@ -72,6 +72,7 @@ public class prueba {
 		        imprimirEnArchivo(f, codigo);
 				
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
+		    		controlador.mostrarTablaSimbolos(f);
 		    		controlador.mostrarListaTokens(f);
 		    		controlador.mostrarWarnings(f);
 			    	controlador.mostrarErrores(f);
