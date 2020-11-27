@@ -59,7 +59,7 @@ public class prueba {
 		    	conversorAssembler = new ConversorAssembler(tercetosController, controlador);
 		    
 		    	//--------------------------------------------------------------------------------
-		    	//MUESTRO CODIGO POR CONSOLA, JUNTO CON SUS TOKENS DETECTADOS, TS, WARNINGS Y ERRORES.
+		    	//MUESTRO CODIGO POR CONSOLA
 		    	System.out.println("Codigo fuente:");
 		    	System.out.println(codigo);
 		    	System.out.println("--------------------------------");
@@ -70,28 +70,33 @@ public class prueba {
 		        	    	
 		        File f = new File (selectedFile.getParent()+"\\resultadoCompilacion.txt");
 		        imprimirEnArchivo(f, codigo);
-		    	
-		  
-		    	controlador.mostrarTablaSimbolos(f);
-		    	tercetosController.mostrarTercetos(f);
-		    	controlador.mostrarListaTokens(f);
-		    	controlador.getEstructuras(f);
-		    	controlador.mostrarWarnings(f);
-		    	controlador.mostrarErrores(f);
-		    	conversorAssembler.mostrarErrores(f);
-		    	
-		    	System.out.println("----");
-		    	System.out.println("----");
-		    	System.out.println("Assembler:");
-		    	System.out.println(".data");
-		    	System.out.println(controlador.generarAssemblerTS());
-		    	System.out.println(".code");        	
-		    	System.out.println(tercetosController.generarAssembler());
-		    	
+				
+		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
+		    		controlador.mostrarTablaSimbolos(f);
+		    		controlador.mostrarListaTokens(f);
+		    		controlador.mostrarWarnings(f);
+			    	controlador.mostrarErrores(f);
+			    	conversorAssembler.mostrarErrores(f);
+		    	} else {
+					//MESTRO LOS TERCETOS ANTES DE EJECUTAR  EL TC.GENASSEMBLER, PARA MOSTRAR LOS TERCETOS SIN REDUCCION SIMPLE
+					tercetosController.mostrarTercetos(f);
+				
+					System.out.println(tercetosController.generarAssembler());
+					System.out.println(controlador.generarAssemblerTS());
+					
+					//MUESTRO LOS TERCETOS DESPUES DE LA REDUCCION SIMPLE
+					tercetosController.mostrarTercetos(f);
+					controlador.mostrarTablaSimbolos(f);
+			    	controlador.mostrarListaTokens(f);
+			    	controlador.getEstructuras(f);
+			    	controlador.mostrarWarnings(f);
+			    	controlador.mostrarErrores(f);
+			    	conversorAssembler.mostrarErrores(f);
+		    	}
 		    	tercetosController.printTercetos();
 	
 		    	if (controlador.hayErrores() || conversorAssembler.hayErroresCI()) {
-		    		JOptionPane.showMessageDialog(null, "No se genera c�digo assembler por errores en el c�digo fuente.", null, JOptionPane.ERROR_MESSAGE);
+		    		JOptionPane.showMessageDialog(null, "No se genera codigo assembler por errores en el codigo fuente.", null, JOptionPane.ERROR_MESSAGE);
 		    	}
 		    	else
 		    	{
@@ -102,7 +107,7 @@ public class prueba {
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-    		JOptionPane.showMessageDialog(null, "Ha habido un error. C�digo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null, "Ha habido un error. Codigo de error: \n" + errors.toString(), null, JOptionPane.ERROR_MESSAGE);
 		}
 	 }
 	 

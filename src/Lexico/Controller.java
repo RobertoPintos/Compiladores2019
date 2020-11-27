@@ -170,7 +170,7 @@ public class Controller {
 		cargarPalabrasReservadas();
 	}
 	
-	//METODO CENTRAL, DEVUELVE DE A UN TOKEN DEL CODIGO FUENTE, EN EL FUTURO ES yylex()
+	//METODO CENTRAL, DEVUELVE DE A UN TOKEN DEL CODIGO FUENTE, ES UTILIZADO EN yylex()
 	
 	public Token getToken() {
 		estado = 0;
@@ -178,7 +178,7 @@ public class Controller {
 			char leido = codigoFuente.getChar();
 			int col = getColumna(leido);
 			if (col == -1) {
-				addWarning("Token no vï¿½lido.", codigoFuente.getLinea());
+				addWarning("Token no válido.", codigoFuente.getLinea());
 				codigoFuente.siguiente();		
 			}
 			else

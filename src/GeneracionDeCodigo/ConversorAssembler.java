@@ -58,27 +58,24 @@ public class ConversorAssembler {
 				+ "includelib \\masm32\\lib\\user32.lib" + '\n'
 				+ "includelib \\masm32\\lib\\masm32.lib" + '\n'
 				+ '\n' +".data" + '\n');	
+		
+		
+		//Inicia el codigo
+		String code = "start:" + '\n' + (String) controladorTercetos.generarAssembler() + '\n'; 
+		
 		String data = "";
 		data = data + controller.generarAssemblerTS() ;
 		data = data + "DividirCero DB \"Error al dividir por cero!\", 0" + '\n';
 		data = data + "OverflowSuma DB \"Error por overflow en suma!\", 0" + '\n';
 		data = data + "OverflowMul DB \"Error por overflow en multiplicacion!\", 0" + '\n';
 		data = data + "_min_float_neg DD -3.40282347E38" + '\n';
-		//data = data + "_max_float_neg DD -1.17549435E-38" + '\n';
-		//data = data + "_min_float_pos DD 1.17549435E-38" + '\n';
 		data = data + "_max_float_pos DD 3.40282347E38" + '\n';
-		//data = data + "_zero_float DD 0.0" + '\n';
 		
 		data = data + '\n' + ".code"+ "\n";
 		data = data + controladorTercetos.generarAssemblerFunctions() + "\n";
 		
-		bw.write( data );
 		
-		//Inicia el codigo
-		String code = "start:" + '\n' + (String) controladorTercetos.generarAssembler() + '\n'; 
-
-
-		bw.write( code );
+		bw.write( data+"\n"+code );
 		String errores = labelDivCero + ":" + '\n';
 		errores = errores + "invoke MessageBox, NULL, addr DividirCero, addr DividirCero, MB_OK" + '\n';
 		errores = errores + "invoke ExitProcess, 0" + '\n';

@@ -533,11 +533,7 @@ final static String yyrule[] = {
 "cte : '-' CTEFLOAT",
 };
 
-<<<<<<< HEAD
-//#line 323 "gramatica.y"
-=======
-//#line 407 "gramatica.y"
->>>>>>> RobertoPintos-patch-1
+//#line 449 "gramatica.y"
 
 
 private ArrayList <Token> listaVar = new ArrayList <Token>();
@@ -556,14 +552,13 @@ private boolean atclase2 = false;
 private String c2 = "";
 private String a2 = "";
 private String visibilidad = "-";
-<<<<<<< HEAD
-=======
 private boolean errorCmp = false;
 private String cteNegativa = "";
 private String cteNegativaFactor = "";
 private String cteNegativaTermino = "";
 private String cteNegativaExpresion = "";
->>>>>>> RobertoPintos-patch-1
+private boolean metClase = false;
+private boolean guardoAtClase = false;
 
 
 private Controller lexico;
@@ -684,49 +679,46 @@ public void actualizarTablaNegativo(String lexema){
 			lexico.getLexico().getTS().replace(nuevoLex, b);
 		} else {
 			if (isInteger(nuevoLex)) {
-<<<<<<< HEAD
-				Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
-				lexico.getLexico().getTS().put(nuevoLex, c);
-			} else if (isFloat(nuevoLex)) {
-				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
-=======
 				Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			} else if (isFloat(nuevoLex)) {
 				Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
->>>>>>> RobertoPintos-patch-1
 				lexico.getLexico().getTS().put(nuevoLex, c);
 			}
 		}
 	} else {
 		String nuevoLex = '-'+lexema;
 		if (isInteger(nuevoLex)) {
-<<<<<<< HEAD
-			Atributo c = new Atributo ("CONST INT", "CONST INT", 0, "-", "-", 1);
-			lexico.getLexico().getTS().put(nuevoLex, c);
-		} else if (isFloat(nuevoLex)) {
-			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", 0.0, "-", "-", 1);
-=======
 			Atributo c = new Atributo ("CONST INT", "CONST INT", Integer.parseInt(nuevoLex), "-", "-", 1);
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		} else if (isFloat(nuevoLex)) {
 			Atributo c = new Atributo ("CONST FLOAT", "CONST FLOAT", Float.parseFloat(nuevoLex), "-", "-", 1);
->>>>>>> RobertoPintos-patch-1
 			lexico.getLexico().getTS().put(nuevoLex, c);
 		}
 	}
 }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> RobertoPintos-patch-1
 public void addTercetoPrint (String lex, String cad) {
 
 	String aux = cad.substring(1, cad.length()-1);
 	Terceto t = new Terceto (lex.toUpperCase(), aux, "-", genCodigo.getTercetosController().getCantTercetos()+1);
 	genCodigo.getTercetosController().addTercetoLista(t);	
+}
+
+public boolean verificarOperando (String lex) {
+	String uso = lexico.getLexico().getTS().get(lex).getUso();
+	if (uso.equals("Variable") || uso.equals("CONST INT") || uso.equals("CONST FLOAT"))
+			return true;
+		else
+			return false;
+}
+
+public boolean verificarVariable (String lex) {
+	String uso = lexico.getLexico().getTS().get(lex).getUso();
+	if (uso.equals("Variable"))
+			return true;
+		else
+			return false;
 }
 
 public void addTercetoAsignacion (String op1, String op2) {
@@ -743,22 +735,21 @@ public void addTercetoAsignacion (String op1, String op2) {
 		} else
 			lexico.getLexico().addError("La variable "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 	} else {
-<<<<<<< HEAD
-=======
-		System.out.println("OPERANDO 1: "+op1);
-		System.out.println("OPERANDO 2: "+op2);
->>>>>>> RobertoPintos-patch-1
 		if (estaDeclarada(op1))
 			if (estaDeclarada(op2)) {
 				if (!atclase1) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (":=", op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-						t.setTipoOp(tipo1);
-						genCodigo.getTercetosController().addTercetoLista(t);
+					if ((verificarOperando(op2) && !metClase) || (metClase)) {
+						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (":=", op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							t.setTipoOp(tipo1);
+							genCodigo.getTercetosController().addTercetoLista(t);
+						} else {
+							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						}
 					} else {
-						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
 					}
 				} else {
 					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
@@ -797,14 +788,18 @@ public void addTercetoAsignacionVarClase (String op1, String op2, String clase) 
 		if (estaDeclarada(op1))
 			if (estaDeclarada(op2)) {
 				if (!atclase1) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (":=", clase + "." + op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-						t.setTipoOp(tipo1);
-						genCodigo.getTercetosController().addTercetoLista(t);
+					if ((verificarOperando(op2) && !metClase) || (metClase)) {
+						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (":=", clase + "." + op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							t.setTipoOp(tipo1);
+							genCodigo.getTercetosController().addTercetoLista(t);
+						} else {
+							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						}
 					} else {
-						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
 					}
 				} else {
 					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
@@ -827,7 +822,6 @@ public void addTercetoAsignacionVarClase (String op1, String op2, String clase) 
 }
 
 public void addTercetoTermino (String operando, String op1, String op2) {
-<<<<<<< HEAD
 		//SI NO HAY OPERACION PREVIA
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
 			//SI ES OPERACION ENTRE DOS ATRIBUTOS DE CLASE
@@ -836,70 +830,94 @@ public void addTercetoTermino (String operando, String op1, String op2) {
 				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
 				if (chequeoTipo(tipo1, tipo2)) {
 						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-	System.out.println("ADD TERCETO TERMINO OP1: "+op1);
-	System.out.println("ADD TERCETO TERMINO OP2: "+op2);
-		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op1))
-				if(estaDeclarada(op2)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoTerm(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
 			} else {
 				if (atclase1) {
-					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
+					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA, Y SI NO VIENE DE ANTES.
 					if (esObjeto(op1)) {
 						if(estaDeclarada(op2)) {
-							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoTerm(t);
-							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							if ((verificarOperando(op2) && !metClase) || (metClase)) {
+								String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									asociarVarAuxTerceto(t, tipo1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									genCodigo.getTercetosController().setTercetoTerm(t);
+								} else
+									lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
 						} else
 							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 					} else {
-						if(estaDeclarada(op1)) {
-							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoTerm(t);
+						if (esObjeto(op2)) {
+							if(estaDeclarada(op1)) {
+								if ((verificarOperando(op1) && !metClase) || (metClase)) {
+									String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+									String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+									if (chequeoTipo(tipo1, tipo2)) {
+										Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+										asociarVarAuxTerceto(t, tipo1);
+										t.setTipoOp(tipo1);
+										genCodigo.getTercetosController().addTercetoLista(t);
+										genCodigo.getTercetosController().setTercetoTerm(t);
+									} else
+										lexico.getLexico().addError ("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+								} else {
+									lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+								}
 							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-						} else
-							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+								lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+						} else { //SIGNIFICA QUE EL AT DE CLASE VIENE CARGADO DE ANTES PERO NO ENTRA EN LA OP ACTUAL
+							if (estaDeclarada(op1))
+								if(estaDeclarada(op2)) {
+									if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || (metClase)) {
+										String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+										String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+										if (chequeoTipo(tipo1, tipo2)) {
+											Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+											asociarVarAuxTerceto(t, tipo1);
+											t.setTipoOp(tipo1);
+											genCodigo.getTercetosController().addTercetoLista(t);
+											genCodigo.getTercetosController().setTercetoTerm(t);
+											guardoAtClase = true;
+										} else
+											lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+									} else {
+										lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+									}
+								} else
+									lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+							else 
+								lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+						}
 					}
 				//SI NO ES UNA OPERACION NORMAL ENTRE DOS VARIABLES/CONSTANTES
 				} else {
 					if (estaDeclarada(op1))
 						if(estaDeclarada(op2)) {
-							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoTerm(t);
-							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || (metClase)) {
+								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									asociarVarAuxTerceto(t, tipo1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									genCodigo.getTercetosController().setTercetoTerm(t);
+								} else
+									lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
 						} else
 							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 					else 
@@ -909,53 +927,60 @@ public void addTercetoTermino (String operando, String op1, String op2) {
 		//SI NO, ES UNA OPERACION ENTRE UN TERCETO ANTERIOR Y UNA VARIABLE/CONST/AT DE CLASE
 		} else {
 			if (atclase1) {
-				String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-				} else
-					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
-			else 
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
-		} else {
-			if(estaDeclarada(op2)) {
-				String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
-					asociarVarAuxTerceto(t, tipo2);
-					t.setTipoOp(tipo2);
-					genCodigo.getTercetosController().addTercetoLista(t);
-					genCodigo.getTercetosController().setTercetoTerm(t);
-				} else
-					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
-			} else {
-				if(estaDeclarada(op2)) {
+				if (esObjeto(op2)) {
 					String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 						asociarVarAuxTerceto(t, tipo2);
 						t.setTipoOp(tipo2);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoTerm(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else {
+					if(estaDeclarada(op2)) {
+						if ((verificarOperando(op2) && !metClase) || (metClase)) {
+							String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo2);
+								t.setTipoOp(tipo2);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoTerm(t);
+								guardoAtClase = true;
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else {
+							lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+						}
+					} else
+						lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			} else {
+				if(estaDeclarada(op2)) {
+					if ((verificarOperando(op2) && !metClase) || (metClase)) {
+						String tipo1 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							asociarVarAuxTerceto(t, tipo2);
+							t.setTipoOp(tipo2);
+							genCodigo.getTercetosController().addTercetoLista(t);
+							genCodigo.getTercetosController().setTercetoTerm(t);
+						} else
+							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+					} else {
+						lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+					}
 				} else
 					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 			}
-=======
-			} else
-				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
->>>>>>> RobertoPintos-patch-1
 		}
 }
 
 public void addTercetoExpresion (String operando, String op1, String op2) {
-<<<<<<< HEAD
 	//SI NO HAY OPERACION PREVIA
 	if (genCodigo.getTercetosController().getTercetoExp() == null) {
 		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
@@ -965,70 +990,95 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 				String tipo2 = lexico.getLexico().getTS().get(a2).getTipo();
 				if (chequeoTipo(tipo1, tipo2)) {
 						Terceto t = new Terceto (operando, c1 + "." + a1, c2 + "." + a2, genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-	if (genCodigo.getTercetosController().getTercetoExp() == null) {
-		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op1))
-				if(estaDeclarada(op2)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoExp(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
 			} else {
 				//OPERACION ENTRE AT DE CLASE Y VARIABLE
 				if (atclase1) {
 					//SI ES OBJETO OP1 SIGNIFICA QUE EL AT DE CLASE ESTA A LA IZQUIERDA, SI NO A DERECHA
 					if (esObjeto(op1)) {
 						if(estaDeclarada(op2)) {
-							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoExp(t);
-							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							if ((verificarOperando(op2) && !metClase)  || metClase) {
+								String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (operando, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									asociarVarAuxTerceto(t, tipo1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									genCodigo.getTercetosController().setTercetoExp(t);
+								} else
+									lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
 						} else
 							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 					} else {
-						if(estaDeclarada(op1)) {
-							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoExp(t);
+						if(esObjeto(op2)) {
+							if(estaDeclarada(op1)) {
+								if ((verificarOperando(op1) && !metClase)  || metClase) {
+									String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+									String tipo2 = lexico.getLexico().getTS().get(op1).getTipo();
+									if (chequeoTipo(tipo1, tipo2)) {
+										Terceto t = new Terceto (operando, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+										asociarVarAuxTerceto(t, tipo1);
+										t.setTipoOp(tipo1);
+										genCodigo.getTercetosController().addTercetoLista(t);
+										genCodigo.getTercetosController().setTercetoExp(t);
+									} else
+										lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+								} else {
+									lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+								}
 							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-						} else
-							lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+								lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+						} else { //VIENE UN AT DE CLASE DE ANTES
+							if (estaDeclarada(op1))
+								if(estaDeclarada(op2)) {
+									if ((verificarOperando(op1) && verificarOperando(op2)  && !metClase)  || metClase) {
+										String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+										String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+										if (chequeoTipo(tipo1, tipo2)) {
+											Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+											asociarVarAuxTerceto(t, tipo1);
+											t.setTipoOp(tipo1);
+											genCodigo.getTercetosController().addTercetoLista(t);
+											genCodigo.getTercetosController().setTercetoExp(t);
+											guardoAtClase = true;
+										} else
+											lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+									} else {
+										lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+									}
+								} else
+									lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+							else 
+								lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+						}
 					}
 				} else {
 					//OPERACION ENTRE DOS VARIABLES
 					if (estaDeclarada(op1))
 						if(estaDeclarada(op2)) {
-							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-								asociarVarAuxTerceto(t, tipo1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								genCodigo.getTercetosController().setTercetoExp(t);
-							} else
-								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							if ((verificarOperando(op1) && verificarOperando(op2)  && !metClase)  || metClase) {
+								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (operando, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									asociarVarAuxTerceto(t, tipo1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									genCodigo.getTercetosController().setTercetoExp(t);
+								} else
+									lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
 						} else
 							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 					else 
@@ -1038,41 +1088,53 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 		} else {
 			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO TERMINO ANTERIOR
 			if (atclase1) {
-				String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, c1 + "." + a1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-				} else
-					lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
-			else 
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
-		} else {
-			if (estaDeclarada(op1)) {
-				String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-				String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
-					asociarVarAuxTerceto(t, tipo1);
-					t.setTipoOp(tipo1);
-					genCodigo.getTercetosController().addTercetoLista(t);
-					genCodigo.getTercetosController().setTercetoExp(t);
-				} else
-					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
-			} else {
-				if (estaDeclarada(op1)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+				if (esObjeto(op1)) { //SI ES OBJETO P1 ENTONCES ES CON UN AT DE CLASE, SI NO ES CON UNA VARIABLE Y EL AT DE CLASE VIENE DE ANTES
+					String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
 					String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+						Terceto t = new Terceto (operando, c1 + "." + a1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 						asociarVarAuxTerceto(t, tipo1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						genCodigo.getTercetosController().setTercetoExp(t);
 					} else
 						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (estaDeclarada(op1)) {
+						if ((verificarOperando(op1) && !metClase)  || metClase) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+								guardoAtClase = true;
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else {
+							lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+						}
+					} else
+						lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
+				}
+			} else {
+				if (estaDeclarada(op1)) {
+					if ((verificarOperando(op1) && !metClase)  || metClase) {
+						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+						String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
+						if (chequeoTipo(tipo1, tipo2)) {
+							Terceto t = new Terceto (operando, op1, "["+genCodigo.getTercetosController().getTercetoTerm().getNumTerceto()+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+							asociarVarAuxTerceto(t, tipo1);
+							t.setTipoOp(tipo1);
+							genCodigo.getTercetosController().addTercetoLista(t);
+							genCodigo.getTercetosController().setTercetoExp(t);
+						} else
+							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+					} else {
+						lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+					}
 				} else
 					lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 			}		
@@ -1094,55 +1156,59 @@ public void addTercetoExpresion (String operando, String op1, String op2) {
 			} else {
 			//OPERACION ENTRE VARIABLE/AT CLASE Y TERCETO EXPRESION ANTERIOR
 				if (atclase1) {
-					String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-						asociarVarAuxTerceto(t, tipo2);
-						t.setTipoOp(tipo2);
-						genCodigo.getTercetosController().addTercetoLista(t);
-						genCodigo.getTercetosController().setTercetoExp(t);
-					} else
-						lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-				} else {
-					if (estaDeclarada(op2)) {
+					if (esObjeto(op2)) {
 						String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 						if (chequeoTipo(tipo1, tipo2)) {
-							Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 							asociarVarAuxTerceto(t, tipo2);
 							t.setTipoOp(tipo2);
 							genCodigo.getTercetosController().addTercetoLista(t);
 							genCodigo.getTercetosController().setTercetoExp(t);
 						} else
 							lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+					} else {
+						if (estaDeclarada(op2)) {
+							if ((verificarOperando(op2) && !metClase) || metClase) {
+								String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+									asociarVarAuxTerceto(t, tipo2);
+									t.setTipoOp(tipo2);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									genCodigo.getTercetosController().setTercetoExp(t);
+									guardoAtClase = true;
+								} else
+									lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
+						} else 
+							lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
+					}
+				} else {
+					if (estaDeclarada(op2)) {
+						if ((verificarOperando(op2) && !metClase) || metClase) {
+							String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								asociarVarAuxTerceto(t, tipo2);
+								t.setTipoOp(tipo2);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								genCodigo.getTercetosController().setTercetoExp(t);
+							} else
+								lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+						} else {
+							lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+						}
 					} else 
 						lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
 				}
 			}
 		} else {
 			//OPERACION ENTRE TERCETO TERMINO Y TERCETO EXPRESION
-=======
-			} else
-				lexico.getLexico().addError("La variable: "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
-		}
-	} else {
-		if (genCodigo.getTercetosController().getTercetoTerm() == null) {
-			if (estaDeclarada(op2)) {
-				String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-				if (chequeoTipo(tipo1, tipo2)) {
-					Terceto t = new Terceto (operando, "["+genCodigo.getTercetosController().getTercetoExp().getNumTerceto()+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
-					asociarVarAuxTerceto(t, tipo2);
-					t.setTipoOp(tipo2);
-					genCodigo.getTercetosController().addTercetoLista(t);
-					genCodigo.getTercetosController().setTercetoExp(t);
-				} else
-					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
-			} else 
-				lexico.getLexico().addError("La variable: "+op2+" no esta declarada.", lexico.getLexico().getNroLinea());
-		} else {
->>>>>>> RobertoPintos-patch-1
 			String tipo1 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
 			String tipo2 = genCodigo.getTercetosController().getTercetoTerm().getTipoOp();
 			if (chequeoTipo(tipo1, tipo2)) {	
@@ -1170,10 +1236,6 @@ public void cambiarTercetos () {
 } 
 
 public void addTercetoCondicion (String op1, String lex, String op2) {
-<<<<<<< HEAD
-=======
-	
->>>>>>> RobertoPintos-patch-1
 	if (cmp1 == true)
 		if (cmp2 == true) {
 			String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-2).getTipoOp();
@@ -1186,87 +1248,102 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 			} else 
 				assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
 		} else {
-<<<<<<< HEAD
 			if (atclase1) {
-				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
-				if (chequeoTipo(tipo1,tipo2)) {
-					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-			if (estaDeclarada(op2)) {
-				String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-				String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-				if (chequeoTipo(tipo1,tipo2)) {
-					Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
-					t.setTipoOp(tipo1);
-					genCodigo.getTercetosController().addTercetoLista(t);
-					condStart = genCodigo.getTercetosController().getCantTercetos()-1;
-				} else
-					assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
-			} else {
-				if (estaDeclarada(op2)) {
+				if (esObjeto(op2)) {
 					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-					String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
 					if (chequeoTipo(tipo1,tipo2)) {
-						Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+						Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
 						t.setTipoOp(tipo1);
 						genCodigo.getTercetosController().addTercetoLista(t);
 						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 					} else
 						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+				} else {
+					if (estaDeclarada(op2)) {
+						if ((verificarOperando(op2) && !metClase) || metClase) {
+							String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+							if (chequeoTipo(tipo1,tipo2)) {
+								Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+								guardoAtClase = true;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						} else {
+							lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+						}
+					} else 
+						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+				}
+			} else {
+				if (estaDeclarada(op2)) {
+					if ((verificarOperando(op2) && !metClase) || metClase) {
+						String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+						if (chequeoTipo(tipo1,tipo2)) {
+							Terceto t = new Terceto (lex, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", op2, genCodigo.getTercetosController().getCantTercetos()+1);
+							t.setTipoOp(tipo1);
+							genCodigo.getTercetosController().addTercetoLista(t);
+							condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+						} else
+							assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+					} else {
+						lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+					}
 				} else 
 					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 			}
 		}
 	else { if (cmp2 == true) {
 				if (atclase1) {
-					String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-					String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
-					if (chequeoTipo(tipo1,tipo2)) {
-						Terceto t = new Terceto (lex, c1 + "." + a1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-			} else 
-				assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
-		}
-	else { if (cmp2 == true) {
-				if (estaDeclarada(op1)) {
-					String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-					String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-					if (chequeoTipo(tipo1, tipo2)) {
-						Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
-						t.setTipoOp(tipo1);
-						genCodigo.getTercetosController().addTercetoLista(t);
-						condStart = genCodigo.getTercetosController().getCantTercetos()-1;
-					} else
-						assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
-<<<<<<< HEAD
-				} else {
-					if (estaDeclarada(op1)) {
-						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-						String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
-						if (chequeoTipo(tipo1, tipo2)) {
-							Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-=======
-				} else
-					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());					
-			} else {
-				if (estaDeclarada(op1))
-					if (estaDeclarada(op2)) {
-						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-						if (chequeoTipo(tipo1, tipo2)) {
-							Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
->>>>>>> RobertoPintos-patch-1
+					if (esObjeto(op1)) {
+						String tipo1 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+						String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+						if (chequeoTipo(tipo1,tipo2)) {
+							Terceto t = new Terceto (lex, c1 + "." + a1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
 							t.setTipoOp(tipo1);
 							genCodigo.getTercetosController().addTercetoLista(t);
 							condStart = genCodigo.getTercetosController().getCantTercetos()-1;
 						} else
 							assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+					} else {
+						if (estaDeclarada(op1)) {
+							if ((verificarOperando(op1) && !metClase) || metClase) {
+								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+								String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+								if (chequeoTipo(tipo1, tipo2)) {
+									Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+									t.setTipoOp(tipo1);
+									genCodigo.getTercetosController().addTercetoLista(t);
+									condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+									guardoAtClase = true;
+								} else
+									assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+							} else {
+								lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							}
+						} else
+							assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+					}
+				} else {
+					if (estaDeclarada(op1)) {
+						if ((verificarOperando(op1) && !metClase) || metClase) {
+							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+							String tipo2 = genCodigo.getTercetosController().getTercetoLista(genCodigo.getTercetosController().getCantTercetos()-1).getTipoOp();
+							if (chequeoTipo(tipo1, tipo2)) {
+								Terceto t = new Terceto (lex, op1, "["+Integer.toString(genCodigo.getTercetosController().getCantTercetos())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+								t.setTipoOp(tipo1);
+								genCodigo.getTercetosController().addTercetoLista(t);
+								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+							} else
+								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+						} else {
+							lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+						}
 					} else
-<<<<<<< HEAD
 						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());	
 				}				
 			} else {
@@ -1283,49 +1360,83 @@ public void addTercetoCondicion (String op1, String lex, String op2) {
 				} else {
 					if (atclase1) {
 						if (esObjeto(op1)) {
-							String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (lex, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
-							} else
-								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+							if (estaDeclarada(op2)) {
+								if ((verificarOperando(op2) && !metClase) || metClase) {
+									String tipo1 = lexico.getLexico().getTS().get(a1).getTipo();
+									String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+									if (chequeoTipo(tipo1, tipo2)) {
+										Terceto t = new Terceto (lex, c1 + "." + a1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+										t.setTipoOp(tipo1);
+										genCodigo.getTercetosController().addTercetoLista(t);
+										condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+									} else
+										assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+								} else 
+									lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+							} else 
+								assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());	
 						} else {
-							String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-							String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
-							if (chequeoTipo(tipo1, tipo2)) {
-								Terceto t = new Terceto (lex, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
-								t.setTipoOp(tipo1);
-								genCodigo.getTercetosController().addTercetoLista(t);
-								condStart = genCodigo.getTercetosController().getCantTercetos()-1;
-							} else
-								assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+							if (esObjeto(op2)) {
+								if (estaDeclarada(op1)) {
+									if ((verificarOperando(op1) && !metClase) || metClase) {
+										String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+										String tipo2 = lexico.getLexico().getTS().get(a1).getTipo();
+										if (chequeoTipo(tipo1, tipo2)) {
+											Terceto t = new Terceto (lex, op1, c1 + "." + a1, genCodigo.getTercetosController().getCantTercetos()+1);
+											t.setTipoOp(tipo1);
+											genCodigo.getTercetosController().addTercetoLista(t);
+											condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+										} else
+											assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+									} else 
+										lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+								} else 
+									assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());	
+							} else {
+								if (estaDeclarada(op1))
+									if (estaDeclarada(op2)) {
+										if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || metClase) {
+											String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+											String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+											if (chequeoTipo(tipo1, tipo2)) {
+												Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+												t.setTipoOp(tipo1);
+												genCodigo.getTercetosController().addTercetoLista(t);
+												condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+												guardoAtClase = true;
+											} else
+												assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+										} else {
+											lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+										}
+									} else
+										assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+								else		
+									assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
+							}
 						}
 					} else {
 						if (estaDeclarada(op1))
 							if (estaDeclarada(op2)) {
-								String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-								String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
-								if (chequeoTipo(tipo1, tipo2)) {
-									Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
-									t.setTipoOp(tipo1);
-									genCodigo.getTercetosController().addTercetoLista(t);
-									condStart = genCodigo.getTercetosController().getCantTercetos()-1;
-								} else
-									assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+								if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || metClase) {
+									String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+									String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
+									if (chequeoTipo(tipo1, tipo2)) {
+										Terceto t = new Terceto (lex, op1, op2, genCodigo.getTercetosController().getCantTercetos()+1);
+										t.setTipoOp(tipo1);
+										genCodigo.getTercetosController().addTercetoLista(t);
+										condStart = genCodigo.getTercetosController().getCantTercetos()-1;
+									} else
+										assembler.getConversorAssembler().addErrorCI("Tipos incompatibles en la comparacion", lexico.getLexico().getNroLinea());
+								} else {
+									lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
+								}
 							} else
 								assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 						else		
 							assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
 					}
 				}
-=======
-						assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
-				else		
-					assembler.getConversorAssembler().addErrorCI("Variable no declarada en la comparacion", lexico.getLexico().getNroLinea());
->>>>>>> RobertoPintos-patch-1
 			}
 		}
 }
@@ -1497,11 +1608,7 @@ private void guardarAtClase (String clase, String at) {
 			this.c1 = clase;
 			this.a1 = at;
 			this.atclase1 = true;
-<<<<<<< HEAD
 		} else if (!this.atclase2) {
-=======
-		} else {
->>>>>>> RobertoPintos-patch-1
 			this.c2 = clase;
 			this.a2 = at;
 			this.atclase2 = true;	
@@ -1533,11 +1640,24 @@ private void callFunction (String o, String fn) {
 	Terceto t = new Terceto ("CALL", fn + "@" + o, "-", genCodigo.getTercetosController().getCantTercetos()+1);
 	genCodigo.getTercetosController().addTercetoLista(t);
 }
-<<<<<<< HEAD
-//#line 1307 "Parser.java"
-=======
-//#line 1103 "Parser.java"
->>>>>>> RobertoPintos-patch-1
+
+private void verificarLlamadoAMetodo (String inst, String metodo) {
+	if (esObjeto(inst))
+		if (esMetodo(metodo)){
+			if (checkVisibilidad(metodo)) {
+				if (lexico.getLexico().getTS().get(inst).getDeClase().equals(lexico.getLexico().getTS().get(metodo).getDeClase()) || 
+						lexico.getLexico().getTS().get(lexico.getLexico().getTS().get(inst).getDeClase()).getClasePadre().equals(lexico.getLexico().getTS().get(metodo).getDeClase())) {
+					callFunction(inst, metodo);
+				} else 
+					assembler.getConversorAssembler().addErrorCI("El metodo llamado no corresponde a la clase instanciada ni a ninguna heredada", lexico.getLexico().getNroLinea());
+			} else
+				assembler.getConversorAssembler().addErrorCI("Metodo inaccesible por este objeto", lexico.getLexico().getNroLinea());
+		} else
+			assembler.getConversorAssembler().addErrorCI("Se trato de invocar a un metodo inexistente", lexico.getLexico().getNroLinea());
+  else
+  		assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());	
+}
+//#line 1589 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1741,7 +1861,7 @@ case 12:
 break;
 case 13:
 //#line 83 "gramatica.y"
-{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase con el nombre: "+((Token)val_peek(2).obj).getLexema());
+{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un componente de clase con el nombre: "+((Token)val_peek(2).obj).getLexema());
 																																											 										  addClaseTS(((Token)val_peek(2).obj).getLexema());
 																																											 										  						classFlag = false;
 																																											 										  						   className = "";}
@@ -1752,36 +1872,37 @@ case 14:
 break;
 case 15:
 //#line 87 "gramatica.y"
-{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un componente de clase extendida con el nombre: "+((Token)val_peek(4).obj).getLexema()+", que extiende de: "+((Token)val_peek(1).obj).getLexema());
+{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un componente de clase extendida con el nombre: "+((Token)val_peek(4).obj).getLexema()+", que extiende de: "+((Token)val_peek(1).obj).getLexema());
 																																																														 addClaseHeredadaTS(((Token)val_peek(4).obj).getLexema(),((Token)val_peek(1).obj).getLexema());
 																																																														 														   classFlag = false;
 																																											 										  						   																		  className = "";}
 break;
 case 21:
 //#line 104 "gramatica.y"
-{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un atributo de clase");}
+{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creï¿½ un atributo de clase");}
 break;
 case 22:
 //#line 107 "gramatica.y"
-{setFunctionLabel(((Token)val_peek(2).obj).getLexema());}
+{setFunctionLabel(((Token)val_peek(2).obj).getLexema()); metClase = true;}
 break;
 case 23:
 //#line 107 "gramatica.y"
-{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creó un metodo de clase"); 
+{lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo un metodo de clase"); 
 																																				  System.out.println("Viene un metodo");
 																												  addMetodoTS(((Token)val_peek(6).obj).getLexema(), ((Token)val_peek(4).obj).getLexema());
-																												  													   setReturnLabel();}
+																												  													   setReturnLabel();
+																												  													   metClase = false;}
 break;
 case 25:
-//#line 117 "gramatica.y"
+//#line 118 "gramatica.y"
 { System.out.println("Viene una variable tipo FLOAT");}
 break;
 case 26:
-//#line 118 "gramatica.y"
+//#line 119 "gramatica.y"
 { System.out.println("Viene una variable tipo INT" );}
 break;
 case 27:
-//#line 119 "gramatica.y"
+//#line 120 "gramatica.y"
 { System.out.println("Viene una variable de la clase: "+ ((Token)val_peek(0).obj).getLexema());
    	 							set = true;
    	 							clase = ((Token)val_peek(0).obj).getLexema();
@@ -1791,283 +1912,210 @@ case 27:
    	 								existeClase = false;}
 break;
 case 28:
-//#line 128 "gramatica.y"
+//#line 129 "gramatica.y"
 { visibilidad = "public"; }
 break;
 case 29:
-//#line 129 "gramatica.y"
+//#line 130 "gramatica.y"
 { visibilidad = "private"; }
 break;
 case 31:
-//#line 133 "gramatica.y"
+//#line 134 "gramatica.y"
 {lexico.getLexico().addError("Falta el BEGIN para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
 break;
 case 32:
-//#line 134 "gramatica.y"
+//#line 135 "gramatica.y"
 {lexico.getLexico().addError("Falta el END para el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
 break;
 case 33:
-//#line 135 "gramatica.y"
+//#line 136 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' que cierra el bloque de sentencias ejecutables.", lexico.getLexico().getNroLinea());}
 break;
 case 35:
-//#line 139 "gramatica.y"
+//#line 140 "gramatica.y"
 {System.out.println("Se cargo una sentencia");}
 break;
 case 42:
-//#line 152 "gramatica.y"
-{ if (esObjeto(((Token)val_peek(5).obj).getLexema()))
-														if (esMetodo(((Token)val_peek(3).obj).getLexema())){
-															callFunction(((Token)val_peek(5).obj).getLexema(), ((Token)val_peek(3).obj).getLexema());
-														} else
-															assembler.getConversorAssembler().addErrorCI("Se trato de invocar a un metodo inexistente", lexico.getLexico().getNroLinea());
-												  else
-												  		assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());			
+//#line 153 "gramatica.y"
+{ 
+													verificarLlamadoAMetodo(((Token)val_peek(5).obj).getLexema(), ((Token)val_peek(3).obj).getLexema());
 												}
 break;
 case 44:
-//#line 163 "gramatica.y"
+//#line 159 "gramatica.y"
 {lexico.getLexico().addError("Falta la clase que contiene el metodo", lexico.getLexico().getNroLinea());}
 break;
 case 45:
-//#line 164 "gramatica.y"
+//#line 160 "gramatica.y"
 {lexico.getLexico().addError("Falta definir el metodo de clase ", lexico.getLexico().getNroLinea());}
 break;
 case 46:
-//#line 165 "gramatica.y"
+//#line 161 "gramatica.y"
 {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
 break;
 case 47:
-//#line 166 "gramatica.y"
+//#line 162 "gramatica.y"
 {lexico.getLexico().addError("Falta un parentesis ", lexico.getLexico().getNroLinea());}
 break;
 case 48:
-//#line 167 "gramatica.y"
+//#line 163 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' ", lexico.getLexico().getNroLinea());}
 break;
 case 49:
-//#line 170 "gramatica.y"
+//#line 166 "gramatica.y"
 {lexico.getLexico().agregarEstructura( "En la linea "+lexico.getLexico().getNroLinea()+" se hizo un print");
 																	addTercetoPrint(((Token)val_peek(4).obj).getLexema(), ((Token)val_peek(2).obj).getLexema());}
 break;
 case 51:
-//#line 176 "gramatica.y"
+//#line 172 "gramatica.y"
 {lexico.getLexico().addError("Falta el '('.", lexico.getLexico().getNroLinea());}
 break;
 case 52:
-//#line 177 "gramatica.y"
+//#line 173 "gramatica.y"
 {lexico.getLexico().addError("Falta el ')'.", lexico.getLexico().getNroLinea());}
 break;
 case 53:
-//#line 178 "gramatica.y"
+//#line 174 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' que cierra el print.", lexico.getLexico().getNroLinea());}
 break;
 case 54:
-//#line 182 "gramatica.y"
+//#line 178 "gramatica.y"
 { guardarNumCondicion(); }
 break;
 case 55:
-//#line 182 "gramatica.y"
+//#line 178 "gramatica.y"
 {apilarTercetoIncompletoWHILE();}
 break;
 case 56:
-//#line 182 "gramatica.y"
+//#line 178 "gramatica.y"
 { lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se creo una iteracion");
 																															cmp1 = false; cmp2 = false; condStart = 0;}
 break;
 case 58:
-//#line 187 "gramatica.y"
+//#line 183 "gramatica.y"
 {lexico.getLexico().addError("Falta algun parentesis en la iteracion", lexico.getLexico().getNroLinea());}
 break;
 case 59:
-//#line 190 "gramatica.y"
+//#line 186 "gramatica.y"
 {if (genCodigo.getTercetosController().getTercetoExp() != null)
 							 cmp1 = true;}
 break;
 case 60:
-//#line 191 "gramatica.y"
-<<<<<<< HEAD
-{ if (genCodigo.getTercetosController().getTercetoExp() != null)
-							 																						cmp2 = true;
-																												addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-																												resetAtClase();}
-break;
-case 62:
-//#line 198 "gramatica.y"
-{lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());}
-break;
-case 64:
-//#line 201 "gramatica.y"
-{ completarTercetoFinalWHILE(); }
-break;
-case 65:
-//#line 202 "gramatica.y"
-{ completarTercetoFinalWHILE(); }
-break;
-case 66:
-//#line 203 "gramatica.y"
-{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
-break;
-case 67:
-//#line 204 "gramatica.y"
-{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
-break;
-case 74:
-//#line 216 "gramatica.y"
-=======
+//#line 187 "gramatica.y"
 { if(((Token)val_peek(3).obj).getLexema().equals("-")){
 																													if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																						cmp2 = true;
-																													addTercetoCondicion(cteNegativaExpresion, ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+								 																						cmp2 = true;
+																														addTercetoCondicion(cteNegativaExpresion, ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																														resetAtClase();
+																													} else {
+																														addTercetoCondicion(cteNegativaExpresion, ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																														resetAtClase();
 																													}
 																												}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
 																															if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																								cmp2 = true;
-																															addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion);
+								 																								cmp2 = true;
+																																addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion);
+																																resetAtClase();
+																															} else {
+																																addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion);
+																																resetAtClase();
 																															}
 																													}else{
 								 																							if (genCodigo.getTercetosController().getTercetoExp() != null){
-							 																								cmp2 = true;
-																															addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+								 																								cmp2 = true;
+																																addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																																resetAtClase();
+																															} else {
+																																addTercetoCondicion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+																																resetAtClase();
 																															}
-								 																						 }
+								 																					}
+								 																				 genCodigo.getTercetosController().setTercetoExpNull();
+																												 genCodigo.getTercetosController().setTercetoTermNull();
 								 																				}
 break;
 case 62:
-//#line 211 "gramatica.y"
+//#line 221 "gramatica.y"
 {lexico.getLexico().addError("Error en la comparacion.", lexico.getLexico().getNroLinea());
 						 errorCmp = true;}
 break;
 case 64:
-//#line 215 "gramatica.y"
+//#line 225 "gramatica.y"
 { completarTercetoFinalWHILE(); }
 break;
 case 65:
-//#line 216 "gramatica.y"
+//#line 226 "gramatica.y"
 { completarTercetoFinalWHILE(); }
 break;
 case 66:
-//#line 217 "gramatica.y"
+//#line 227 "gramatica.y"
 {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
 case 67:
-//#line 218 "gramatica.y"
+//#line 228 "gramatica.y"
 {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
 case 74:
-//#line 230 "gramatica.y"
->>>>>>> RobertoPintos-patch-1
+//#line 240 "gramatica.y"
 {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF");
 																														   desapilarYCompletar();
 																										   cmp1 = false; cmp2 = false; condStart = 0;}
 break;
 case 75:
-<<<<<<< HEAD
-//#line 219 "gramatica.y"
+//#line 243 "gramatica.y"
 {completarTercetoFinalIF();}
 break;
 case 76:
-//#line 219 "gramatica.y"
-=======
-//#line 233 "gramatica.y"
-{completarTercetoFinalIF();}
-break;
-case 76:
-//#line 233 "gramatica.y"
->>>>>>> RobertoPintos-patch-1
+//#line 243 "gramatica.y"
 {lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una condicion IF con ELSE");
           																																											   desapilarYCompletar();
           																																							condStart = 0; cmp1 = false; cmp2 = false;}
 break;
 case 77:
-<<<<<<< HEAD
-//#line 224 "gramatica.y"
+//#line 248 "gramatica.y"
 {apilarTercetoIncompletoIF();}
 break;
 case 79:
-//#line 225 "gramatica.y"
+//#line 249 "gramatica.y"
 {lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
 break;
 case 80:
-//#line 226 "gramatica.y"
+//#line 250 "gramatica.y"
 {lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
 break;
 case 81:
-//#line 227 "gramatica.y"
+//#line 251 "gramatica.y"
 {lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
 break;
 case 84:
-//#line 232 "gramatica.y"
+//#line 256 "gramatica.y"
 {lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
 case 85:
-//#line 233 "gramatica.y"
+//#line 257 "gramatica.y"
 {lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
 break;
 case 86:
-//#line 236 "gramatica.y"
+//#line 260 "gramatica.y"
 { if (esMetodo(((Token)val_peek(3).obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
-											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-											addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
-										} 
-=======
-//#line 238 "gramatica.y"
-{apilarTercetoIncompletoIF();}
-break;
-case 79:
-//#line 239 "gramatica.y"
-{lexico.getLexico().addError("Falta el '(' de la condicion ", lexico.getLexico().getNroLinea());}
-break;
-case 80:
-//#line 240 "gramatica.y"
-{lexico.getLexico().addError("Falta el ')' de la condicion ", lexico.getLexico().getNroLinea());}
-break;
-case 81:
-//#line 241 "gramatica.y"
-{lexico.getLexico().addError("Faltan los parentesis de la condicion", lexico.getLexico().getNroLinea());}
-break;
-case 84:
-//#line 246 "gramatica.y"
-{lexico.getLexico().addError("Falta el END en el bloque anidado", lexico.getLexico().getNroLinea());}
-break;
-case 85:
-//#line 247 "gramatica.y"
-{lexico.getLexico().addError("Falta el BEGIN en el bloque anidado", lexico.getLexico().getNroLinea());}
-break;
-case 86:
-//#line 250 "gramatica.y"
-{ if (esMetodo(((Token)val_peek(3).obj).getLexema())) {
-											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
-									} else {
-											if(((Token)val_peek(1).obj).getLexema().equals("-")){
-												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-												addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion);
-											} else {
-												lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-												System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-												addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
-											}
-									}
->>>>>>> RobertoPintos-patch-1
+												if(((Token)val_peek(1).obj).getLexema().equals("-")){
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion);
+												} else {
+													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+													addTercetoAsignacion(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema());
+												}
+										}
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 break;
 case 87:
-<<<<<<< HEAD
-//#line 246 "gramatica.y"
-{ if (esMetodo(((Token)val_peek(5).obj).getLexema())) {
-											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
-										} else {
-											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-											System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-											addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
-=======
-//#line 266 "gramatica.y"
+//#line 276 "gramatica.y"
 { if (esMetodo(((Token)val_peek(5).obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
@@ -2080,120 +2128,75 @@ case 87:
 													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
 													addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
 												}	
->>>>>>> RobertoPintos-patch-1
 										} 
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 break;
 case 88:
-<<<<<<< HEAD
-//#line 256 "gramatica.y"
+//#line 292 "gramatica.y"
 { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 89:
-//#line 257 "gramatica.y"
+//#line 293 "gramatica.y"
 { System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 90:
-//#line 258 "gramatica.y"
+//#line 294 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
 break;
 case 91:
-//#line 261 "gramatica.y"
-{
-											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
-									   		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-									   		resetAtClase();
-									}
-break;
-case 92:
-//#line 266 "gramatica.y"
-{
-	  										lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
-	  								  		addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-	  								  		resetAtClase();
-	  								}
-break;
-case 93:
-//#line 271 "gramatica.y"
-{System.out.println("Paso de termino a expresion");
-      												   cambiarTercetos();}
-break;
-case 94:
-//#line 275 "gramatica.y"
-{
-										 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
-										 addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
-										 resetAtClase(); 
-							 }
-break;
-case 95:
-//#line 280 "gramatica.y"
-{
-								  		 lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
-									     addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-									     resetAtClase();
-							 }
-break;
-case 96:
-//#line 285 "gramatica.y"
-{ System.out.println("Paso factor a termino");}
-break;
-case 97:
-//#line 288 "gramatica.y"
-{System.out.println("Cargo un identificador");}
-break;
-case 98:
-//#line 289 "gramatica.y"
-=======
-//#line 282 "gramatica.y"
-{ System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
-break;
-case 89:
-//#line 283 "gramatica.y"
-{ System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
-break;
-case 90:
-//#line 284 "gramatica.y"
-{lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
-break;
-case 91:
-//#line 287 "gramatica.y"
+//#line 297 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+								 			if (!guardoAtClase)
+												resetAtClase();
 										}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
 													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 	  								  				addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(0).obj).getLexema());
+	  								  				if (!guardoAtClase)
+														resetAtClase();
 											}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
 														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
-	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);	
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);
+	  								  					if (!guardoAtClase)
+															resetAtClase();	
 												}else{	
 								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
-	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+	  								  					if (!guardoAtClase)
+															resetAtClase();		
 							 						}  	 
 							 }
 break;
 case 92:
-//#line 301 "gramatica.y"
+//#line 319 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
+								 			if (!guardoAtClase)
+												resetAtClase();
 										}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
 													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 	  								  				addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(0).obj).getLexema());
+	  								  				if (!guardoAtClase)
+														resetAtClase();
 											}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
 														lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
-	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);	
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaTermino);
+	  								  					if (!guardoAtClase)
+															resetAtClase();	
 												}else{	
 								 						lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
-	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());		
+	  								  					addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+	  								  					if (!guardoAtClase)
+															resetAtClase();		
 							 						}		
 	  								}
 break;
 case 93:
-//#line 315 "gramatica.y"
+//#line 341 "gramatica.y"
 {System.out.println("Paso de termino a expresion");
       				   cambiarTercetos();
       				   if(((Token)val_peek(0).obj).getLexema().equals("-")){
@@ -2203,41 +2206,57 @@ case 93:
       				}
 break;
 case 94:
-//#line 324 "gramatica.y"
+//#line 350 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
 								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+								 	if (!guardoAtClase)
+										resetAtClase(); 
 								}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
 								 			addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, ((Token)val_peek(0).obj).getLexema());
+								 			if (!guardoAtClase)
+												resetAtClase(); 
 										}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
 													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
 								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaFactor);
+								 					if (!guardoAtClase)
+														resetAtClase(); 
 											}else{	
 								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
-								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());	
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+								 					if (!guardoAtClase)
+														resetAtClase(); 	
 							 					}  	 
 							 }
 break;
 case 95:
-//#line 339 "gramatica.y"
+//#line 373 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
 								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
+								 	if (!guardoAtClase)
+										resetAtClase(); 
 								}else if(((Token)val_peek(2).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
 								 			addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, ((Token)val_peek(0).obj).getLexema());
+								 			if (!guardoAtClase)
+												resetAtClase(); 
 										}else if(((Token)val_peek(0).obj).getLexema().equals("-")){
 													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
 								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), cteNegativaFactor);
+								 					if (!guardoAtClase)
+														resetAtClase(); 
 											}else{	
 								 					lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
-								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());	
+								 					addTercetoTermino(((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+								 					if (!guardoAtClase)
+														resetAtClase(); 	
 							 					}
 							 }
 break;
 case 96:
-//#line 353 "gramatica.y"
+//#line 395 "gramatica.y"
 { System.out.println("Paso factor a termino");
 					if(((Token)val_peek(0).obj).getLexema().equals("-")){
 			   			cteNegativaTermino = cteNegativaFactor;
@@ -2246,12 +2265,11 @@ case 96:
 				}
 break;
 case 97:
-//#line 361 "gramatica.y"
+//#line 403 "gramatica.y"
 {System.out.println("Cargo un identificador");}
 break;
 case 98:
-//#line 362 "gramatica.y"
->>>>>>> RobertoPintos-patch-1
+//#line 404 "gramatica.y"
 {if (estaDeclarada(((Token)val_peek(2).obj).getLexema()))
 						if (esObjeto(((Token)val_peek(2).obj).getLexema()))
 							if (estaDeclarada(((Token)val_peek(0).obj).getLexema())) {
@@ -2272,31 +2290,7 @@ case 98:
 					}
 break;
 case 99:
-<<<<<<< HEAD
-//#line 307 "gramatica.y"
-{System.out.println("Paso de cte a factor");}
-break;
-case 100:
-//#line 311 "gramatica.y"
-{System.out.println("Leo una constante INT");}
-break;
-case 101:
-//#line 312 "gramatica.y"
-{System.out.println("Leo una constante negada");
-		  actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
-break;
-case 102:
-//#line 314 "gramatica.y"
-{System.out.println("Leo una constante FLOAT");}
-break;
-case 103:
-//#line 315 "gramatica.y"
-{System.out.println("Leo una float negada");
-    		actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());}
-break;
-//#line 1842 "Parser.java"
-=======
-//#line 380 "gramatica.y"
+//#line 422 "gramatica.y"
 {System.out.println("Paso de cte a factor");
 			   if(((Token)val_peek(0).obj).getLexema().equals("-")){
 			   		cteNegativaFactor = cteNegativa;
@@ -2305,11 +2299,11 @@ break;
 			  }
 break;
 case 100:
-//#line 389 "gramatica.y"
+//#line 431 "gramatica.y"
 {System.out.println("Leo una constante INT");}
 break;
 case 101:
-//#line 390 "gramatica.y"
+//#line 432 "gramatica.y"
 {System.out.println("Leo una constante negada");
 		  cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
 		  System.out.println("CTE NEGATIVA INT: "+cteNegativa);
@@ -2317,19 +2311,18 @@ case 101:
 		  }
 break;
 case 102:
-//#line 395 "gramatica.y"
+//#line 437 "gramatica.y"
 {System.out.println("Leo una constante FLOAT");}
 break;
 case 103:
-//#line 396 "gramatica.y"
+//#line 438 "gramatica.y"
 {System.out.println("Leo una float negada");
     		cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
 		  	System.out.println("CTE NEGATIVA FLOAT: "+cteNegativa);
 		  	actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());
 		  	}
 break;
-//#line 1721 "Parser.java"
->>>>>>> RobertoPintos-patch-1
+//#line 2249 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
