@@ -276,15 +276,33 @@ asig 	: ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema()))
 		| ID '.' ID ASIGNACION expresion ';' { if (esMetodo(((Token)$1.obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
-												if(((Token)$5.obj).getLexema().equals("-")){
-													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-													addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), cteNegativaExpresion, ((Token)$1.obj).getLexema());
-												} else {
-													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-													addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), ((Token)$5.obj).getLexema(), ((Token)$1.obj).getLexema());
-												}	
+												if (estaDeclarada(((Token)$1.obj).getLexema()))
+													if (esObjeto(((Token)$1.obj).getLexema()))
+														if (estaDeclarada(((Token)$3.obj).getLexema())) {
+															if (esAtributoClase(((Token)$3.obj).getLexema())) {
+																if (checkClasePadre(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema())) {
+																	if (checkVisibilidad(((Token)$3.obj).getLexema())) {
+																		if(((Token)$5.obj).getLexema().equals("-")){
+																			lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+																			System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+																			addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), cteNegativaExpresion, ((Token)$1.obj).getLexema());
+																		} else {
+																			lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+																			System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+																			addTercetoAsignacionVarClase(((Token)$3.obj).getLexema(), ((Token)$5.obj).getLexema(), ((Token)$1.obj).getLexema());
+																		}
+																	} else
+																		assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
+																} else
+																	assembler.getConversorAssembler().addErrorCI("El atributo no corresponde a la clase del objeto o a la de sus ancestros", lexico.getLexico().getNroLinea());
+															} else
+																assembler.getConversorAssembler().addErrorCI("El elemento no es un atributo de clase", lexico.getLexico().getNroLinea());
+														} else
+															assembler.getConversorAssembler().addErrorCI("Atributo de clase no declarado", lexico.getLexico().getNroLinea());
+													else
+														assembler.getConversorAssembler().addErrorCI("El elemento utilizado no es un objeto", lexico.getLexico().getNroLinea());
+												 else
+													assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());		
 										} 
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
@@ -405,11 +423,14 @@ factor  : ID {System.out.println("Cargo un identificador");}
 						if (esObjeto(((Token)$1.obj).getLexema()))
 							if (estaDeclarada(((Token)$3.obj).getLexema())) {
 								if (esAtributoClase(((Token)$3.obj).getLexema())) {
-									if (checkVisibilidad(((Token)$3.obj).getLexema())) {
-										guardarAtClase(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
-										System.out.println("Cargue la variable "+((Token)$3.obj).getLexema()+" de la clase "+((Token)$1.obj).getLexema());
+									if (checkClasePadre(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema())) {
+										if (checkVisibilidad(((Token)$3.obj).getLexema())) {
+											guardarAtClase(((Token)$1.obj).getLexema(), ((Token)$3.obj).getLexema());
+											System.out.println("Cargue la variable "+((Token)$3.obj).getLexema()+" de la clase "+((Token)$1.obj).getLexema());
+										} else
+											assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
 									} else
-										assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
+										assembler.getConversorAssembler().addErrorCI("El atributo no corresponde a la clase del objeto o a la de sus ancestros", lexico.getLexico().getNroLinea());
 								} else
 									assembler.getConversorAssembler().addErrorCI("El elemento no es un atributo de clase", lexico.getLexico().getNroLinea());
 							} else
@@ -551,10 +572,14 @@ public void addClaseHeredadaTS(String lex, String lex2){
 	if (!esClase(lex))
 		if (esClase (lex2))
 			lexico.getLexico().addClassHeredadaTS(lex,lex2);
-		else
+		else {
 			assembler.getConversorAssembler().addErrorCI("Clase padre no declarada", lexico.getLexico().getNroLinea());
-	else
+			lexico.getLexico().limpiarTS(lex);
+		}
+	else {
 		assembler.getConversorAssembler().addErrorCI("Clase ya declarada anteriormente", lexico.getLexico().getNroLinea());
+		lexico.getLexico().limpiarTS(lex);
+	}
 }
 
 public void addMetodoTS(String vis, String lex) {
@@ -636,21 +661,24 @@ public boolean verificarVariable (String lex) {
 public void addTercetoAsignacion (String op1, String op2) {
 	if ( genCodigo.getTercetosController().getTercetoExp() != null ) {
 		if (estaDeclarada(op1)) {
-			String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-			String tipo2 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-			if (chequeoTipo(tipo1, tipo2)) {
-				Terceto t = new Terceto (":=", op1, "["+Integer.toString(genCodigo.getTercetosController().getTercetoExp().getNumTerceto())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-				t.setTipoOp(tipo1);
-				genCodigo.getTercetosController().addTercetoLista(t);
+			if ((verificarOperando(op1) && !metClase) || (metClase)) {
+				String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+				String tipo2 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+				if (chequeoTipo(tipo1, tipo2)) {
+					Terceto t = new Terceto (":=", op1, "["+Integer.toString(genCodigo.getTercetosController().getTercetoExp().getNumTerceto())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+					t.setTipoOp(tipo1);
+					genCodigo.getTercetosController().addTercetoLista(t);
+				} else
+					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
 			} else
-				lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
 		} else
 			lexico.getLexico().addError("La variable "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 	} else {
 		if (estaDeclarada(op1))
 			if (estaDeclarada(op2)) {
 				if (!atclase1) {
-					if ((verificarOperando(op2) && !metClase) || (metClase)) {
+					if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || (metClase)) {
 						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
 						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 						if (chequeoTipo(tipo1, tipo2)) {
@@ -1557,15 +1585,29 @@ private void verificarLlamadoAMetodo (String inst, String metodo) {
 	if (esObjeto(inst))
 		if (esMetodo(metodo)){
 			if (checkVisibilidad(metodo)) {
-				if (lexico.getLexico().getTS().get(inst).getDeClase().equals(lexico.getLexico().getTS().get(metodo).getDeClase()) || 
-						lexico.getLexico().getTS().get(lexico.getLexico().getTS().get(inst).getDeClase()).getClasePadre().equals(lexico.getLexico().getTS().get(metodo).getDeClase())) {
+				if (checkClasePadre(inst, metodo)) {
 					callFunction(inst, metodo);
 				} else 
-					assembler.getConversorAssembler().addErrorCI("El metodo llamado no corresponde a la clase instanciada ni a ninguna heredada", lexico.getLexico().getNroLinea());
+					assembler.getConversorAssembler().addErrorCI("El metodo llamado no corresponde a la clase instanciada ni a ninguna de sus ancestros", lexico.getLexico().getNroLinea());
 			} else
 				assembler.getConversorAssembler().addErrorCI("Metodo inaccesible por este objeto", lexico.getLexico().getNroLinea());
 		} else
 			assembler.getConversorAssembler().addErrorCI("Se trato de invocar a un metodo inexistente", lexico.getLexico().getNroLinea());
   else
   		assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());	
+}
+
+private boolean checkClasePadre (String objeto, String atributo) {
+	boolean pertenece = false;
+	String claseObjeto = lexico.getLexico().getTS().get(objeto).getDeClase();
+	String claseAtributo = lexico.getLexico().getTS().get(atributo).getDeClase();
+	if (claseObjeto.equals(claseAtributo))
+		pertenece = true;
+	else {
+		String clasePadreObjeto = lexico.getLexico().getTS().get(claseObjeto).getClasePadre();
+		if (!clasePadreObjeto.equals("-"))
+			pertenece = checkClasePadre(clasePadreObjeto, atributo);
+	}
+	
+	return pertenece;
 }

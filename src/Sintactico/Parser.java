@@ -533,7 +533,7 @@ final static String yyrule[] = {
 "cte : '-' CTEFLOAT",
 };
 
-//#line 449 "gramatica.y"
+//#line 470 "gramatica.y"
 
 
 private ArrayList <Token> listaVar = new ArrayList <Token>();
@@ -639,10 +639,14 @@ public void addClaseHeredadaTS(String lex, String lex2){
 	if (!esClase(lex))
 		if (esClase (lex2))
 			lexico.getLexico().addClassHeredadaTS(lex,lex2);
-		else
+		else {
 			assembler.getConversorAssembler().addErrorCI("Clase padre no declarada", lexico.getLexico().getNroLinea());
-	else
+			lexico.getLexico().limpiarTS(lex);
+		}
+	else {
 		assembler.getConversorAssembler().addErrorCI("Clase ya declarada anteriormente", lexico.getLexico().getNroLinea());
+		lexico.getLexico().limpiarTS(lex);
+	}
 }
 
 public void addMetodoTS(String vis, String lex) {
@@ -724,21 +728,24 @@ public boolean verificarVariable (String lex) {
 public void addTercetoAsignacion (String op1, String op2) {
 	if ( genCodigo.getTercetosController().getTercetoExp() != null ) {
 		if (estaDeclarada(op1)) {
-			String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
-			String tipo2 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
-			if (chequeoTipo(tipo1, tipo2)) {
-				Terceto t = new Terceto (":=", op1, "["+Integer.toString(genCodigo.getTercetosController().getTercetoExp().getNumTerceto())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
-				t.setTipoOp(tipo1);
-				genCodigo.getTercetosController().addTercetoLista(t);
+			if ((verificarOperando(op1) && !metClase) || (metClase)) {
+				String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
+				String tipo2 = genCodigo.getTercetosController().getTercetoExp().getTipoOp();
+				if (chequeoTipo(tipo1, tipo2)) {
+					Terceto t = new Terceto (":=", op1, "["+Integer.toString(genCodigo.getTercetosController().getTercetoExp().getNumTerceto())+"]", genCodigo.getTercetosController().getCantTercetos()+1);
+					t.setTipoOp(tipo1);
+					genCodigo.getTercetosController().addTercetoLista(t);
+				} else
+					lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
 			} else
-				lexico.getLexico().addError("Tipos incompatibles en la operacion", lexico.getLexico().getNroLinea());
+				lexico.getLexico().addError("El operando no es una variable o constante", lexico.getLexico().getNroLinea());
 		} else
 			lexico.getLexico().addError("La variable "+op1+" no esta declarada.", lexico.getLexico().getNroLinea());
 	} else {
 		if (estaDeclarada(op1))
 			if (estaDeclarada(op2)) {
 				if (!atclase1) {
-					if ((verificarOperando(op2) && !metClase) || (metClase)) {
+					if ((verificarOperando(op1) && verificarOperando(op2) && !metClase) || (metClase)) {
 						String tipo1 = lexico.getLexico().getTS().get(op1).getTipo();
 						String tipo2 = lexico.getLexico().getTS().get(op2).getTipo();
 						if (chequeoTipo(tipo1, tipo2)) {
@@ -1645,11 +1652,10 @@ private void verificarLlamadoAMetodo (String inst, String metodo) {
 	if (esObjeto(inst))
 		if (esMetodo(metodo)){
 			if (checkVisibilidad(metodo)) {
-				if (lexico.getLexico().getTS().get(inst).getDeClase().equals(lexico.getLexico().getTS().get(metodo).getDeClase()) || 
-						lexico.getLexico().getTS().get(lexico.getLexico().getTS().get(inst).getDeClase()).getClasePadre().equals(lexico.getLexico().getTS().get(metodo).getDeClase())) {
+				if (checkClasePadre(inst, metodo)) {
 					callFunction(inst, metodo);
 				} else 
-					assembler.getConversorAssembler().addErrorCI("El metodo llamado no corresponde a la clase instanciada ni a ninguna heredada", lexico.getLexico().getNroLinea());
+					assembler.getConversorAssembler().addErrorCI("El metodo llamado no corresponde a la clase instanciada ni a ninguna de sus ancestros", lexico.getLexico().getNroLinea());
 			} else
 				assembler.getConversorAssembler().addErrorCI("Metodo inaccesible por este objeto", lexico.getLexico().getNroLinea());
 		} else
@@ -1657,7 +1663,22 @@ private void verificarLlamadoAMetodo (String inst, String metodo) {
   else
   		assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());	
 }
-//#line 1589 "Parser.java"
+
+private boolean checkClasePadre (String objeto, String atributo) {
+	boolean pertenece = false;
+	String claseObjeto = lexico.getLexico().getTS().get(objeto).getDeClase();
+	String claseAtributo = lexico.getLexico().getTS().get(atributo).getDeClase();
+	if (claseObjeto.equals(claseAtributo))
+		pertenece = true;
+	else {
+		String clasePadreObjeto = lexico.getLexico().getTS().get(claseObjeto).getClasePadre();
+		if (!clasePadreObjeto.equals("-"))
+			pertenece = checkClasePadre(clasePadreObjeto, atributo);
+	}
+	
+	return pertenece;
+}
+//#line 1610 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -2119,34 +2140,52 @@ case 87:
 { if (esMetodo(((Token)val_peek(5).obj).getLexema())) {
 											lexico.getLexico().addError("No se puede hacer una asignacion a un metodo de clase.", lexico.getLexico().getNroLinea());
 										} else {
-												if(((Token)val_peek(1).obj).getLexema().equals("-")){
-													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-													addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(5).obj).getLexema());
-												} else {
-													lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
-													System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
-													addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
-												}	
+												if (estaDeclarada(((Token)val_peek(5).obj).getLexema()))
+													if (esObjeto(((Token)val_peek(5).obj).getLexema()))
+														if (estaDeclarada(((Token)val_peek(3).obj).getLexema())) {
+															if (esAtributoClase(((Token)val_peek(3).obj).getLexema())) {
+																if (checkClasePadre(((Token)val_peek(5).obj).getLexema(), ((Token)val_peek(3).obj).getLexema())) {
+																	if (checkVisibilidad(((Token)val_peek(3).obj).getLexema())) {
+																		if(((Token)val_peek(1).obj).getLexema().equals("-")){
+																			lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+																			System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+																			addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), cteNegativaExpresion, ((Token)val_peek(5).obj).getLexema());
+																		} else {
+																			lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una asignacion");
+																			System.out.println("Realizo la asignacion en la linea: "+lexico.getLexico().getNroLinea());
+																			addTercetoAsignacionVarClase(((Token)val_peek(3).obj).getLexema(), ((Token)val_peek(1).obj).getLexema(), ((Token)val_peek(5).obj).getLexema());
+																		}
+																	} else
+																		assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
+																} else
+																	assembler.getConversorAssembler().addErrorCI("El atributo no corresponde a la clase del objeto o a la de sus ancestros", lexico.getLexico().getNroLinea());
+															} else
+																assembler.getConversorAssembler().addErrorCI("El elemento no es un atributo de clase", lexico.getLexico().getNroLinea());
+														} else
+															assembler.getConversorAssembler().addErrorCI("Atributo de clase no declarado", lexico.getLexico().getNroLinea());
+													else
+														assembler.getConversorAssembler().addErrorCI("El elemento utilizado no es un objeto", lexico.getLexico().getNroLinea());
+												 else
+													assembler.getConversorAssembler().addErrorCI("Objeto no declarado", lexico.getLexico().getNroLinea());		
 										} 
 										genCodigo.getTercetosController().setTercetoExpNull();
 										genCodigo.getTercetosController().setTercetoTermNull(); 
 										resetAtClase();}
 break;
 case 88:
-//#line 292 "gramatica.y"
+//#line 310 "gramatica.y"
 { System.out.println("Error, falta el ':=' de la asignacion"); lexico.getLexico().addError("Falta el ':=' de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 89:
-//#line 293 "gramatica.y"
+//#line 311 "gramatica.y"
 { System.out.println("Error, falta el ID a la izquierda de la asignacion"); lexico.getLexico().addError("Falta el ID de la asignacion ", lexico.getLexico().getNroLinea());}
 break;
 case 90:
-//#line 294 "gramatica.y"
+//#line 312 "gramatica.y"
 {lexico.getLexico().addError("Falta el ';' que cierra la asignacion.", lexico.getLexico().getNroLinea());}
 break;
 case 91:
-//#line 297 "gramatica.y"
+//#line 315 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una suma");
 								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
@@ -2171,7 +2210,7 @@ case 91:
 							 }
 break;
 case 92:
-//#line 319 "gramatica.y"
+//#line 337 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 											lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una resta");
 								 			addTercetoExpresion(((Token)val_peek(1).obj).getLexema(), cteNegativaExpresion, cteNegativaTermino);
@@ -2196,7 +2235,7 @@ case 92:
 	  								}
 break;
 case 93:
-//#line 341 "gramatica.y"
+//#line 359 "gramatica.y"
 {System.out.println("Paso de termino a expresion");
       				   cambiarTercetos();
       				   if(((Token)val_peek(0).obj).getLexema().equals("-")){
@@ -2206,7 +2245,7 @@ case 93:
       				}
 break;
 case 94:
-//#line 350 "gramatica.y"
+//#line 368 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una multiplicacion");
 								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
@@ -2231,7 +2270,7 @@ case 94:
 							 }
 break;
 case 95:
-//#line 373 "gramatica.y"
+//#line 391 "gramatica.y"
 {if(((Token)val_peek(2).obj).getLexema().equals("-") && ((Token)val_peek(0).obj).getLexema().equals("-")){
 									lexico.getLexico().agregarEstructura("En la linea "+lexico.getLexico().getNroLinea()+" se agrego una division");
 								 	addTercetoTermino(((Token)val_peek(1).obj).getLexema(), cteNegativaTermino, cteNegativaFactor);
@@ -2256,7 +2295,7 @@ case 95:
 							 }
 break;
 case 96:
-//#line 395 "gramatica.y"
+//#line 413 "gramatica.y"
 { System.out.println("Paso factor a termino");
 					if(((Token)val_peek(0).obj).getLexema().equals("-")){
 			   			cteNegativaTermino = cteNegativaFactor;
@@ -2265,20 +2304,23 @@ case 96:
 				}
 break;
 case 97:
-//#line 403 "gramatica.y"
+//#line 421 "gramatica.y"
 {System.out.println("Cargo un identificador");}
 break;
 case 98:
-//#line 404 "gramatica.y"
+//#line 422 "gramatica.y"
 {if (estaDeclarada(((Token)val_peek(2).obj).getLexema()))
 						if (esObjeto(((Token)val_peek(2).obj).getLexema()))
 							if (estaDeclarada(((Token)val_peek(0).obj).getLexema())) {
 								if (esAtributoClase(((Token)val_peek(0).obj).getLexema())) {
-									if (checkVisibilidad(((Token)val_peek(0).obj).getLexema())) {
-										guardarAtClase(((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
-										System.out.println("Cargue la variable "+((Token)val_peek(0).obj).getLexema()+" de la clase "+((Token)val_peek(2).obj).getLexema());
+									if (checkClasePadre(((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema())) {
+										if (checkVisibilidad(((Token)val_peek(0).obj).getLexema())) {
+											guardarAtClase(((Token)val_peek(2).obj).getLexema(), ((Token)val_peek(0).obj).getLexema());
+											System.out.println("Cargue la variable "+((Token)val_peek(0).obj).getLexema()+" de la clase "+((Token)val_peek(2).obj).getLexema());
+										} else
+											assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
 									} else
-										assembler.getConversorAssembler().addErrorCI("Atributo inaccesible por su visibilidad", lexico.getLexico().getNroLinea());
+										assembler.getConversorAssembler().addErrorCI("El atributo no corresponde a la clase del objeto o a la de sus ancestros", lexico.getLexico().getNroLinea());
 								} else
 									assembler.getConversorAssembler().addErrorCI("El elemento no es un atributo de clase", lexico.getLexico().getNroLinea());
 							} else
@@ -2290,7 +2332,7 @@ case 98:
 					}
 break;
 case 99:
-//#line 422 "gramatica.y"
+//#line 443 "gramatica.y"
 {System.out.println("Paso de cte a factor");
 			   if(((Token)val_peek(0).obj).getLexema().equals("-")){
 			   		cteNegativaFactor = cteNegativa;
@@ -2299,11 +2341,11 @@ case 99:
 			  }
 break;
 case 100:
-//#line 431 "gramatica.y"
+//#line 452 "gramatica.y"
 {System.out.println("Leo una constante INT");}
 break;
 case 101:
-//#line 432 "gramatica.y"
+//#line 453 "gramatica.y"
 {System.out.println("Leo una constante negada");
 		  cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
 		  System.out.println("CTE NEGATIVA INT: "+cteNegativa);
@@ -2311,18 +2353,18 @@ case 101:
 		  }
 break;
 case 102:
-//#line 437 "gramatica.y"
+//#line 458 "gramatica.y"
 {System.out.println("Leo una constante FLOAT");}
 break;
 case 103:
-//#line 438 "gramatica.y"
+//#line 459 "gramatica.y"
 {System.out.println("Leo una float negada");
     		cteNegativa = "-"+((Token)val_peek(0).obj).getLexema();
 		  	System.out.println("CTE NEGATIVA FLOAT: "+cteNegativa);
 		  	actualizarTablaNegativo(((Token)val_peek(0).obj).getLexema());
 		  	}
 break;
-//#line 2249 "Parser.java"
+//#line 2291 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
