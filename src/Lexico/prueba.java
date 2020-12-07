@@ -79,13 +79,13 @@ public class prueba {
 			    	conversorAssembler.mostrarErrores(f);
 		    	} else {
 					//MESTRO LOS TERCETOS ANTES DE EJECUTAR  EL TC.GENASSEMBLER, PARA MOSTRAR LOS TERCETOS SIN REDUCCION SIMPLE
-					tercetosController.mostrarTercetos(f);
+					tercetosController.mostrarTercetos(f, false);
 				
 					System.out.println(tercetosController.generarAssembler());
 					System.out.println(controlador.generarAssemblerTS());
 					
 					//MUESTRO LOS TERCETOS DESPUES DE LA REDUCCION SIMPLE
-					tercetosController.mostrarTercetos(f);
+					tercetosController.mostrarTercetos(f, true);
 					controlador.mostrarTablaSimbolos(f);
 			    	controlador.mostrarListaTokens(f);
 			    	controlador.getEstructuras(f);

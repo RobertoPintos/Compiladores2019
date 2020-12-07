@@ -478,6 +478,17 @@ public class Controller {
 		tablaDeSimbolo.remove(lex);
 	}
 	
+	public void limpiarTS(String lex) {
+		List<String> aBorrar = new ArrayList<String>();
+		for (String s: tablaDeSimbolo.keySet()) 
+			if (lex.equals(tablaDeSimbolo.get(s).getDeClase()))
+				aBorrar.add(s);
+		for (String s: aBorrar) 
+			tablaDeSimbolo.remove(s);
+		
+			
+	}
+	
 	public void mostrarWarnings(File f) {
 		try {
 			FileWriter fwriter = new FileWriter(f, true);
@@ -553,20 +564,8 @@ public class Controller {
 			String tipo = tablaDeSimbolo.get(s).getTipo();
 			Object valor = tablaDeSimbolo.get(s).getValor();
 			String uso = tablaDeSimbolo.get(s).getUso();
-			String deClase = tablaDeSimbolo.get(s).getDeClase();
 			if (uso.equals("Objeto")) {
-				for (String s2: tablaDeSimbolo.keySet()) {
-					String uso2 = tablaDeSimbolo.get(s2).getUso();
-					String deClase2 = tablaDeSimbolo.get(s2).getDeClase();
-					String tipo2 = tablaDeSimbolo.get(s2).getTipo();	
-					if (uso2.equals("Atributo de clase") && deClase2.equals(tipo)) {
-						if (tipo2.equals("int"))
-							asm = asm + "_" + s +  "_" + s2 + " DW " + valor +'\n';
-						else 
-							if (tipo2.equals("float")) 
-								asm = asm + "_" + s + "_" + s2 + " DD " + valor +'\n';
-					}
-				}	
+				asm += generarAssemblerAtObjeto(s, tipo);	
 			} else
 				if (!uso.equals("Atributo de clase"))
 					if (uso.equals("Variable auxiliar")) {
@@ -600,6 +599,29 @@ public class Controller {
 							asm = asm + "_" + s + " DD " + valor +'\n'; 
 			}
     	return asm;
+    }
+    
+    private String generarAssemblerAtObjeto (String obj, String clase) {
+    	String asm = "";
+    	for (String s2: tablaDeSimbolo.keySet()) {
+			String uso2 = tablaDeSimbolo.get(s2).getUso();
+			String deClase2 = tablaDeSimbolo.get(s2).getDeClase();
+			String tipo2 = tablaDeSimbolo.get(s2).getTipo();
+			Object valor = tablaDeSimbolo.get(s2).getValor();
+			if (uso2.equals("Atributo de clase") && deClase2.equals(clase)) {
+				if (tipo2.equals("int"))
+					asm = asm + "_" + obj +  "_" + s2 + " DW " + valor +'\n';
+				else 
+					if (tipo2.equals("float")) 
+						asm = asm + "_" + obj + "_" + s2 + " DD " + valor +'\n';
+			}
+		}
+		String claseAbuelo = tablaDeSimbolo.get(clase).getClasePadre();
+		if(!claseAbuelo.equals("-")) {
+			asm += generarAssemblerAtObjeto(obj, claseAbuelo);
+		}
+		
+		return asm;
     }
 
 	public void setComent(boolean b) {

@@ -107,8 +107,9 @@ public class TercetosController {
 			// PRIMER PASADA PARA OPTIMIZACION POR REDUCCION SIMPLE
 			reduccionSimple();	
 			
-			// SEGUNDA PASADA, MARCO BIFURCACIONES Y COMPARACIONES CON DOBLES REGISTROS
+			// SEGUNDA PASADA, MARCO BIFURCACIONES, COMPARACIONES CON DOBLES REGISTROS Y FUNCIONES
 			analizarTercetos();
+			analizarTercetosFunctions();
 			
 			// TERCER PASADA, GENERO EL ASSEMBLER FINAL
 			String asmFinal = "";
@@ -769,8 +770,9 @@ public class TercetosController {
 		else if (t.getOperador().equals("CALL")) {
 			int aux = t.getOp1().indexOf('@');
 			String instancia = t.getOp1().substring(aux+1, t.getOp1().length());
+			String claseInstancia = controller.getTS().get(instancia).getDeClase();
 			boolean intercambio = false;
-			if (hasAtributosAsociados(instancia)) {
+			if (hasAtributosAsociados(claseInstancia)) {
 				asm += intercambioAtributos(instancia, intercambio);
 				intercambio = true;
 			}
@@ -783,18 +785,21 @@ public class TercetosController {
 	}
 
 	
-	private boolean hasAtributosAsociados (String inst) {
+	private boolean hasAtributosAsociados (String claseInst) {
 		
 		boolean result = false;
 		HashMap <String,Atributo> tablaSimb = controller.getTS();
-		String type = tablaSimb.get(inst).getTipo();
 		for (String s: tablaSimb.keySet()) {
 			String uso2 = tablaSimb.get(s).getUso();
 			String deClase2 = tablaSimb.get(s).getDeClase();
-			if (uso2.equals("Atributo de clase") && deClase2.equals(type)) {
+			if (uso2.equals("Atributo de clase") && deClase2.equals(claseInst)) {
 				result = true;
 			}
 		}
+		if (!result)
+			if(!tablaSimb.get(claseInst).getClasePadre().equals("-"))
+				return hasAtributosAsociados(tablaSimb.get(claseInst).getClasePadre());
+			
 		return result;
 	}
 	
@@ -802,50 +807,68 @@ public class TercetosController {
 		
 		String asm = "";
 		HashMap <String,Atributo> tablaSimb = controller.getTS();
-		String type = tablaSimb.get(inst).getTipo();
-		String clasePadre = tablaSimb.get(type).getClasePadre();
+		String clasePadre = tablaSimb.get(inst).getDeClase();
 		if (!interc) {
-			for (String s: tablaSimb.keySet()) {
-				String uso = tablaSimb.get(s).getUso();
-				String deClase = tablaSimb.get(s).getDeClase();
-				if (uso.equals("Atributo de clase") && (deClase.equals(type) || deClase.equals(clasePadre))) {
-					asm += "MOV AX, _" + inst + "_" + s + '\n';
-					asm += "MOV _" + s + ", AX \n"; 
-				}	
-			}
+			asm += recorroEIntercambioIda(inst, clasePadre, tablaSimb);			
 		} else {
-			for (String s: tablaSimb.keySet()) {
-				String uso = tablaSimb.get(s).getUso();
-				String deClase = tablaSimb.get(s).getDeClase();
-				if (uso.equals("Atributo de clase") && (deClase.equals(type) || deClase.equals(clasePadre))) {
-					asm += "MOV AX, _" + s + '\n';
-					asm += "MOV _" + inst + "_" + s + ", AX \n"; 
-				}	
-			}
+			asm += recorroEIntercambioVuelta(inst, clasePadre, tablaSimb);
+
 			asm = asm.substring(0, asm.length()-2);
+		}
+		return asm;
+	}
+	
+	private String recorroEIntercambioIda (String inst, String clasePadre, HashMap <String,Atributo> ts) {
+		String asm = "";		
+		for (String s: ts.keySet()) {
+			String uso = ts.get(s).getUso();
+			String deClase = ts.get(s).getDeClase();
+			if (uso.equals("Atributo de clase") && deClase.equals(clasePadre)) {
+				asm += "MOV AX, _" + inst + "_" + s + '\n';
+				asm += "MOV _" + s + ", AX \n"; 
+			}	
+		}
+		String claseAbuelo = ts.get(clasePadre).getClasePadre();
+		if(!claseAbuelo.equals("-")) {
+			asm += recorroEIntercambioIda(inst, claseAbuelo, ts);
+		}
+		return asm;
+	}
+	
+	private String recorroEIntercambioVuelta (String inst, String clasePadre, HashMap <String,Atributo> ts) {
+		String asm = "";		
+		for (String s: ts.keySet()) {
+			String uso = ts.get(s).getUso();
+			String deClase = ts.get(s).getDeClase();
+			if (uso.equals("Atributo de clase") && deClase.equals(clasePadre)) {
+				asm += "MOV AX, _" + s + '\n';
+				asm += "MOV _" + inst + "_" + s + ", AX \n"; 
+			}	
+		}
+		String claseAbuelo = ts.get(clasePadre).getClasePadre();
+		if(!claseAbuelo.equals("-")) {
+			asm += recorroEIntercambioVuelta(inst, claseAbuelo, ts);
 		}
 		return asm;
 	}
 	
 	public String generarAssemblerFunctions() {
 
-		analizarTercetosFunctions();
-
 		String asm = "";
 		for (Terceto t : tercetos) {
 			if (t.getOperador().equals("FUNCTION"))
 				asm += "@FUNCTION_" + t.getOp1() + ": \n";
 			else if (t.getOperador().equals("RETURN"))
-				asm += "RET \n";
-			else if (t.getMarcaFunc()) {
-				if (t.getOperador().equals("PRINT")) {
-					String s = t.getOp1().replaceAll("\\s", "_");
-					asm += "invoke MessageBox, NULL, addr " + s + ", addr " + s + ", MB_OK";
+					asm += "RET \n";
+				else if (t.getMarcaFunc()) {
+					if (t.getOperador().equals("PRINT")) {
+						String s = t.getOp1().replaceAll("\\s", "_");
+						asm += "invoke MessageBox, NULL, addr " + s + ", addr " + s + ", MB_OK";
+					}
+					t.setMarcaFunc(false);
+					asm += writeAssembler(t) + '\n';
+					t.setMarcaFunc();
 				}
-				t.setMarcaFunc(false);
-				asm += writeAssembler(t) + '\n';
-				t.setMarcaFunc();
-			}
 		}
 
 		return asm;
@@ -868,13 +891,16 @@ public class TercetosController {
 		}
 	}
 	
-	public void mostrarTercetos(File f) {
+	public void mostrarTercetos(File f, boolean b) {
 		try {
 			FileWriter fwriter = new FileWriter(f, true);
 			PrintWriter writer = new PrintWriter(fwriter);
 			writer.println("-----------------------------------");
 			writer.println("-----------------------------------");
-			writer.println("Lista de tercetos:");
+			if (!b)
+				writer.println("Lista de tercetos:");
+			else
+				writer.println("Lista de tercetos despues de la reduccion simple:");
 			for (Terceto t: tercetos) {
 				String bf = "";
 				if (t.getAuxAsoc() == null)
