@@ -210,8 +210,7 @@ public class TercetosController {
 				i++;
 				
 		}
-	}
-	
+	}	
 	
 	private void analizarTercetos() {
 
@@ -422,8 +421,8 @@ public class TercetosController {
 				}
 				// CASO 2: (OP, TERCETO, VAR)
 				if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
-					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp1().length()-1)) - 1;
-					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp1().length()-1));
+					String nombreVarAsoc = tercetos.get(getIndexTercetoNro(idTerceto)).getAuxAsoc();
 					if (estatica.equals("DIV") || estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
@@ -497,8 +496,8 @@ public class TercetosController {
 				}
 				// CASO 3: (OP, VAR, TERCETO)
 				if ((!t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-					int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
-					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+					int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1));
+					String nombreVarAsoc = tercetos.get(getIndexTercetoNro(idTerceto)).getAuxAsoc();
 					if (estatica.equals("IDIV") || estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
@@ -547,7 +546,7 @@ public class TercetosController {
 							String s1 = t.getOp1().replace(".", "_");
 							s1 = s1.replace('-', '_');
 							asm += "FLD _" + s1 + '\n';
-							asm += "F" + estatica + " _" + nombreVarAsoc + '\n';
+							asm += "F" + estatica + " @" + nombreVarAsoc + '\n';
 							asm += "FSTP @" + t.getAuxAsoc() + '\n';
 
 							asm += "FLD _max_float_pos \n";
@@ -580,10 +579,10 @@ public class TercetosController {
 				}
 				// CASO 4: (OP, TERCETO, TERCETO)
 				if ((t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
-					int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
-					int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
-					String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
-					String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
+					int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1));
+					int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1));
+					String nombreVarAsoc1 = tercetos.get(getIndexTercetoNro(idTerceto1)).getAuxAsoc();
+					String nombreVarAsoc2 = tercetos.get(getIndexTercetoNro(idTerceto2)).getAuxAsoc();
 					if (estatica.equals("IDIV") || estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
@@ -680,10 +679,10 @@ public class TercetosController {
 					}
 					// CASO 2: (OP, VAR, TERCETO) 
 					if ((t.getOp2().startsWith("["))) {
-						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) -1;
+						int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1));
 						// CASO VAR ENTERA
 						if(tercetos.size() > idTerceto) { // Fue necesario incorporar esta condicion sino el get(idTerceto).getAuxAsoc() me tiraba un indexout debido a que se habian eliminado otros tercetos
-							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+							String nombreVarAsoc = tercetos.get(getIndexTercetoNro(idTerceto)).getAuxAsoc();
 							if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 								asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
 								asm += "MOV _" + aux1 + ", " + reg;
@@ -703,10 +702,10 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm += "CMP AX, BX";
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
-							String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
-							int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
-							String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
+							int idTerceto1 = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1));
+							String nombreVarAsoc1 = tercetos.get(getIndexTercetoNro(idTerceto1)).getAuxAsoc();
+							int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1));
+							String nombreVarAsoc2 = tercetos.get(getIndexTercetoNro(idTerceto2)).getAuxAsoc();
 							asm += "FLD @" + nombreVarAsoc1 + '\n';
 							asm += "FLD @" + nombreVarAsoc2 + '\n';
 							asm += "FCOMPP \n";
@@ -718,8 +717,8 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm += "CMP AX, _" + t.getOp2().replace(".", "_").replace("-", "_");
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
-							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+							int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1));
+							String nombreVarAsoc = tercetos.get(getIndexTercetoNro(idTerceto)).getAuxAsoc();
 							String s2 = t.getOp1().replace('.', '_');
 							s2 = s2.replace('-', '_');
 							asm += "FLD _" + s2 + '\n';
@@ -733,8 +732,8 @@ public class TercetosController {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
 							asm += "CMP _" + t.getOp1().replace(".", "_").replace("-", "_") + ", AX";
 						else { // COMPARACION ENTRE DOS FLOAT
-							int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
-							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
+							int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1));
+							String nombreVarAsoc = tercetos.get(getIndexTercetoNro(idTerceto)).getAuxAsoc();
 							String s1 = t.getOp1().replace('.', '_');
 							s1 = s1.replace('-', '_');
 							asm += "FLD _" + s1 + '\n';
@@ -814,7 +813,7 @@ public class TercetosController {
 		} else {
 			asm += recorroEIntercambioVuelta(inst, clasePadre, tablaSimb);
 
-			asm = asm.substring(0, asm.length()-2);
+			asm = asm.substring(0, asm.length()-1);
 		}
 		return asm;
 	}
@@ -926,5 +925,20 @@ public class TercetosController {
 		} catch (Exception e) {
     		e.printStackTrace();
 		}
+	}
+	
+	private int getIndexTercetoNro (int nroTerceto) {
+		boolean encontre = false;
+		int nroTerc = 0;
+		int i = 0;
+		while ( i < tercetos.size() && !encontre) {
+			Terceto t = tercetos.get(i);
+			if ( t.getNumTerceto() == nroTerceto ) {
+				encontre = true;
+				nroTerc = i;
+			}
+			i++;
+		}
+		return nroTerc;
 	}
 }
