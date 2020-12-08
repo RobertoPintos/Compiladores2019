@@ -357,9 +357,10 @@ public class Controller {
 	}
 	
 	public void addVarTS (String lex, String t, String u, Object v, String dc, String cp, String visibilidad) {
-		if (tablaDeSimbolo.containsKey(lex)) 
+		if (tablaDeSimbolo.containsKey(lex)) {
 			System.out.println("La variable "+lex+" ya existe.");
-		else {
+			tablaDeSimbolo.get(lex).incrementoCantRef();
+		} else {
 			Atributo a = new Atributo(t, u, v, dc, cp, 1);
 			a.setVisibilidad(visibilidad);
 			tablaDeSimbolo.put(lex, a);

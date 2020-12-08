@@ -187,7 +187,6 @@ public class TercetosController {
 			}
 			i++;
 		}
-		
 	}
 	
 	private void reduccionSimple() {
@@ -200,7 +199,9 @@ public class TercetosController {
 				if (controller.getTS().containsKey(op1) && controller.getTS().containsKey(op2)) {
 					if ((tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-")) && controller.getLexico().getTS().get(op1).getTipo().equals("CONST INT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST INT") 
 						|| (tercetos.get(i).getOperador().equals("*") || tercetos.get(i).getOperador().equals("/") || tercetos.get(i).getOperador().equals("+") || tercetos.get(i).getOperador().equals("-"))  && controller.getLexico().getTS().get(op1).getTipo().equals("CONST FLOAT") && controller.getLexico().getTS().get(op2).getTipo().equals("CONST FLOAT")) {
-						String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), controller.getLexico().getTS().get(op1).getTipo());
+						String tipo = controller.getLexico().getTS().get(op1).getTipo();
+						String calculo = calculador(tercetos.get(i).getOperador(), tercetos.get(i).getOp1(), tercetos.get(i).getOp2(), tipo);
+						controller.getLexico().addVarTS(calculo, tipo, "-", calculo, "-", "-", "-");
 						reemplazarReferencia(tercetos.get(i).getNumTerceto(), calculo, i + 1);// le mando i++ por que seria donde comienza la busqueda para el reemplazo de la referencia de los tercetos
 						controller.getLexico().elimVarTS(tercetos.get(i).getAuxAsoc());
 						tercetos.remove(i);
@@ -423,7 +424,7 @@ public class TercetosController {
 				if ((t.getOp1().startsWith("[")) && (!t.getOp2().startsWith("["))) {
 					int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp1().length()-1)) - 1;
 					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-					if (estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
+					if (estatica.equals("DIV") || estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// DOS VARIABLES ENTERAS
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", _" + t.getOp2().replace(".", "_") + '\n';
@@ -498,7 +499,7 @@ public class TercetosController {
 				if ((!t.getOp1().startsWith("[")) && (t.getOp2().startsWith("["))) {
 					int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 					String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
-					if (estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
+					if (estatica.equals("IDIV") || estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", @" + nombreVarAsoc + '\n';
@@ -583,7 +584,7 @@ public class TercetosController {
 					int idTerceto2 = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 					String nombreVarAsoc1 = tercetos.get(idTerceto1).getAuxAsoc();
 					String nombreVarAsoc2 = tercetos.get(idTerceto2).getAuxAsoc();
-					if (estatica.equals("IDIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
+					if (estatica.equals("IDIV") || estatica.equals("DIV")) { // SI ES UNA DIVISION TENGO QUE CHEQUEAR QUE EL DIVISOR NO SEA 0
 						// VAR ENTERA
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) {
 							asm += "MOV " + reg + ", @" + nombreVarAsoc2 + '\n';
@@ -715,7 +716,7 @@ public class TercetosController {
 					// CASO 2: UN TERCETO Y UNA CONSTANTE/VARIBLE
 					else if (t.getOp1().startsWith("["))
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
-							asm += "CMP AX, _" + t.getOp2().replace(".", "_");
+							asm += "CMP AX, _" + t.getOp2().replace(".", "_").replace("-", "_");
 						else { // COMPARACION ENTRE DOS FLOAT
 							int idTerceto = Integer.parseInt(t.getOp1().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
@@ -730,7 +731,7 @@ public class TercetosController {
 					// CASO 3: UNA CONSTANTE/VARIABLE Y UN TERCETO
 					else if (t.getOp2().startsWith("["))
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) // COMPARACION ENTEROS
-							asm += "CMP _" + t.getOp1().replace(".", "_") + ", AX";
+							asm += "CMP _" + t.getOp1().replace(".", "_").replace("-", "_") + ", AX";
 						else { // COMPARACION ENTRE DOS FLOAT
 							int idTerceto = Integer.parseInt(t.getOp2().substring(1, t.getOp2().length()-1)) - 1;
 							String nombreVarAsoc = tercetos.get(idTerceto).getAuxAsoc();
@@ -745,8 +746,8 @@ public class TercetosController {
 					// CASO 4: DOS CONSTANTES/VARIABLES
 					else {
 						if (t.getTipoOp().equals("int") || t.getTipoOp().equals("CONST INT")) { // VAR/CONST ENTERAS
-							asm += "MOV AX, _" + t.getOp1().replace(".", "_") + '\n';
-							asm += "CMP AX, _" + t.getOp2().replace(".", "_");
+							asm += "MOV AX, _" + t.getOp1().replace(".", "_").replace("-", "_") + '\n';
+							asm += "CMP AX, _" + t.getOp2().replace(".", "_").replace("-", "_");
 						} else { // VAR/CONST FLOAT
 							String s1 = t.getOp1().replace('.', '_');
 							String s2 = t.getOp2().replace('.', '_');
@@ -823,10 +824,16 @@ public class TercetosController {
 		for (String s: ts.keySet()) {
 			String uso = ts.get(s).getUso();
 			String deClase = ts.get(s).getDeClase();
+			String tipo = ts.get(s).getTipo();
 			if (uso.equals("Atributo de clase") && deClase.equals(clasePadre)) {
+				if (tipo.equals("int")) {
 				asm += "MOV AX, _" + inst + "_" + s + '\n';
 				asm += "MOV _" + s + ", AX \n"; 
-			}	
+				} else {
+					asm += "FLD _" + inst + "_" + s + '\n';
+					asm += "FSTP _" + s + '\n'; 
+				}
+			}
 		}
 		String claseAbuelo = ts.get(clasePadre).getClasePadre();
 		if(!claseAbuelo.equals("-")) {
@@ -840,9 +847,15 @@ public class TercetosController {
 		for (String s: ts.keySet()) {
 			String uso = ts.get(s).getUso();
 			String deClase = ts.get(s).getDeClase();
+			String tipo = ts.get(s).getTipo();
 			if (uso.equals("Atributo de clase") && deClase.equals(clasePadre)) {
-				asm += "MOV AX, _" + s + '\n';
-				asm += "MOV _" + inst + "_" + s + ", AX \n"; 
+				if (tipo.equals("int")) {
+					asm += "MOV AX, _" + s + '\n';
+					asm += "MOV _" + inst + "_" + s + ", AX \n"; 
+				} else {
+					asm += "FLD _" + s + '\n';
+					asm += "FSTP _" + inst + "_" + s + "\n";  
+				}
 			}	
 		}
 		String claseAbuelo = ts.get(clasePadre).getClasePadre();
